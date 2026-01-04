@@ -8,7 +8,7 @@
 
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/openai_api.h>
-#include <debug/log.h>
+#include <output/log.h>
 
 using json = nlohmann::json;
 

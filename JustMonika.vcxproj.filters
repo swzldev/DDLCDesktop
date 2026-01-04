@@ -45,7 +45,7 @@
     <ClCompile Include="src\core\input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\debug\log.cpp">
+    <ClCompile Include="src\output\log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,7 +95,7 @@
     <ClInclude Include="include\core\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\debug\log.h">
+    <ClInclude Include="include\output\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

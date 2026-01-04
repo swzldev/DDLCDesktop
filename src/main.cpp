@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 #include <core/widget.h>
-#include <debug/log.h>
+#include <output/log.h>
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	log::open_file("log.txt");

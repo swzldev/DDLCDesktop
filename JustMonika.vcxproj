@@ -138,7 +138,7 @@
     <ClCompile Include="src\core\renderer.cpp" />
     <ClCompile Include="src\core\widget.cpp" />
     <ClCompile Include="src\core\window.cpp" />
-    <ClCompile Include="src\debug\log.cpp" />
+    <ClCompile Include="src\output\log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\visual\character_visuals.cpp" />
     <ClCompile Include="src\visual\sprite.cpp" />
@@ -154,7 +154,7 @@
     <ClInclude Include="include\core\widget.h" />
     <ClInclude Include="include\core\window.h" />
     <ClInclude Include="include\ddlc\characters.h" />
-    <ClInclude Include="include\debug\log.h" />
+    <ClInclude Include="include\output\log.h" />
     <ClInclude Include="include\visual\character_visuals.h" />
     <ClInclude Include="include\visual\sprite.h" />
     <ClInclude Include="lib\nlohmann-json\include\nlohmann\json.hpp" />
