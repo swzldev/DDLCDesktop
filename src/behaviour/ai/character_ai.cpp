@@ -208,7 +208,7 @@ Generate output **strictly in JSON** with this exact schema:
 
 Rules:
 
-1. interactions: generate 10-20 interactions. Each interactions has:
+1. interactions: generate at least 5 interactions but aim for more if possible. Each interactions has:
    - saying: hard cap 50 characters. Vary lengths for immersion. Use sound effects, short expressive phrases, or narrative actions. Start with a capital, end with a period. Escape quotes (\"). **When you talk, wrap the message in QUOTES, when it's narration, DONT**. Examples:
      - Non-narrative: "Ah! I didn't expect to see you..."
      - Narrative: Monika looks away nervously.

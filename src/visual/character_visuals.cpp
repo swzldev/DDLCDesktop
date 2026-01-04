@@ -58,8 +58,20 @@ void character_visuals::set_saying(const std::string& saying) {
 	is_speaking_ = true;
 }
 void character_visuals::set_visual(const std::string visual_str) {
-	if (visual_str.size() != 3) {
-		throw std::runtime_error("Invalid visual string in character_visuals::set_visual");
+	std::string vis = visual_str;
+
+	// safety checks
+	if (vis.size() != 3) {
+		vis = "11a";
+	}
+	if (vis[0] != '1' || vis[0] != '2') {
+		vis[0] = '1';
+	}
+	if (vis[1] != '1' || vis[1] != '2') {
+		vis[1] = '1';
+	}
+	if (vis[2] < 'a' || vis[2] > 'r') {
+		vis[2] = 'a';
 	}
 
 	pose_left_ = std::string(1, visual_str[0]);

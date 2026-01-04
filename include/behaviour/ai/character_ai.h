@@ -11,7 +11,7 @@
 
 class character_ai {
 public:
-	static constexpr auto MODEL_NAME = "gpt-4o-mini";
+	static constexpr auto MODEL_NAME = "gpt-4.1";
 	static constexpr int MAX_HISTORY_MESSAGES = 6;
 
 public:
