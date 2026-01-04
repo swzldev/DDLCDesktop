@@ -14,12 +14,21 @@
 using json = nlohmann::json;
 
 character_ai::character_ai() {
-	std::ifstream key_file("API_KEY.txt");
-	if (!key_file.is_open()) {
-		throw std::runtime_error("Failed to open API_KEY.txt for reading OpenAI API key (It is likely you did not read the installation instructions on the github).");
+	std::ifstream config("config.json");
+	if (!config.is_open()) {
+		throw std::runtime_error("Failed to open config.json (you will need to recreate it yourself or reinstall)");
 	}
-	std::string api_key;
-	std::getline(key_file, api_key);
+	
+	json j;
+	config >> j;
+	std::string api_key = j.value("openai_api_key", "");
+	if (api_key.empty()) {
+		throw std::runtime_error("OpenAI API key not found in config.json (did you read the installation instructions on the github?)");
+	}
+
+	model_ = j.value("openai_model", "gpt-4o-mini");
+	message_history_size_ = j.value("openai_message_history_size", 6);
+	user_name_ = j.value("user_name", "");
 
 	openai_ = new openai_api(api_key);
 
@@ -36,7 +45,7 @@ character_ai::~character_ai() {
 }
 
 void character_ai::handle_close_interaction() {
-	add_to_history("user", "[Interaction] The player closed Monika's window.");
+	add_to_history("user", "[Interaction] " + get_user_name() + " closed Monika's window.");
 }
 
 void character_ai::handle_interaction_async(const character_interaction& interaction) {
@@ -98,6 +107,13 @@ void character_ai::load_state(const char* path) {
 	file.close();
 }
 
+std::string character_ai::get_user_name() {
+	if (user_name_.empty()) {
+		return "The user";
+	}
+	return user_name_;
+}
+
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
 	std::string prompt = build_prompt(interaction);
 	std::string response = openai_->get_response(prompt);
@@ -130,21 +146,22 @@ std::string character_ai::build_prompt(const character_interaction& interaction)
 	add_to_history("user", interaction_message);
 
 	json payload;
-	payload["model"] = MODEL_NAME;
+	payload["model"] = model_;
 	payload["input"] = messages;
 
 	return payload.dump();
 }
 std::string character_ai::interaction_to_message(const character_interaction& interaction) {
+	std::string user_name = get_user_name();
 	switch (interaction.get_kind()) {
 	case character_interaction::kind::CLICK:
-		return "[Interaction] The player clicked Monika.";
+		return "[Interaction] " + user_name + " clicked Monika.";
 	case character_interaction::kind::CHOICE_MADE:
-		return "[Interaction] Player: \"" + interaction.str_data + "\" (Choice " + std::to_string(interaction.int_data) + ")";
+		return "[Interaction] " + user_name + ": \"" + interaction.str_data + "\" (Choice " + std::to_string(interaction.int_data) + ")";
 	case character_interaction::kind::WINDOW_OPEN:
-		return "[Interaction] The player opened Monika's window.";
+		return "[Interaction] " + user_name + " opened Monika's window.";
 	default:
-		return "[Interaction] The player interacted with Monika, but an internal error occurred and we don't know what the interaction was.";
+		return "[Interaction] " + user_name + " interacted with Monika, but an internal error occurred and we don't know what the interaction was.";
 	}
 }
 std::string character_ai::extract_content_from_response(const std::string& response) {

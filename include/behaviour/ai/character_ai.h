@@ -11,10 +11,6 @@
 
 class character_ai {
 public:
-	static constexpr auto MODEL_NAME = "gpt-4o-mini";
-	static constexpr int MAX_HISTORY_MESSAGES = 6;
-
-public:
 	character_ai();
 	~character_ai();
 
@@ -27,8 +23,13 @@ public:
 	void save_state(const char* path);
 	void load_state(const char* path);
 
+	std::string get_user_name();
+
 private:
 	openai_api* openai_;
+	std::string model_ = "gpt-4o-mini";
+	int message_history_size_;
+	std::string user_name_ = "";
 
 	struct message {
 		std::string role;
@@ -42,7 +43,7 @@ private:
 	inline void add_to_history(const std::string& role, const std::string& content) {
 		conversation_history_.push_back({ role, content });
 		// limit history size (dont include system prompt)
-		if (conversation_history_.size() > MAX_HISTORY_MESSAGES + 1) {
+		if (conversation_history_.size() > message_history_size_ + 1) {
 			conversation_history_.erase(conversation_history_.begin());
 		}
 	}
