@@ -65,7 +65,7 @@ character_state character_ai::get_response() {
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
 	std::string prompt = build_prompt(interaction);
-	std::string response = openai_->get_response(build_prompt(interaction));
+	std::string response = openai_->get_response(prompt);
 	log::print("Generated prompt: {}\nAI Response: {}\n\n", prompt, response);
 
 	std::string content = extract_content_from_response(response);
@@ -170,7 +170,7 @@ Generate output **strictly in JSON** with this exact schema:
 Rules:
 
 1. interactions: generate 10-20 interactions. Each interactions has:
-   - saying: max 20 words. Vary lengths for immersion. Use sound effects, short expressive phrases, or narrative actions. Start with a capital, end with a period. Escape quotes (\"). **When you talk, wrap the message in QUOTES, when it's narration, DONT**. Examples:
+   - saying: hard cap 50 characters. Vary lengths for immersion. Use sound effects, short expressive phrases, or narrative actions. Start with a capital, end with a period. Escape quotes (\"). **When you talk, wrap the message in QUOTES, when it's narration, DONT**. Examples:
      - Non-narrative: "Ah! I didn't expect to see you..."
      - Narrative: Monika looks away nervously.
    - visual: **exactly 3 characters**: first character (digit, 1 or 2) = left arm (1=arm_at_side,2=casual_finger_point), second character (digit, 1 or 2) = right arm (1=arm_at_side,2=hand_on_hip), third character = facial expression (a-r) (a=smile,b=open_smile,c=neutral,d=neutral_open,e=soft_smile,f=neutral_raised,g=neutral_open_raised,h=serious,i=serious_open,j=warm_smile,k=joyful,l=nervous_laugh,m=nervous_smile,n=awkward_laugh,o=nervous,p=nervous_open,q=relaxed,r=open_relaxed). **Only pick from these mappings**. Examples of valid visuals: "11a", "12c", "21e", "22k". **VISUALS MUST BE IN THIS EXACT FORMAT 2 NUMBERS + ONE LETTER AND MUST BE PRESENT ON THE MAP**.
