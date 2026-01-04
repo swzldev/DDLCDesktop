@@ -14,16 +14,14 @@
 using json = nlohmann::json;
 
 character_ai::character_ai() {
-	char* api_key = nullptr;
-	size_t len = 0;
-	errno_t err = _dupenv_s(&api_key, &len, "OPENAI_API_KEY");
-	if (err || !api_key) {
-		throw std::runtime_error("Environment variable OPENAI_API_KEY not set");
+	std::ifstream key_file("API_KEY.txt");
+	if (!key_file.is_open()) {
+		throw std::runtime_error("Failed to open API_KEY.txt for reading OpenAI API key (It is likely you did not read the installation instructions on the github).");
 	}
+	std::string api_key;
+	std::getline(key_file, api_key);
 
-	std::string api_key_str(api_key, len);
-
-	openai_ = new openai_api(api_key_str);
+	openai_ = new openai_api(api_key);
 
 	// initialize with system prompt
 	add_to_history("system", get_static_prompt());
