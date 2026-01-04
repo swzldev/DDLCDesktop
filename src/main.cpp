@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <filesystem>
 #include <cstdint>
 #include <Windows.h>
 #include <DbgHelp.h>
@@ -37,19 +38,22 @@ LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* exceptionInfo) {
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	SetUnhandledExceptionFilter(UnhandledExceptionHandler);
 
-	log::open_file("log.txt");
+	std::filesystem::path log_path = std::filesystem::current_path() / "log.txt";
 
 	try {
+		log::open_file(log_path.string().c_str());
 		widget main_widget;
 		main_widget.main_loop();
 	}
 	catch (const std::exception& e) {
 		log::print("FATAL ERROR: Unhandled exception: {}\n", e.what());
+		log::shutdown();
 		MessageBoxA(nullptr, e.what(), "Fatal Error", MB_OK | MB_ICONERROR);
 		return 1;
 	}
 	catch (...) {
 		log::print("FATAL ERROR: Unknown unhandled exception occurred.\n");
+		log::shutdown();
 		MessageBoxA(nullptr, "An unknown fatal error occurred.", "Fatal Error", MB_OK | MB_ICONERROR);
 		return 1;
 	}
