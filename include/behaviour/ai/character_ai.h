@@ -18,9 +18,14 @@ public:
 	character_ai();
 	~character_ai();
 
+	void handle_close_interaction(); // doesnt use AI, so dont need async
+
 	void handle_interaction_async(const character_interaction& interaction);
 	bool is_response_ready() const;
 	character_state get_response();
+
+	void save_state(const char* path);
+	void load_state(const char* path);
 
 private:
 	openai_api* openai_;

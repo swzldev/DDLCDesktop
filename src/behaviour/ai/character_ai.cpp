@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <string>
+#include <fstream>
 
 #include <nlohmann/json.hpp>
 
@@ -36,6 +37,10 @@ character_ai::~character_ai() {
 	openai_ = nullptr;
 }
 
+void character_ai::handle_close_interaction() {
+	add_to_history("user", "[Interaction] The player closed Monika's window.");
+}
+
 void character_ai::handle_interaction_async(const character_interaction& interaction) {
 	if (is_processing_) {
 		return; // already processing
@@ -61,6 +66,38 @@ character_state character_ai::get_response() {
 		return pending_response_.get();
 	}
 	return character_state{};
+}
+
+void character_ai::save_state(const char* path) {
+	std::ofstream file(path);
+	if (!file.is_open()) {
+		throw std::runtime_error("Failed to open file for saving character AI state");
+	}
+
+	json j;
+	j["conversation_history"] = json::array();
+	for (const auto& msg : conversation_history_) {
+		j["conversation_history"].push_back({ {"role", msg.role}, {"content", msg.content} });
+	}
+	file << j.dump(4);
+
+	file.close();
+}
+void character_ai::load_state(const char* path) {
+	std::ifstream file(path);
+	if (!file.is_open()) {
+		return; // no saved state
+	}
+
+	json j;
+	file >> j;
+
+	conversation_history_.clear();
+	for (const auto& msg : j["conversation_history"]) {
+		conversation_history_.push_back({ msg["role"].get<std::string>(), msg["content"].get<std::string>() });
+	}
+
+	file.close();
 }
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
@@ -106,6 +143,8 @@ std::string character_ai::interaction_to_message(const character_interaction& in
 		return "[Interaction] The player clicked Monika.";
 	case character_interaction::kind::CHOICE_MADE:
 		return "[Interaction] Player: \"" + interaction.str_data + "\" (Choice " + std::to_string(interaction.int_data) + ")";
+	case character_interaction::kind::WINDOW_OPEN:
+		return "[Interaction] The player opened Monika's window.";
 	default:
 		return "[Interaction] The player interacted with Monika, but an internal error occurred and we don't know what the interaction was.";
 	}

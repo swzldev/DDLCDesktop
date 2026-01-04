@@ -1,7 +1,20 @@
 #include <behaviour/character_logic.h>
 
+#include <string>
+#include <filesystem>
+
 #include <core/input.h>
 #include <behaviour/character_interaction.h>
+
+character_logic::character_logic() {
+	if (std::filesystem::exists("character_state.json")) {
+		ai.load_state("character_state.json");
+	}
+
+	// window opened
+	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
+	begin_think(interaction);
+}
 
 void character_logic::handle_interaction(const character_interaction& interaction) {
 	if (state_ == logic_state::IDLE) {
@@ -74,6 +87,12 @@ void character_logic::tick(float delta_time) {
 	}
 
 	visuals.tick(delta_time);
+}
+
+void character_logic::shutdown() {
+	ai.handle_close_interaction();
+
+	ai.save_state("character_state.json");
 }
 
 int character_logic::get_choice_input(int num_choices) {

@@ -114,6 +114,14 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		}
 		return 0;
 	}
+	case WM_DESTROY:
+	{
+		if (win) {
+			win->should_close_ = true;
+		}
+		PostQuitMessage(0);
+		return 0;
+	}
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

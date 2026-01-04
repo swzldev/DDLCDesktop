@@ -20,6 +20,8 @@ public:
 
 	void poll_events() const;
 
+	inline bool should_close() const { return should_close_; }
+
 	std::vector<std::function<void()>> on_mouse_click;
 
 	inline renderer* get_renderer() const { return renderer_; }
@@ -27,6 +29,7 @@ public:
 private:
 	HWND hwnd_;
 	renderer* renderer_;
+	bool should_close_ = false;
 
 	void create_renderer();
 

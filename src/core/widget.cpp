@@ -21,20 +21,24 @@ widget::~widget() {
 }
 
 void widget::main_loop() {
+	running_ = true;
+
 	// set hooks
 	window_->on_mouse_click.push_back([this]() {
 		character_interaction interaction(character_interaction::kind::CLICK);
 		character_logic_.handle_interaction(interaction);
 	});
 
-	bool running = true;
-	while (running) {
+	while (running_) {
 		auto now = std::chrono::high_resolution_clock::now();
 		float delta_time = std::chrono::duration<float>(now - last_time_).count();
 
 		input::tick();
 
 		window_->poll_events();
+		if (window_->should_close() || input::is_key_pressed(VK_ESCAPE)) {
+			stop();
+		}
 
 		renderer_->begin_draw();
 
@@ -43,12 +47,13 @@ void widget::main_loop() {
 
 		renderer_->end_draw();
 
-		if (input::is_key_pressed(VK_ESCAPE)) {
-			running = false;
-		}
-
 		last_time_ = now;
 	}
 
 	sprite::cleanup_all_sprites();
+}
+void widget::stop() {
+	character_logic_.shutdown();
+
+	running_ = false;
 }

@@ -13,11 +13,13 @@ enum class logic_state {
 
 class character_logic {
 public:
-	character_logic() = default;
+	character_logic();
 
 	void handle_interaction(const character_interaction& interaction);
 
 	void tick(float delta_time);
+
+	void shutdown();
 
 	character_visuals visuals;
 	character_ai ai;
