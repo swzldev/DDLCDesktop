@@ -215,7 +215,7 @@ std::string character_ai::get_system_prompt() const {
 	else if (system_prompt_ == "shy-playful") {
 		return system_prompts::shy_playful;
 	}
-	else if (system_prompt_ == "postgame" || system_prompt_.empty()) {
+	else if (system_prompt_ == "postgame" || system_prompt_ == "default" || system_prompt_.empty()) {
 		return system_prompts::postgame;
 	}
 	else {
