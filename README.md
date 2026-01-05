@@ -50,15 +50,14 @@
 
 <h3>Config.json & API Key</h3>
 <p>Next to JustMonika.exe there is a file called config.json. Open this file in a text editor and you will see the following:</p>
-```json
-{
+<pre><code>{
   "openai_api_key": "<your api key>",
   "openai_model": "gpt-4o-mini",
   "openai_message_history_size": 6,
   "user_name": "<your name>",
   "behaviour_preset": "default"
 }
-```
+</code></pre>
 <p>You will need to fill in your OpenAI API key in order for Monika to be able to talk to you. You can get an API key by signing up for an account at <a href="https://platform.openai.com/signup">OpenAI</a> and generating a key in the API section. Note: you may have to set up a billing account and purchase credits for it to work correctly, but I'm not too sure.</p>
 
 <p>Once you have your API key, replace <code>&lt;your api key&gt;</code> with your actual key. You can also change the <code>user_name</code> field to whatever you want Monika to call you, and lastly, if you want a custom behaviour you can change the <code>"behaviour_preset"</code> to any one of the following:</p>
