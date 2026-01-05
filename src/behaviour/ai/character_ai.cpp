@@ -212,7 +212,7 @@ std::string character_ai::get_system_prompt() const {
 	else if (system_prompt_ == "obsessive") {
 		return system_prompts::obsessive;
 	}
-	else if (system_prompt_ == "shy-playful") {
+	else if (system_prompt_ == "shy") {
 		return system_prompts::shy_playful;
 	}
 	else if (system_prompt_ == "postgame" || system_prompt_ == "default" || system_prompt_.empty()) {
