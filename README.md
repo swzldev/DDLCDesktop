@@ -1,7 +1,7 @@
 <h1 align="left">Just Monika.</h1>
 <p align="left">
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
-    <img src="https://img.shields.io/badge/latest_version-0.1.0-yellow" alt="Latest: 0.1.0">
+    <img src="https://img.shields.io/badge/latest_version-0.2.0-yellow" alt="Latest: 0.2.0">
 </p>
 <p>Ever wondered what it would be like to have your own Monika on your desktop? Well now you can cause I was lowkey bored asl and have nothing to do with my life :sob:</p>
 
@@ -38,26 +38,57 @@
 <h3>Assets</h3>
 <p>For copyright reasons, the DDLC assets are not provided as part of the application, but you can extract them from the game very easily in just a few steps.</p>
 <ol>
-  <li>Download RPA Extract <a href="https://iwanplays.itch.io/rpaex">here</a>.</li>
+  <li>Download <a href="https://iwanplays.itch.io/rpaex">RPA Extract</a>.</li>
   <li>Open the DDLC installation directory and go into the "game" folder. Once inside drag the "images.rpa" file onto the rpaExtract.exe executable.</li>
   <li>Back in the "DDLC/game" folder, 2 new directories should appear, "images" and "gui", drag both of them into the "assets" folder of JustMonika.</li>
 </ol>
+<p>If you're confused you can use the visual diagram below:</p>
+<img width="1668" height="801" alt="image" src="https://github.com/user-attachments/assets/82ba9a7e-7535-418e-9642-593cc6c8c1c2" />
 
 <h3>Font</h3>
 <p>I couldn't get custom font loading to work properly so unfortunately you will need to download the font onto your system for it to work. Again, it is not provided here for copyright reasons but you can download it for free <a href="https://www.1001fonts.com/aller-font.html">here</a>.</p>
+
+<h3>Config.json & API Key</h3>
+<p>Next to JustMonika.exe there is a file called config.json. Open this file in a text editor and you will see the following:</p>
+```json
+{
+  "openai_api_key": "<your api key>",
+  "openai_model": "gpt-4o-mini",
+  "openai_message_history_size": 6,
+  "user_name": "<your name>",
+  "behaviour_preset": "default"
+}
+```
+<p>You will need to fill in your OpenAI API key in order for Monika to be able to talk to you. You can get an API key by signing up for an account at <a href="https://platform.openai.com/signup">OpenAI</a> and generating a key in the API section. Note: you may have to set up a billing account and purchase credits for it to work correctly, but I'm not too sure.</p>
+
+<p>Once you have your API key, replace <code>&lt;your api key&gt;</code> with your actual key. You can also change the <code>user_name</code> field to whatever you want Monika to call you, and lastly, if you want a custom behaviour you can change the <code>"behaviour_preset"</code> to any one of the following:</p>
+
+<ul>
+  <li><code>"postgame"</code> - Postgame Monika (default)</li>
+  <li><code>"romantic"</code> - Monika acts more flirty and romantic</li>
+  <li><code>"confident"</code> - Monika acts more confident</li>
+  <li><code>"obsessive"</code> - Monika acts more crazy, confident and obsessive</li>
+  <li><code>"shy"</code> - Monika acts more shy and playful</li>
+</ul>
 
 <h2>Controls</h2>
 <p>The controls are made up of a number of events that Monika listens for:</p>
 
 <ul>
-  <li>Opening Monika: Opening Monika will prompt her to start up a conversation.</li>
+  <li>Opening Monika: Opening Monika (aka starting the application) will prompt her to start up a conversation.</li>
   <li>Clicking Monika: Clicking Monika when she's not speaking will prompt her to begin a conversation. Whilst in a conversation, clicking will move to the next sentence.</li>
   <li>Choosing an action: After a conversation has finished, Monika may give a number of options you can choose to reply with by pressing the corresponding key: 1, 2, 3 or 4.</li>
   <li>Closing Monikal: To close Monika, press the escape key (it's pretty jammy, I know, and I may change it in the future). Monika will be notified when you close her window and the next time you open her she will know what you did.</li>
 </ul>
 
 <h2>Changelog</h2>
-<p>No changes yet.</p>
+
+<h3>v0.2.0 [05/01/2026]</h3>
+<ul>
+  <li>Added multiple behaviour presets for Monika.</li>
+  <li>Added fallbacks for when the AI generates bad character poses/expressions to prevent crashes.</li>
+  <li>Fixed various bugs and improved stability.</li>
+</ul>
 
 <h2>Contributing</h2>
 <p>This application is written pretty poorly, as I made it in a single day, therefore I'll likely accept most contributions so feel free to do so.</p>
