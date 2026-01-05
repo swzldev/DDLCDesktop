@@ -3,7 +3,7 @@
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
     <img src="https://img.shields.io/badge/latest_version-0.2.0-yellow" alt="Latest: 0.2.0">
 </p>
-<p>Ever wondered what it would be like to have your own Monika on your desktop? Well now you can cause I was lowkey bored asl and have nothing to do with my life :sob:</p>
+<p>Ever wondered what it would be like to have your own Monika on your desktop? No? Well now you can!</p>
 
 <p>
   <a href="#features">Features</a> &bull;
