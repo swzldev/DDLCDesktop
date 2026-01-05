@@ -134,8 +134,6 @@ character_state character_ai::handle_interaction_internal(const character_intera
 std::string character_ai::build_prompt(const character_interaction& interaction) {
 	json messages = json::array();
 
-	std::string system_prompt = get_static_prompt();
-
 	// add conversation history
 	for (const auto& msg : conversation_history_) {
 		messages.push_back({ {"role", msg.role}, {"content", msg.content} });
