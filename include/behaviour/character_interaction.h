@@ -15,7 +15,7 @@ public:
 	kind get_kind() const { return kind_; }
 
 	std::string str_data;
-	int int_data;
+	int int_data = 0;
 
 private:
 	kind kind_;
