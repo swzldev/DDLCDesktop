@@ -33,7 +33,7 @@
 <p>First install the application binaries from the <a href="https://github.com/swzldev/JustMonika/releases">releases</a> page. It should be called <code>JustMonika-*.*.*-Windows.zip</code></p>
 <p>Once downloaded, extract the contents somewhere (make sure it's not somewhere with limited permissions such as Program Files or System32).</p>
 
-<p>Once extracted there are just a few small things to do before it can run:</p>
+<p>Once extracted simply follow the instructions below:</p>
 
 <h3>Assets</h3>
 <p>For copyright reasons, the DDLC assets are not provided as part of the application, but you can extract them from the game very easily in just a few steps.</p>
