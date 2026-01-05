@@ -98,5 +98,8 @@
     <ClInclude Include="include\output\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\behaviour\ai\system_prompts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

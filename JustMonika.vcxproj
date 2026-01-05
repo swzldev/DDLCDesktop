@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="include\behaviour\ai\character_ai.h" />
     <ClInclude Include="include\behaviour\ai\openai_api.h" />
+    <ClInclude Include="include\behaviour\ai\system_prompts.h" />
     <ClInclude Include="include\behaviour\character_interaction.h" />
     <ClInclude Include="include\behaviour\character_logic.h" />
     <ClInclude Include="include\behaviour\character_state.h" />

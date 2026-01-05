@@ -30,6 +30,7 @@ private:
 	std::string model_ = "gpt-4o-mini";
 	int message_history_size_;
 	std::string user_name_ = "";
+	std::string system_prompt_ = "";
 
 	struct message {
 		std::string role;
@@ -54,5 +55,5 @@ private:
 	std::string extract_content_from_response(const std::string& response);
 	character_state parse_response(const std::string& raw_response);
 
-	static std::string get_static_prompt();
+	std::string get_system_prompt() const;
 };
