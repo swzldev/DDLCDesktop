@@ -51,10 +51,10 @@
 <h3>Config.json & API Key</h3>
 <p>Next to JustMonika.exe there is a file called config.json. Open this file in a text editor and you will see the following:</p>
 <pre><code>{
-  "openai_api_key": "<your api key>",
+  "openai_api_key": "&lt;your api key&gt;",
   "openai_model": "gpt-4o-mini",
   "openai_message_history_size": 6,
-  "user_name": "<your name>",
+  "user_name": "&lt;your name&gt;",
   "behaviour_preset": "default"
 }
 </code></pre>
