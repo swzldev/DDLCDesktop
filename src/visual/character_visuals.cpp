@@ -43,7 +43,7 @@ void character_visuals::draw(renderer* renderer) const {
 
 		// draw text
 		std::wstring wtext(saying_.begin(), saying_.end());
-		renderer->draw_text(wtext, 225, 400, 430, 130);
+		renderer->draw_text(wtext, 225, 400, 430, 130, 4);
 	}
 }
 
@@ -94,8 +94,17 @@ void character_visuals::set_expression(char expression) {
 void character_visuals::set_position(int x, int y) {
 	widget::get_instance().set_position(x, y);
 }
+int character_visuals::get_x() {
+	return widget::get_instance().get_position_x();
+}
+int character_visuals::get_y() {
+	return widget::get_instance().get_position_y();
+}
 void character_visuals::set_scale(int scale) {
 	widget::get_instance().resize(scale);
+}
+int character_visuals::get_scale() {
+	return widget::get_instance().size();
 }
 
 void character_visuals::update_sprites() {

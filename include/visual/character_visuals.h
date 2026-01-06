@@ -28,7 +28,10 @@ public:
 	void set_expression(char expression);
 
 	void set_position(int x, int y);
+	int get_x();
+	int get_y();
 	void set_scale(int scale);
+	int get_scale();
 
 	inline void set_chars_per_second(float cps) {
 		chars_per_second_ = cps;
