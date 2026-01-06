@@ -129,16 +129,6 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 	case WM_NCHITTEST:
 	{
-		POINT pt;
-		GetCursorPos(&pt);
-		ScreenToClient(hwnd, &pt);
-
-		if (win && win->renderer_) {
-			if (win->renderer_->is_transparent_pixel(pt)) {
-				return HTTRANSPARENT;
-			}
-		}
-
 		return HTCLIENT;
 	}
 	case WM_LBUTTONDOWN:

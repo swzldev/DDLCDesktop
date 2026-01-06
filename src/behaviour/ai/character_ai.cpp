@@ -168,8 +168,18 @@ std::string character_ai::extract_content_from_response(const std::string& respo
 	try {
 		auto j = json::parse(response);
 
-		// format: output[0] -> content[0] -> text
-		return j["output"][0]["content"][0]["text"].get<std::string>();
+		// format: output[type == message] -> content[type == output_text] -> text
+		json output_arr = j["output"];
+		for (const auto& item : output_arr) {
+			if (item["type"] == "message") {
+				auto content_arr = item["content"];
+				for (const auto& content_item : content_arr) {
+					if (content_item["type"] == "output_text") {
+						return content_item["text"].get<std::string>();
+					}
+				}
+			}
+		}
 	}
 	catch (...) {
 		return "";

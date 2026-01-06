@@ -143,6 +143,17 @@ renderer::renderer(HWND hwnd, int width, int height) {
 void renderer::resize(int width, int height) {
     width_ = width;
     height_ = height;
+
+    if (d2d_brush_) {
+        d2d_brush_.Reset();
+    }
+    if (d2d_target_bitmap_) {
+        d2d_target_bitmap_.Reset();
+    }
+    if (swapchain_) {
+        swapchain_.Reset();
+    }
+
 	create_render_target();
 }
 

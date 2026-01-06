@@ -43,7 +43,7 @@ void character_visuals::draw(renderer* renderer) const {
 
 		// draw text
 		std::wstring wtext(saying_.begin(), saying_.end());
-		renderer->draw_text(wtext, 225, 400, 430, 130, 4);
+		renderer->draw_text(wtext, 225, 400, 430, 130, 3);
 	}
 }
 
