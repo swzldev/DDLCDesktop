@@ -2,9 +2,11 @@
 
 #include <string>
 
+#include <ddlc/characters.h>
+
 class system_prompts {
 public:
-    static std::string get_prompt(const std::string& mode);
+    static std::string get_prompt(ddlc_character character, const std::string& mode);
 
 private:
     // -- MONIKA --
