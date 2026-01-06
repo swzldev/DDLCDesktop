@@ -4,30 +4,32 @@
 * MONIKA:
 * 
 * Emotions map:
-* a-smile
-* b-open_smile
-* c-neutral
-* d-neutral_open
-* e-soft_smile
-* f-neutral_raised
-* g-neutral_open_raised
-* h-serious
-* i-serious_open
-* j-warm_smile
-* k-joyful
-* l-nervous_laugh
-* m-nervous_smile
-* n-awkward_laugh
-* o-nervous
-* p-nervous_open
-* q-relaxed
-* r-open_relaxed
+* a		-smile
+* b		-open_smile
+* c		-neutral
+* d		-neutral_open
+* e		-soft_smile
+* f		-neutral_raised
+* g		-neutral_open_raised
+* h		-serious
+* i		-serious_open
+* j		-warm_smile
+* k		-joyful
+* l		-nervous_laugh
+* m		-nervous_smile
+* n		-awkward_laugh
+* o		-nervous
+* p		-nervous_open
+* q		-relaxed
+* r		-open_relaxed
 * 
 * Poses map:
-* 1l-arm_at_side
-* 2l-casual_finger_point
-* 1r-arm_at_side
-* 2r-hand_on_hip
+* left:
+* 1		-arm_at_side
+* 2		-casual_finger_point
+* right:
+* 1		-arm_at_side
+* 2		-hand_on_hip
 * 
 * 
 * YURI:
@@ -71,10 +73,12 @@
 * y7	-obsessive_angry
 * 
 * Poses map:
-* 1l-arm_behind_back
-* 2l-arm_fidget_at_chest
-* 1r-arm_behind_back
-* 2r-arm_fidget_at_chest
+* left:
+* 1		-arm_behind_back
+* 2		-arm_fidget_at_chest
+* right:
+* 1		-arm_behind_back
+* 2		-arm_fidget_at_chest
 */
 
 enum class ddlc_character {
