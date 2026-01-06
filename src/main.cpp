@@ -42,8 +42,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	try {
 		log::open_file(log_path.string().c_str());
-		widget main_widget;
-		main_widget.main_loop();
+		widget::get_instance().main_loop();
 	}
 	catch (const std::exception& e) {
 		log::print("FATAL ERROR: Unhandled exception: {}\n", e.what());
