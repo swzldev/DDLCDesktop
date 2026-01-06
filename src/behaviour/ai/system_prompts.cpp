@@ -33,7 +33,7 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 	}
 	case ddlc_character::YURI: {
 		if (mode == "postgame" || mode == "default" || mode.empty()) {
-			bhv = monika_postgame;
+			bhv = yuri_postgame;
 		}
 		else {
 			throw std::runtime_error("(Yuri) Unknown prompt preset: " + mode);
