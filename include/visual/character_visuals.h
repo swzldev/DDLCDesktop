@@ -27,6 +27,9 @@ public:
 	void set_pose(char left, char right);
 	void set_expression(char expression);
 
+	void set_position(int x, int y);
+	void set_scale(int scale);
+
 	inline void set_chars_per_second(float cps) {
 		chars_per_second_ = cps;
 	}

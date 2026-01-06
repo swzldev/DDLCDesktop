@@ -4,6 +4,8 @@
 #include <string>
 #include <stdexcept>
 
+#include <core/widget.h>
+
 namespace fs = std::filesystem;
 
 void character_visuals::tick(float delta_time) {
@@ -87,6 +89,13 @@ void character_visuals::set_pose(char left, char right) {
 void character_visuals::set_expression(char expression) {
 	expression_ = expression;
 	update_sprites();
+}
+
+void character_visuals::set_position(int x, int y) {
+	widget::get_instance().set_position(x, y);
+}
+void character_visuals::set_scale(int scale) {
+	widget::get_instance().resize(scale);
 }
 
 void character_visuals::update_sprites() {
