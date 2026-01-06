@@ -7,13 +7,19 @@
 
 class widget {
 public:
-	widget();
 	~widget();
+
+	static widget& get_instance() {
+		static widget instance;
+		return instance;
+	}
 
 	void main_loop();
 	void stop();
 
 private:
+	widget();
+
 	window* window_;
 	renderer* renderer_;
 	bool running_ = true;
