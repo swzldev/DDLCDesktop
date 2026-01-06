@@ -30,13 +30,23 @@ character_logic::character_logic() {
 	}
 	visuals.set_character(character);
 
+	// create ai
+	ai = new character_ai(character);
+
 	if (std::filesystem::exists("character_state.json")) {
-		ai.load_state("character_state.json");
+		ai->load_state("character_state.json");
 	}
 
 	// window opened
 	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
 	begin_think(interaction);
+}
+character_logic::~character_logic() {
+	if (ai) {
+		ai->save_state("character_state.json");
+		delete ai;
+		ai = nullptr;
+	}
 }
 
 void character_logic::handle_interaction(const character_interaction& interaction) {
@@ -80,9 +90,9 @@ void character_logic::tick(float delta_time) {
 			// constantly think
 			display_think();
 		}
-		if (ai.is_response_ready()) {
+		if (ai->is_response_ready()) {
 			visuals.set_chars_per_second(50.0f);
-			current_state = ai.get_response();
+			current_state = ai->get_response();
 			if (!current_state.interactions.empty()) {
 				state_ = logic_state::TALKING;
 				interaction_index_ = 0;
@@ -113,9 +123,9 @@ void character_logic::tick(float delta_time) {
 }
 
 void character_logic::shutdown() {
-	ai.handle_close_interaction();
+	ai->handle_close_interaction();
 
-	ai.save_state("character_state.json");
+	ai->save_state("character_state.json");
 }
 
 int character_logic::get_choice_input(int num_choices) {
@@ -139,7 +149,7 @@ int character_logic::get_choice_input(int num_choices) {
 
 void character_logic::begin_think(const character_interaction& interaction) {
 	display_think();
-	ai.handle_interaction_async(interaction);
+	ai->handle_interaction_async(interaction);
 	state_ = logic_state::THINKING;
 }
 

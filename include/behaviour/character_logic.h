@@ -14,6 +14,7 @@ enum class logic_state {
 class character_logic {
 public:
 	character_logic();
+	~character_logic();
 
 	void handle_interaction(const character_interaction& interaction);
 
@@ -22,7 +23,7 @@ public:
 	void shutdown();
 
 	character_visuals visuals;
-	character_ai ai;
+	character_ai* ai;
 	character_state current_state;
 
 private:
