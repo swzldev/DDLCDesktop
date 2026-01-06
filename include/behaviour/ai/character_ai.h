@@ -45,7 +45,7 @@ private:
 		conversation_history_.push_back({ role, content });
 		// limit history size (dont include system prompt)
 		if (conversation_history_.size() > message_history_size_ + 1) {
-			conversation_history_.erase(conversation_history_.begin());
+			conversation_history_.erase(conversation_history_.begin() + 1);
 		}
 	}
 
