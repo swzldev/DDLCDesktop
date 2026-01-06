@@ -323,5 +323,5 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 }
 
 std::string character_ai::get_system_prompt() const {
-	return system_prompts::get_prompt(system_prompt_);
+	return system_prompts::get_prompt(character_, system_prompt_);
 }
