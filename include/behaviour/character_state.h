@@ -7,6 +7,9 @@ struct character_state {
 	struct interaction {
 		std::string saying;
 		std::string visual;
+		int new_x = -1;
+		int new_y = -1;
+		int new_scale = -1;
 	};
 
 	std::vector<interaction> interactions;
