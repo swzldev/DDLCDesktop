@@ -153,7 +153,9 @@ void character_logic::display_current_interaction() {
 	if (interaction_index_ < current_state.interactions.size()) {
 		const auto& inter = current_state.interactions[interaction_index_];
 		visuals.set_saying(inter.saying);
-		visuals.set_visual(inter.visual);
+
+		visuals.set_expression(inter.expression);
+		visuals.set_pose(inter.pose_left, inter.pose_right);
 
 		const int screen_width = 1920;  // TODO: get this properly
 		const int screen_height = 1080; // TODO: get this properly
