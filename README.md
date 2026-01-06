@@ -85,6 +85,8 @@
 <h3>Unreleased</h3>
 <ul>
   <li>Monika is now able to move freely around the desktop and resize herself.</li>
+  <li>Fixed a bug where the system prompt was erased causing crashes.</li>
+  <li>Fixed a crash that would happen with models that return multiple outputs.</li>
   <li>Many improvements to the system prompts for a more realistic experience.</li>
 </ul>
 
