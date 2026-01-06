@@ -186,6 +186,9 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 			character_state::interaction i;
 			i.saying = inter.value("saying", "");
 			i.visual = inter.value("visual", "11a"); // default neutral pose
+			i.new_x = inter.value("new_x", -1); // default no change
+			i.new_y = inter.value("new_y", -1); // default no change
+			i.new_scale = inter.value("new_scale", -1); // default no change
 			state.interactions.push_back(i);
 		}
 
@@ -203,22 +206,5 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 }
 
 std::string character_ai::get_system_prompt() const {
-	if (system_prompt_ == "romantic") {
-		return system_prompts::romantic;
-	}
-	else if (system_prompt_ == "confident") {
-		return system_prompts::confident;
-	}
-	else if (system_prompt_ == "obsessive") {
-		return system_prompts::obsessive;
-	}
-	else if (system_prompt_ == "shy") {
-		return system_prompts::shy_playful;
-	}
-	else if (system_prompt_ == "postgame" || system_prompt_ == "default" || system_prompt_.empty()) {
-		return system_prompts::postgame;
-	}
-	else {
-		throw std::runtime_error("Unknown behaviour preset: " + system_prompt_);
-	}
+	return system_prompts::get_prompt(system_prompt_);
 }
