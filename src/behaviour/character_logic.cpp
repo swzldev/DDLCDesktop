@@ -132,12 +132,35 @@ void character_logic::display_current_interaction() {
 		visuals.set_saying(inter.saying);
 		visuals.set_visual(inter.visual);
 
-		if (inter.new_x != -1 || inter.new_y != -1) {
-			// auto handles -1 = no change
-			visuals.set_position(inter.new_x, inter.new_y);
-		}
+		const int screen_width = 1920;  // TODO: get this properly
+		const int screen_height = 1080; // TODO: get this properly
+
+		int new_x = inter.new_x == -1 ? visuals.get_x() : inter.new_x;
+		int new_y = inter.new_y == -1 ? visuals.get_y() : inter.new_y;
+
+		// pre-apply scale
 		if (inter.new_scale != -1) {
 			visuals.set_scale(inter.new_scale);
 		}
+
+		int scale = visuals.get_scale();
+
+		// clamp position to screen bounds (or move if scale means position is out of bounds)
+		// note x and y = top left (not centre)
+		if (new_x < 0) {
+			new_x = 0;
+		}
+		else if (new_x + scale > screen_width) {
+			new_x = screen_width - scale;
+		}
+
+		if (new_y < 0) {
+			new_y = 0;
+		}
+		else if (new_y + scale > screen_height) {
+			new_y = screen_height - scale;
+		}
+
+		visuals.set_position(new_x, new_y);
 	}
 }
