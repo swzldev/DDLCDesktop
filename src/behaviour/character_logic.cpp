@@ -2,11 +2,34 @@
 
 #include <string>
 #include <filesystem>
+#include <fstream>
+
+#include <nlohmann/json.hpp>
 
 #include <core/input.h>
 #include <behaviour/character_interaction.h>
 
+using json = nlohmann::json;
+
 character_logic::character_logic() {
+	std::ifstream cfg("config.json");
+	if (!cfg.is_open()) {
+		throw std::runtime_error("Failed to open config.json (you will need to recreate it yourself or reinstall)");
+	}
+
+	json j;
+	cfg >> j;
+
+	std::string character_str = j.value("character", "monika");
+	ddlc_character character = ddlc_character::MONIKA;
+	if (character_str == "monika") {
+		character = ddlc_character::MONIKA;
+	}
+	else if (character_str == "yuri") {
+		character = ddlc_character::YURI;
+	}
+	visuals.set_character(character);
+
 	if (std::filesystem::exists("character_state.json")) {
 		ai.load_state("character_state.json");
 	}
