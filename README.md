@@ -82,6 +82,12 @@
 
 <h2>Changelog</h2>
 
+<h3>Unreleased</h3>
+<ul>
+  <li>Monika is now able to move freely around the desktop and resize herself.</li>
+  <li>Many improvements to the system prompts for a more realistic experience.</li>
+</ul>
+
 <h3>v0.2.0 [05/01/2026]</h3>
 <ul>
   <li>Added multiple behaviour presets for Monika.</li>
