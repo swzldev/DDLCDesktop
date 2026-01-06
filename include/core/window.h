@@ -18,8 +18,13 @@ public:
 	void show(bool focus = false) const;
 	void hide() const;
 
-	void set_position(int x, int y) const;
+	void set_position(int x, int y);
 	void resize(int size); // note: size is both width and height
+
+	inline int pos_x() const { return pos_x_; }
+	inline int pos_y() const { return pos_y_; }
+
+	inline int size() const { return width_; }
 
 	void poll_events() const;
 
@@ -35,6 +40,8 @@ private:
 	bool should_close_ = false;
 	int width_ = DEF_WINDOW_WIDTH;
 	int height_ = DEF_WINDOW_HEIGHT;
+	int pos_x_ = 100;
+	int pos_y_ = 100;
 
 	void create_renderer();
 

@@ -24,6 +24,17 @@ public:
 		window_->resize(size);
 	}
 
+	inline int get_position_x() {
+		return window_->pos_x();
+	}
+	inline int get_position_y() {
+		return window_->pos_y();
+	}
+
+	inline int size() {
+		return window_->size();
+	}
+
 private:
 	widget();
 

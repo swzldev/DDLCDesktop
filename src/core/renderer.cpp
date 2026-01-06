@@ -179,6 +179,10 @@ void renderer::draw_sprite(sprite* spr, int x, int y) {
         return;
     }
 
+	float scale_f = height_ / 450.0f;
+	float ax = x * scale_f;
+	float ay = y * scale_f;
+
     ID2D1Bitmap* bitmap = spr->create_d2d_bitmap(d2d_ctx_.Get());
     if (!bitmap) {
         return;
@@ -191,10 +195,10 @@ void renderer::draw_sprite(sprite* spr, int x, int y) {
     float scaled_height = bmp_size.height * scale;
 
     D2D1_RECT_F dest_rect = D2D1::RectF(
-        static_cast<float>(x),
-        static_cast<float>(y),
-        static_cast<float>(x) + scaled_width,
-        static_cast<float>(y) + scaled_height
+        static_cast<float>(ax),
+        static_cast<float>(ay),
+        static_cast<float>(ax) + scaled_width,
+        static_cast<float>(ay) + scaled_height
     );
     d2d_ctx_->DrawBitmap(
         bitmap,
@@ -214,6 +218,14 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
         return;
 	}
 
+    float scale_f = height_ / 450.0f;
+
+	x *= scale_f;
+	y *= scale_f;
+
+	width *= scale_f;
+	height *= scale_f;
+
     // set brush color
     d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::White));
 
@@ -227,7 +239,7 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 
     // stroke
     d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
-    float outline_thickness = 1.5f;
+    float outline_thickness = 1.5f * scale_f;
 
     for (int ox = -1; ox <= 1; ox++) {
         for (int oy = -1; oy <= 1; oy++) {

@@ -21,14 +21,19 @@ window::window() {
 	wc.hCursor = LoadCursor(NULL, IDC_HAND);
 	RegisterClassExW(&wc);
 
+	pos_x_ = 1400;
+	pos_y_ = 630;
+	width_ = DEF_WINDOW_WIDTH;
+	height_ = DEF_WINDOW_HEIGHT;
+
 	// create window
 	hwnd_ = CreateWindowExW(
 		WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST,
 		L"JustMonikaWindowClass",
 		L"",
 		WS_POPUP,
-		1400, 630,
-		DEF_WINDOW_WIDTH, DEF_WINDOW_HEIGHT,
+		pos_x_, pos_y_,
+		width_, height_,
 		NULL, NULL, hInstance, this
 	);
 
@@ -59,17 +64,9 @@ void window::hide() const {
 	ShowWindow(hwnd_, SW_HIDE);
 }
 
-void window::set_position(int x, int y) const {
-	RECT rect;
-	GetWindowRect(hwnd_, &rect);
-	// -1 means current
-	if (x == -1) {
-		x = rect.left;
-	}
-	if (y == -1) {
-		y = rect.top;
-	}
-
+void window::set_position(int x, int y) {
+	pos_x_ = x;
+	pos_y_ = y;
 	SetWindowPos(
 		hwnd_,
 		HWND_TOPMOST,
@@ -82,6 +79,8 @@ void window::resize(int size) {
 	if (size <= 0) {
 		throw std::invalid_argument("Size must be positive");
 	}
+	width_ = size;
+	height_ = size;
 	SetWindowPos(
 		hwnd_,
 		HWND_TOPMOST,
