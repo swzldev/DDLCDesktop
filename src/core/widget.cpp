@@ -9,10 +9,6 @@
 #include <behaviour/character_interaction.h>
 #include <visual/sprite.h>
 
-widget::widget() {
-	window_ = new window();
-	renderer_ = window_->get_renderer();
-}
 widget::~widget() {
 	if (window_) {
 		delete window_;
@@ -29,6 +25,9 @@ void widget::main_loop() {
 		character_logic_.handle_interaction(interaction);
 	});
 
+	// first tick delta time will be 0, but thats better
+	// than some crazy huge value
+	last_time_ = std::chrono::high_resolution_clock::now();
 	while (running_) {
 		auto now = std::chrono::high_resolution_clock::now();
 		float delta_time = std::chrono::duration<float>(now - last_time_).count();
@@ -56,4 +55,9 @@ void widget::stop() {
 	character_logic_.shutdown();
 
 	running_ = false;
+}
+
+widget::widget() {
+	window_ = new window();
+	renderer_ = window_->get_renderer();
 }
