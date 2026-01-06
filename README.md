@@ -3,7 +3,7 @@
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
     <img src="https://img.shields.io/badge/latest_version-0.2.0-yellow" alt="Latest: 0.2.0">
 </p>
-<p>Ever wondered what it would be like to have your own Monika on your desktop? Well now you can cause I was lowkey bored asl and have nothing to do with my life :sob:</p>
+<p>Ever wondered what it would be like to have your own Monika on your desktop? No? Well now you can!</p>
 
 <p>
   <a href="#features">Features</a> &bull;
@@ -33,7 +33,7 @@
 <p>First install the application binaries from the <a href="https://github.com/swzldev/JustMonika/releases">releases</a> page. It should be called <code>JustMonika-*.*.*-Windows.zip</code></p>
 <p>Once downloaded, extract the contents somewhere (make sure it's not somewhere with limited permissions such as Program Files or System32).</p>
 
-<p>Once extracted there are just a few small things to do before it can run:</p>
+<p>Once extracted simply follow the instructions below:</p>
 
 <h3>Assets</h3>
 <p>For copyright reasons, the DDLC assets are not provided as part of the application, but you can extract them from the game very easily in just a few steps.</p>
@@ -50,15 +50,14 @@
 
 <h3>Config.json & API Key</h3>
 <p>Next to JustMonika.exe there is a file called config.json. Open this file in a text editor and you will see the following:</p>
-```json
-{
-  "openai_api_key": "<your api key>",
+<pre><code>{
+  "openai_api_key": "&lt;your api key&gt;",
   "openai_model": "gpt-4o-mini",
   "openai_message_history_size": 6,
-  "user_name": "<your name>",
+  "user_name": "&lt;your name&gt;",
   "behaviour_preset": "default"
 }
-```
+</code></pre>
 <p>You will need to fill in your OpenAI API key in order for Monika to be able to talk to you. You can get an API key by signing up for an account at <a href="https://platform.openai.com/signup">OpenAI</a> and generating a key in the API section. Note: you may have to set up a billing account and purchase credits for it to work correctly, but I'm not too sure.</p>
 
 <p>Once you have your API key, replace <code>&lt;your api key&gt;</code> with your actual key. You can also change the <code>user_name</code> field to whatever you want Monika to call you, and lastly, if you want a custom behaviour you can change the <code>"behaviour_preset"</code> to any one of the following:</p>
