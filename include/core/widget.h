@@ -17,6 +17,13 @@ public:
 	void main_loop();
 	void stop();
 
+	inline void set_position(int x, int y) {
+		window_->set_position(x, y);
+	}
+	inline void resize(int size) {
+		window_->resize(size);
+	}
+
 private:
 	widget();
 
