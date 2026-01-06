@@ -28,7 +28,7 @@ window::window() {
 		L"",
 		WS_POPUP,
 		1400, 630,
-		WINDOW_WIDTH, WINDOW_HEIGHT,
+		DEF_WINDOW_WIDTH, DEF_WINDOW_HEIGHT,
 		NULL, NULL, hInstance, this
 	);
 
@@ -59,6 +59,31 @@ void window::hide() const {
 	ShowWindow(hwnd_, SW_HIDE);
 }
 
+void window::set_position(int x, int y) const {
+	SetWindowPos(
+		hwnd_,
+		HWND_TOPMOST,
+		x, y,
+		0, 0,
+		SWP_NOSIZE | SWP_NOACTIVATE
+	);
+}
+void window::resize(int size) {
+	if (size <= 0) {
+		throw std::invalid_argument("Size must be positive");
+	}
+	SetWindowPos(
+		hwnd_,
+		HWND_TOPMOST,
+		0, 0,
+		size, size,
+		SWP_NOMOVE | SWP_NOACTIVATE
+	);
+	if (renderer_) {
+		renderer_->resize(size, size);
+	}
+}
+
 void window::poll_events() const {
 	MSG msg;
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -69,7 +94,7 @@ void window::poll_events() const {
 
 void window::create_renderer() {
 	if (!renderer_) {
-		renderer_ = new renderer(hwnd_, WINDOW_WIDTH, WINDOW_HEIGHT);
+		renderer_ = new renderer(hwnd_, width_, height_);
 	}
 }
 

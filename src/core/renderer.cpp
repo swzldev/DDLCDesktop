@@ -140,6 +140,12 @@ renderer::renderer(HWND hwnd, int width, int height) {
     }
 }
 
+void renderer::resize(int width, int height) {
+    width_ = width;
+    height_ = height;
+	create_render_target();
+}
+
 void renderer::begin_draw() {
     d2d_ctx_->BeginDraw();
 

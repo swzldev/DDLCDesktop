@@ -8,8 +8,8 @@
 
 class window {
 public:
-	static constexpr int WINDOW_HEIGHT = 450;
-	static constexpr int WINDOW_WIDTH = 450;
+	static constexpr int DEF_WINDOW_HEIGHT = 450;
+	static constexpr int DEF_WINDOW_WIDTH = 450;
 
 public:
 	window();
@@ -17,6 +17,9 @@ public:
 
 	void show(bool focus = false) const;
 	void hide() const;
+
+	void set_position(int x, int y) const;
+	void resize(int size); // note: size is both width and height
 
 	void poll_events() const;
 
@@ -30,6 +33,8 @@ private:
 	HWND hwnd_;
 	renderer* renderer_;
 	bool should_close_ = false;
+	int width_ = DEF_WINDOW_WIDTH;
+	int height_ = DEF_WINDOW_HEIGHT;
 
 	void create_renderer();
 

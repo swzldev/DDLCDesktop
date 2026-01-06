@@ -21,6 +21,8 @@ public:
 	renderer(HWND hwnd, int width, int height);
 	~renderer() = default;
 
+	void resize(int width, int height);
+
 	void begin_draw();
 	void end_draw();
 
