@@ -81,12 +81,12 @@ void character_visuals::set_visual(const std::string visual_str) {
 	expression_ = visual_str[2];
 	update_sprites();
 }
-void character_visuals::set_pose(char left, char right) {
-	pose_left_ = std::string(1, left);
-	pose_right_ = std::string(1, right);
+void character_visuals::set_pose(const std::string& left, const std::string& right) {
+	pose_left_ = left;
+	pose_right_ = right;
 	update_sprites();
 }
-void character_visuals::set_expression(char expression) {
+void character_visuals::set_expression(const std::string& expression) {
 	expression_ = expression;
 	update_sprites();
 }
@@ -112,6 +112,9 @@ void character_visuals::update_sprites() {
 	switch (character_) {
 	case ddlc_character::MONIKA:
 		chr_images_path /= "monika";
+		break;
+	case ddlc_character::YURI:
+		chr_images_path /= "yuri";
 		break;
 	default:
 		throw std::runtime_error("Unsupported character in character_visuals::update_sprites");

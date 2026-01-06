@@ -24,8 +24,8 @@ public:
 
 	void set_saying(const std::string& saying);
 	void set_visual(const std::string visual_str);
-	void set_pose(char left, char right);
-	void set_expression(char expression);
+	void set_pose(const std::string& left, const std::string& right);
+	void set_expression(const std::string& expression);
 
 	void set_position(int x, int y);
 	int get_x();
