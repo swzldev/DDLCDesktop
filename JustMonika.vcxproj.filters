@@ -48,6 +48,9 @@
     <ClCompile Include="src\output\log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\behaviour\ai\system_prompts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\widget.h">
