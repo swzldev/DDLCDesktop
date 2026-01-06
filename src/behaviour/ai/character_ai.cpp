@@ -195,7 +195,9 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 		for (auto& inter : j["interactions"]) {
 			character_state::interaction i;
 			i.saying = inter.value("saying", "");
-			i.visual = inter.value("visual", "11a"); // default neutral pose
+			i.expression = inter.value("expression", "a"); // default expression
+			i.pose_left = inter.value("pose_left", "1"); // default pose
+			i.pose_right = inter.value("pose_right", "1"); // default pose
 			i.new_x = inter.value("new_x", -1); // default no change
 			i.new_scale = inter.value("new_scale", -1); // default no change
 			state.interactions.push_back(i);
@@ -207,7 +209,14 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 	}
 	catch (...) {
 		// fallback
-		state.interactions.push_back({ "", "11a" });
+		character_state::interaction i;
+		i.saying = "";
+		i.expression = "a";
+		i.pose_left = "1";
+		i.pose_right = "1";
+		i.new_x = -1;
+		i.new_scale = -1;
+		state.interactions.push_back(i);
 		state.actions = {};
 	}
 
