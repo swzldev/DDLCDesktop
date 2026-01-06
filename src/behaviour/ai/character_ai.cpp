@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <fstream>
+#include <unordered_map>
 
 #include <nlohmann/json.hpp>
 
@@ -14,7 +15,9 @@
 
 using json = nlohmann::json;
 
-character_ai::character_ai() {
+character_ai::character_ai(ddlc_character character) {
+	character_ = character;
+
 	std::ifstream config("config.json");
 	if (!config.is_open()) {
 		throw std::runtime_error("Failed to open config.json (you will need to recreate it yourself or reinstall)");
@@ -195,9 +198,9 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 		for (auto& inter : j["interactions"]) {
 			character_state::interaction i;
 			i.saying = inter.value("saying", "");
-			i.expression = inter.value("expression", "a"); // default expression
-			i.pose_left = inter.value("pose_left", "1"); // default pose
-			i.pose_right = inter.value("pose_right", "1"); // default pose
+			i.expression = get_expression_code(inter.value("expression", ""));
+			i.pose_left = get_pose_code(inter.value("pose_left", ""));
+			i.pose_right = get_pose_code(inter.value("pose_right", ""));
 			i.new_x = inter.value("new_x", -1); // default no change
 			i.new_scale = inter.value("new_scale", -1); // default no change
 			state.interactions.push_back(i);
@@ -221,6 +224,102 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 	}
 
 	return state;
+}
+
+std::string character_ai::get_pose_code(const std::string& pose) {
+	static const std::unordered_map<std::string, std::string> monika_poses = {
+		{"arm_at_side", "1"},
+		{"casual_finger_point", "2"},
+		{"hand_on_hip", "2"}
+	};
+
+	static const std::unordered_map<std::string, std::string> yuri_poses = {
+		{"arm_behind_back", "1"},
+		{"arm_fidget_at_chest", "2"}
+	};
+
+	const auto& pose_map = (character_ == ddlc_character::MONIKA)
+		? monika_poses
+		: monika_poses;
+
+	auto it = pose_map.find(pose);
+	if (it != pose_map.end()) {
+		return it->second;
+	}
+
+	return "1"; // default fallback
+}
+std::string character_ai::get_expression_code(const std::string& expression) {
+	static const std::unordered_map<std::string, std::string> monika_expressions = {
+		{"smile", "a"},
+		{"open_smile", "b"},
+		{"neutral", "c"},
+		{"neutral_open", "d"},
+		{"soft_smile", "e"},
+		{"neutral_raised", "f"},
+		{"neutral_open_raised", "g"},
+		{"serious", "h"},
+		{"serious_open", "i"},
+		{"warm_smile", "j"},
+		{"joyful", "k"},
+		{"nervous_laugh", "l"},
+		{"nervous_smile", "m"},
+		{"awkward_laugh", "n"},
+		{"nervous", "o"},
+		{"nervous_open", "p"},
+		{"relaxed", "q"},
+		{"open_relaxed", "r"}
+	};
+
+	static const std::unordered_map<std::string, std::string> yuri_expressions = {
+		{"smile", "a"},
+		{"head_tilt_look_forward", "a2"},
+		{"open_smile", "b"},
+		{"head_tilt_look_away", "b2"},
+		{"warm_smile", "c"},
+		{"head_tilt_face_red", "c2"},
+		{"joyful", "d"},
+		{"head_tilt_nervous", "d2"},
+		{"ooh", "e"},
+		{"head_tilt_face_red_smile", "e2"},
+		{"amazed", "f"},
+		{"serious", "g"},
+		{"serious_open_slightly", "h"},
+		{"eyes_dilated_open", "h2"},
+		{"serious_smile", "i"},
+		{"serious_open_wide", "j"},
+		{"breathe_eyes_closed", "k"},
+		{"breathe_eyes_closed_2", "l"},
+		{"smile_eyes_closed", "m"},
+		{"nervous", "n"},
+		{"nervous_look_away", "o"},
+		{"distraught", "p"},
+		{"nervous_laugh", "q"},
+		{"angry_serious", "r"},
+		{"relieved", "s"},
+		{"nervous_breath", "t"},
+		{"soft_smile", "u"},
+		{"hesitant_worry", "v"},
+		{"relieved_breath", "w"},
+		{"obsessive_eyes_joy", "y"},
+		{"obsessive_nervous", "y2"},
+		{"obsessive_manic_delight", "y3"},
+		{"obsessive_ooh", "y4"},
+		{"overjoyed", "y5"},
+		{"soft_hesitation", "y6"},
+		{"obsessive_angry", "y7"}
+	};
+
+	const auto& expr_map = (character_ == ddlc_character::MONIKA)
+		? monika_expressions
+		: yuri_expressions;
+
+	auto it = expr_map.find(expression);
+	if (it != expr_map.end()) {
+		return it->second;
+	}
+
+	return "a"; // default fallback
 }
 
 std::string character_ai::get_system_prompt() const {

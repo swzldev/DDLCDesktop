@@ -5,13 +5,14 @@
 #include <future>
 #include <atomic>
 
+#include <ddlc/characters.h>
 #include <behaviour/character_state.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/openai_api.h>
 
 class character_ai {
 public:
-	character_ai();
+	character_ai(ddlc_character character);
 	~character_ai();
 
 	void handle_close_interaction(); // doesnt use AI, so dont need async
@@ -31,6 +32,7 @@ private:
 	int message_history_size_;
 	std::string user_name_ = "";
 	std::string system_prompt_ = "";
+	ddlc_character character_;
 
 	struct message {
 		std::string role;
@@ -54,6 +56,8 @@ private:
 	std::string interaction_to_message(const character_interaction& interaction);
 	std::string extract_content_from_response(const std::string& response);
 	character_state parse_response(const std::string& raw_response);
+	std::string get_pose_code(const std::string& pose);
+	std::string get_expression_code(const std::string& expression);
 
 	std::string get_system_prompt() const;
 };
