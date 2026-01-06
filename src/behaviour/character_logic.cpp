@@ -131,5 +131,13 @@ void character_logic::display_current_interaction() {
 		const auto& inter = current_state.interactions[interaction_index_];
 		visuals.set_saying(inter.saying);
 		visuals.set_visual(inter.visual);
+
+		if (inter.new_x != -1 || inter.new_y != -1) {
+			// auto handles -1 = no change
+			visuals.set_position(inter.new_x, inter.new_y);
+		}
+		if (inter.new_scale != -1) {
+			visuals.set_scale(inter.new_scale);
+		}
 	}
 }
