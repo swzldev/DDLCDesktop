@@ -33,42 +33,42 @@
 * YURI:
 * 
 * Emotions map:
-* a-smile
-* a2-head_tilt_look_forward
-* b-open_smile
-* b2-head_tilt_look_away
-* c-warm_smile
-* c2-head_tilt_face_red
-* d-joyful
-* d2-head_tilt_nervous
-* e-ooh
-* e2-head_tilt_face_red_smile
-* f-amazed
-* g-serious
-* h-serious_open_slightly
-* h2-eyes_dilated_open
-* i-serious_smile
-* j-serious_open_wide
-* k-breathe_eyes_closed
-* l-breathe_eyes_closed_2
-* m-smile_eyes_closed
-* n-nervous
-* o-nervous_look_away
-* p-distraught
-* q-nervous_laugh
-* r-angry_serious
-* s-relieved
-* t-nervous_breath
-* u-soft_smile
-* v-hesitant_worry
-* w-relieved_breath
-* y-obsessive_eyes_joy
-* y2-obsessive_nervous
-* y3-obsessive_manic_delight
-* y4-obsessive_ooh
-* y5-overjoyed
-* y6-soft_hesitation
-* y7-obsessive_angry
+* a		-smile
+* a2	-head_tilt_look_forward
+* b		-open_smile
+* b2	-head_tilt_look_away
+* c		-warm_smile
+* c2	-head_tilt_face_red
+* d		-joyful
+* d2	-head_tilt_nervous
+* e		-ooh
+* e2	-head_tilt_face_red_smile
+* f		-amazed
+* g		-serious
+* h		-serious_open_slightly
+* h2	-eyes_dilated_open
+* i		-serious_smile
+* j		-serious_open_wide
+* k		-breathe_eyes_closed
+* l		-breathe_eyes_closed_2
+* m		-smile_eyes_closed
+* n		-nervous
+* o		-nervous_look_away
+* p		-distraught
+* q		-nervous_laugh
+* r		-angry_serious
+* s		-relieved
+* t		-nervous_breath
+* u		-soft_smile
+* v		-hesitant_worry
+* w		-relieved_breath
+* y		-obsessive_eyes_joy
+* y2	-obsessive_nervous
+* y3	-obsessive_manic_delight
+* y4	-obsessive_ooh
+* y5	-overjoyed
+* y6	-soft_hesitation
+* y7	-obsessive_angry
 * 
 * Poses map:
 * 1l-arm_behind_back
