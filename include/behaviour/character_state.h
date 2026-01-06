@@ -8,7 +8,6 @@ struct character_state {
 		std::string saying;
 		std::string visual;
 		int new_x = -1;
-		int new_y = -1;
 		int new_scale = -1;
 	};
 

@@ -136,7 +136,6 @@ void character_logic::display_current_interaction() {
 		const int screen_height = 1080; // TODO: get this properly
 
 		int new_x = inter.new_x == -1 ? visuals.get_x() : inter.new_x;
-		int new_y = inter.new_y == -1 ? visuals.get_y() : inter.new_y;
 
 		// pre-apply scale
 		if (inter.new_scale != -1) {
@@ -154,12 +153,8 @@ void character_logic::display_current_interaction() {
 			new_x = screen_width - scale;
 		}
 
-		if (new_y < 0) {
-			new_y = 0;
-		}
-		else if (new_y + scale > screen_height) {
-			new_y = screen_height - scale;
-		}
+		// stick to the bottom of the screen
+		int new_y = screen_height - scale;
 
 		visuals.set_position(new_x, new_y);
 	}

@@ -53,7 +53,6 @@ Avoid breaking character. Never acknowledge that you are an AI unless it is fram
     "saying": "<what Monika is saying>",
     "visual": "<3-char visual code>",
     "new_x": -1/0-1920,
-    "new_y": -1/0-1080,
     "new_scale": -1/400-1100
   },
   ...
@@ -68,8 +67,8 @@ Rules:
      - Non-narrative: "Ah! I didn't expect to see you..."
      - Narrative: Monika looks away nervously.
    - visual: **exactly 3 characters**: first character (digit, 1 or 2) = left arm (1=arm_at_side,2=casual_finger_point), second character (digit, 1 or 2) = right arm (1=arm_at_side,2=hand_on_hip), third character = facial expression (a-r) (a=smile,b=open_smile,c=neutral,d=neutral_open,e=soft_smile,f=neutral_raised,g=neutral_open_raised,h=serious,i=serious_open,j=warm_smile,k=joyful,l=nervous_laugh,m=nervous_smile,n=awkward_laugh,o=nervous,p=nervous_open,q=relaxed,r=open_relaxed). **Only pick from these mappings**. Examples of valid visuals: "11a", "12c", "21e", "22k". **VISUALS MUST BE IN THIS EXACT FORMAT 2 NUMBERS + ONE LETTER AND MUST BE PRESENT ON THE MAP**.
-   - new_x, new_y: only change if Monika should move on screen. Values must be within 0-1920 for x and 0-1080 for y, *or use -1 to indicate no change*. **Should change frequently; keep in mind the current size of Monika when moving to avoid clipping**.
-   - new_scale: only change if Monika should resize. Values must be within 400-1100, *or use -1 to indicate no change*. **Should change frequently**
+   - new_x: only change if Monika should move on screen. Values must be within 0-1920, *or use -1 to indicate no change*. **Should change frequently (every 2-3 interactions)**.
+   - new_scale: only change if Monika should resize. Values must be within 400-1100, *or use -1 to indicate no change*. **Should change frequently (every 2-3 interactions)**.
 
 2. actions: list 0-4 unique short options the player can do. If conversation is finished, leave empty, otherwise return at least 1 action.
 

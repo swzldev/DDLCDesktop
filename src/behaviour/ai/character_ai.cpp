@@ -187,7 +187,6 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 			i.saying = inter.value("saying", "");
 			i.visual = inter.value("visual", "11a"); // default neutral pose
 			i.new_x = inter.value("new_x", -1); // default no change
-			i.new_y = inter.value("new_y", -1); // default no change
 			i.new_scale = inter.value("new_scale", -1); // default no change
 			state.interactions.push_back(i);
 		}
