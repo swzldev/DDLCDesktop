@@ -204,10 +204,15 @@ void renderer::draw_sprite(sprite* spr, int x, int y) {
         nullptr
     );
 }
-void renderer::draw_text(const std::wstring& text, float x, float y, float width, float height) {
+void renderer::draw_text(const std::wstring& text, float x, float y, float width, float height, int em) {
     if (!d2d_brush_) {
         return;
     }
+
+	// create text format
+    if (!create_text_format({ L"Aller", L"Segoe UI", L"Arial" }, em)) {
+        return;
+	}
 
     // set brush color
     d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::White));
@@ -345,4 +350,26 @@ void renderer::create_render_target() {
     if (FAILED(hr)) {
         throw std::runtime_error("Failed to set visual content");
     }
+}
+
+bool renderer::create_text_format(const std::vector<std::wstring>& font_families, int em) {
+    float base_font_size = height_ / 100.0f;
+	float font_size = base_font_size * em;
+
+    for (const auto& family : font_families) {
+        HRESULT hr = dwrite_factory_->CreateTextFormat(
+            family.c_str(),
+            nullptr,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            font_size,
+            L"en-us",
+            &dwrite_text_format_
+        );
+        if (SUCCEEDED(hr)) {
+            return true;
+        }
+	}
+	return false;
 }

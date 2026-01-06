@@ -27,7 +27,7 @@ public:
 	void end_draw();
 
 	void draw_sprite(sprite* spr, int x = 0, int y = 0);
-	void draw_text(const std::wstring& text, float x, float y, float width, float height);
+	void draw_text(const std::wstring& text, float x, float y, float width, float height, int em = 12);
 
 	bool is_transparent_pixel(POINT pt) const;
 
@@ -49,10 +49,11 @@ private:
 
 	ComPtr<IDWriteFactory> dwrite_factory_;
 	ComPtr<IDWriteTextFormat> dwrite_text_format_;
-	ComPtr<IDWriteFontCollection> dwrite_font_collection_;
 
 	int width_;
 	int height_;
 
 	void create_render_target();
+
+	bool create_text_format(const std::vector<std::wstring>& font_families, int em);
 };
