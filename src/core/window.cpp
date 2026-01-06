@@ -60,6 +60,16 @@ void window::hide() const {
 }
 
 void window::set_position(int x, int y) const {
+	RECT rect;
+	GetWindowRect(hwnd_, &rect);
+	// -1 means current
+	if (x == -1) {
+		x = rect.left;
+	}
+	if (y == -1) {
+		y = rect.top;
+	}
+
 	SetWindowPos(
 		hwnd_,
 		HWND_TOPMOST,
