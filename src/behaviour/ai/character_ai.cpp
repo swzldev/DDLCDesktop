@@ -50,7 +50,7 @@ character_ai::~character_ai() {
 }
 
 void character_ai::handle_close_interaction() {
-	add_to_history("user", "[Interaction] " + get_user_name() + " closed Monika's window.");
+	add_to_history("user", "[Interaction] " + get_user_name() + " closed " + get_character_name() + "'s window.");
 }
 
 void character_ai::handle_interaction_async(const character_interaction& interaction) {
@@ -112,11 +112,21 @@ void character_ai::load_state(const char* path) {
 	file.close();
 }
 
-std::string character_ai::get_user_name() {
+std::string character_ai::get_user_name() const {
 	if (user_name_.empty()) {
 		return "The user";
 	}
 	return user_name_;
+}
+std::string character_ai::get_character_name() const {
+	switch (character_) {
+	case ddlc_character::MONIKA:
+		return "Monika";
+	case ddlc_character::YURI:
+		return "Yuri";
+	default:
+		return "You"; // fallback
+	}
 }
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
@@ -156,15 +166,16 @@ std::string character_ai::build_prompt(const character_interaction& interaction)
 }
 std::string character_ai::interaction_to_message(const character_interaction& interaction) {
 	std::string user_name = get_user_name();
+	std::string character_name = get_character_name();
 	switch (interaction.get_kind()) {
 	case character_interaction::kind::CLICK:
-		return "[Interaction] " + user_name + " clicked Monika.";
+		return "[Interaction] " + user_name + " clicked " + character_name + ".";
 	case character_interaction::kind::CHOICE_MADE:
 		return "[Interaction] " + user_name + ": \"" + interaction.str_data + "\" (Choice " + std::to_string(interaction.int_data) + ")";
 	case character_interaction::kind::WINDOW_OPEN:
-		return "[Interaction] " + user_name + " opened Monika's window.";
+		return "[Interaction] " + user_name + " opened " + character_name + "'s window.";
 	default:
-		return "[Interaction] " + user_name + " interacted with Monika, but an internal error occurred and we don't know what the interaction was.";
+		return "[Interaction] " + user_name + " interacted with " + character_name + ", but an internal error occurred and we don't know what the interaction was.";
 	}
 }
 std::string character_ai::extract_content_from_response(const std::string& response) {

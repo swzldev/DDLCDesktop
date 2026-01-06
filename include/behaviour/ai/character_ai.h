@@ -24,7 +24,8 @@ public:
 	void save_state(const char* path);
 	void load_state(const char* path);
 
-	std::string get_user_name();
+	std::string get_user_name() const;
+	std::string get_character_name() const;
 
 private:
 	openai_api* openai_;
