@@ -45,8 +45,8 @@
 <p>If you're confused you can use the visual diagram below:</p>
 <img width="1668" height="801" alt="image" src="https://github.com/user-attachments/assets/82ba9a7e-7535-418e-9642-593cc6c8c1c2" />
 
-<h3>Font</h3>
-<p>I couldn't get custom font loading to work properly so unfortunately you will need to download the font onto your system for it to work. Again, it is not provided here for copyright reasons but you can download it for free <a href="https://www.1001fonts.com/aller-font.html">here</a>.</p>
+<h3>Font (OPTIONAL)</h3>
+<p>By default Just Monika attempts to use 3 fonts, "Aller" -> "Segoe UI" -> "Arial". If you want it to use the original DDLC font (Aller), you will need to install it onto your system. Again, it is not provided with the binaries for copyright reasons, but you can download it for free <a href="https://www.1001fonts.com/aller-font.html">here</a>.<p>
 
 <h3>Config.json & API Key</h3>
 <p>Next to JustMonika.exe there is a file called config.json. Open this file in a text editor and you will see the following:</p>
@@ -58,7 +58,7 @@
   "behaviour_preset": "default"
 }
 </code></pre>
-<p>You will need to fill in your OpenAI API key in order for Monika to be able to talk to you. You can get an API key by signing up for an account at <a href="https://platform.openai.com/signup">OpenAI</a> and generating a key in the API section. Note: you may have to set up a billing account and purchase credits for it to work correctly, but I'm not too sure.</p>
+<p>You will need to fill in your OpenAI API key in order for Monika to be able to talk to you. You can get an API key by signing up for an account at <a href="https://platform.openai.com/signup">OpenAI</a> and generating a key in the API section. Note: you may have to add credit for it to work, but don't worry, it's pretty afforable, just 5$ of credit will last you thousands of conversations (assuming you stick to the gpt-4o-mini model).</p>
 
 <p>Once you have your API key, replace <code>&lt;your api key&gt;</code> with your actual key. You can also change the <code>user_name</code> field to whatever you want Monika to call you, and lastly, if you want a custom behaviour you can change the <code>"behaviour_preset"</code> to any one of the following:</p>
 
