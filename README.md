@@ -1,19 +1,21 @@
-<div><img src=".\assets\logo-circle.png" alt="Logo" align="middle" height="230px"></div>
-<h1 align="middle">Just Monika.</h1>
-<p align="middle">
+<div align="center">
+  <img src=".\assets\logo-circle.png" alt="Logo" height="230px">
+  <h1 align="center">Just Monika.</h1>
+  <p align="center">
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
     <img src="https://img.shields.io/badge/latest_version-0.2.0-yellow" alt="Latest: 0.2.0">
-</p>
-<p align="middle">Ever wondered what it would be like to have your own Monika on your desktop? No? Well now you can!</p>
+  </p>
+  <p>Ever wondered what it would be like to have your own Monika on your desktop? No? Well now you can!</p>
 
-<p align="middle">
-  <a href="#features">Features</a> &bull;
-  <a href="#installation">Installation</a> &bull;
-  <a href="#controls">Controls</a> &bull;
-  <a href="#changelog">Changelog</a> &bull;
-  <a href="#contributing">Contributing</a> &bull;
-  <a href="#license">License</a>
-</p>
+  [Features] | [Installation] | [Controls] | [Changelog] | [Contributing] | [License]
+</div>
+
+[Features]: #features
+[Installation]: #installation
+[Controls]: #controls
+[Changelog]: #changelog
+[Contributing]: #contributing
+[License]: #license
 
 <blockquote>
 <h3>Important note:</h3>
