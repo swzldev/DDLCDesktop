@@ -1,11 +1,12 @@
-<h1 align="left">Just Monika.<br><img src=".\assets\logo-circle.png" alt="Logo" align="right" height="230px"></h1>
-<p align="left">
+<img src=".\assets\logo-circle.png" alt="Logo" align="right" height="230px">
+<h1 align="middle">Just Monika.</h1>
+<p align="middle">
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
     <img src="https://img.shields.io/badge/latest_version-0.2.0-yellow" alt="Latest: 0.2.0">
 </p>
-<p>Ever wondered what it would be like to have your own Monika on your desktop? No? Well now you can!</p>
+<p align="middle">Ever wondered what it would be like to have your own Monika on your desktop? No? Well now you can!</p>
 
-<p>
+<p align="middle">
   <a href="#features">Features</a> &bull;
   <a href="#installation">Installation</a> &bull;
   <a href="#controls">Controls</a> &bull;
