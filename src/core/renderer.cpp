@@ -155,6 +155,11 @@ void renderer::resize(int width, int height) {
     }
 
 	create_render_target();
+
+    HRESULT hr = dcomp_device_->Commit();
+    if (FAILED(hr)) {
+        throw std::runtime_error("Failed to commit composition after resize");
+    }
 }
 
 void renderer::begin_draw() {
