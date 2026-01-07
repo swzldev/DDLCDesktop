@@ -249,8 +249,17 @@ std::string character_ai::get_pose_code(const std::string& pose) {
 		{"arm_fidget_at_chest", "2"}
 	};
 
+	static const std::unordered_map<std::string, std::string> natsuki_poses = {
+		{"arm_at_side", "1"},
+		{"hand_on_hip", "2"}
+	};
+
 	const auto& pose_map = (character_ == ddlc_character::MONIKA)
 		? monika_poses
+		: (character_ == ddlc_character::YURI)
+		? yuri_poses
+		: (character_ == ddlc_character::NATSUKI)
+		? natsuki_poses
 		: monika_poses;
 
 	auto it = pose_map.find(pose);
@@ -321,9 +330,43 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 		{"obsessive_angry", "y7"}
 	};
 
+	static const std::unordered_map<std::string, std::string> natsuki_expressions = {
+		{"smile", "a"},
+		{"talk", "b"},
+		{"mouth_open", "c"},
+		{"smile_open", "d"},
+		{"talk_serious", "e"},
+		{"frustrated", "f"},
+		{"annoyed", "g"},
+		{"flustered_open", "h"},
+		{"flustered", "i"},
+		{"smile_sincere", "j"},
+		{"talk_sincere", "k"},
+		{"joyful", "l"},
+		{"concerned_open", "m"},
+		{"concerned", "n"},
+		{"angry", "o"},
+		{"shout", "p"},
+		{"look_away_open", "q"},
+		{"look_away_angry", "r"},
+		{"look_away", "s"},
+		{"scream", "scream"},
+		{"cool_smile_open", "t"},
+		{"concerned_look_away", "u"},
+		{"cute_moan", "v"},
+		{"talk_eyes_closed", "w"},
+		{"angry_eyes_closed", "x"},
+		{"smartass", "y"},
+		{"overjoyed", "z"}
+	};
+
 	const auto& expr_map = (character_ == ddlc_character::MONIKA)
 		? monika_expressions
-		: yuri_expressions;
+		: (character_ == ddlc_character::YURI)
+		? yuri_expressions
+		: (character_ == ddlc_character::NATSUKI)
+		? natsuki_expressions
+		: monika_expressions;
 
 	auto it = expr_map.find(expression);
 	if (it != expr_map.end()) {
