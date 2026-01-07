@@ -1,4 +1,4 @@
-<h1 align="left">Just Monika.<br><img src=".\assets\logo.png" alt="Logo" align="right" height="250px"></h1>
+<h1 align="left">Just Monika.<br><img src=".\assets\logo-circle.png" alt="Logo" align="right" height="230px"></h1>
 <p align="left">
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
     <img src="https://img.shields.io/badge/latest_version-0.2.0-yellow" alt="Latest: 0.2.0">
