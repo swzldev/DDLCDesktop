@@ -79,6 +79,47 @@
 * right:
 * 1		-arm_behind_back
 * 2		-arm_fidget_at_chest
+* 
+* 
+* NATSUKI:
+* 
+* Emotions map:
+* a		-smile
+* b		-talk
+* c		-mouth_open
+* d		-smile_open
+* e		-talk_serious
+* f		-frustrated
+* g		-annoyed
+* h		-flustered_open
+* i		-flustered
+* j		-smile_sincere
+* k		-talk_sincere
+* l		-joyful
+* m		-concerned_open
+* n		-concerned
+* o		-angry
+* p		-shout
+* q		-look_away_open
+* r		-look_away_angry
+* s		-look_away
+* scream-scream
+* t		-cool_smile_open
+* u		-concerned_look_away
+* v		-cute_moan
+* w		-talk_eyes_closed
+* x		-angry_eyes_closed
+* y		-smartass
+* z		-overjoyed
+* 
+* Poses map:
+* left:
+* 1		-arm_at_side
+* 2		-hand_on_hip
+* 
+* right:
+* 1		-arm_at_side
+* 2		-hand_on_hip
 */
 
 enum class ddlc_character {
