@@ -41,5 +41,17 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 
 		return bhv + "\n" + rules_yuri;
 	}
+	case ddlc_character::NATSUKI: {
+		if (mode == "postgame" || mode == "default" || mode.empty()) {
+			bhv = natsuki_postgame;
+		}
+		else {
+			throw std::runtime_error("(Natsuki) Unknown prompt preset: " + mode);
+		}
+
+		return bhv + "\n" + rules_natsuki;
+	}
+	default:
+		throw std::runtime_error("Unknown character for system prompt");
 	}
 }
