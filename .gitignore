@@ -3,10 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Assets contain copyright images
-# You will need to generate them yourself
-assets/
-
 # User-specific files
 *.rsuser
 *.suo
