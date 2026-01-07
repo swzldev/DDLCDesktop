@@ -28,6 +28,12 @@ character_logic::character_logic() {
 	else if (character_str == "yuri") {
 		character = ddlc_character::YURI;
 	}
+	else if (character_str == "natsuki") {
+		character = ddlc_character::NATSUKI;
+	}
+	else {
+		throw std::runtime_error("Invalid character specified in config.json: '" + character_str + "'");
+	}
 	visuals.set_character(character);
 
 	// create ai
