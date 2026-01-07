@@ -88,9 +88,6 @@ void window::resize(int size) {
 		size, size,
 		SWP_NOMOVE | SWP_NOACTIVATE
 	);
-	if (renderer_) {
-		renderer_->resize(size, size);
-	}
 }
 
 void window::poll_events() const {
@@ -135,6 +132,15 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	{
 		if (win) {
 			win->invoke(win->on_mouse_click);
+		}
+		return 0;
+	}
+	case WM_SIZE: {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+
+		if (win->renderer_) {
+			win->renderer_->resize(x, y);
 		}
 		return 0;
 	}
