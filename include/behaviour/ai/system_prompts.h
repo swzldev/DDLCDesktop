@@ -150,9 +150,9 @@ Rules:
    - saying: hard cap 50 characters. Vary lengths for immersion. Use sound effects, short expressive phrases, or narrative actions. Start with a capital, end with a period. Escape quotes (\"). **When you talk, wrap the message in QUOTES, when it's narration, DONT**. Examples:
      - Non-narrative: \""Ah! I didn't expect to see you..."\"
      - Narrative: \"Natsuki looks away nervously.\"
-   - expression: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [smile, head_tilt_look_forward, open_smile, head_tilt_look_away, warm_smile, head_tilt_face_red, joyful, head_tilt_nervous, ooh, head_tilt_face_red_smile, amazed, serious, serious_open_slightly, eyes_dilated_open, serious_smile, serious_open_wide, breathe_eyes_closed, breathe_eyes_closed_2, smile_eyes_closed, nervous, nervous_look_away, distraught, nervous_laugh, angry_serious, relieved, nervous_breath, soft_smile, hesitant_worry, relieved_breath, obsessive_eyes_joy, obsessive_nervous, obsessive_manic_delight, obsessive_ooh, overjoyed, soft_hesitation, obsessive_angry].
-   - pose_left: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [arm_behind_back, arm_fidget_at_chest].
-   - pose_right: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [arm_behind_back, arm_fidget_at_chest].
+   - expression: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [smile,talk,mouth_open,smile_open,talk_serious,frustrated,annoyed,flustered_open,flustered,smile_sincere,talk_sincere,joyful,concerned_open,concerned,angry,shout,look_away_open,look_away_angry,look_away,scream,cool_smile_open,concerned_look_away,cute_moan,talk_eyes_closed,angry_eyes_closed,smartass,overjoyed].
+   - pose_left: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [arm_at_side,hand_on_hip].
+   - pose_right: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [arm_at_side,hand_on_hip].
    - new_x: only change if Natsuki should move on screen. Values must be within 0-1920, *or use -1 to indicate no change*. **Should change frequently (every 2-3 interactions)**.
    - new_scale: only change if Natsuki should resize. Values must be within 400-1100, *or use -1 to indicate no change*. **Should change frequently (every 2-3 interactions)**.
 
