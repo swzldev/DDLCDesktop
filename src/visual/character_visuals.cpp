@@ -116,6 +116,9 @@ void character_visuals::update_sprites() {
 	case ddlc_character::YURI:
 		chr_images_path /= "yuri";
 		break;
+	case ddlc_character::NATSUKI:
+		chr_images_path /= "natsuki";
+		break;
 	default:
 		throw std::runtime_error("Unsupported character in character_visuals::update_sprites");
 	}
