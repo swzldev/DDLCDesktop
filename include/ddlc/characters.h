@@ -84,4 +84,5 @@
 enum class ddlc_character {
 	MONIKA,
 	YURI,
+	NATSUKI
 };
