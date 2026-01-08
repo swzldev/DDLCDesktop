@@ -254,13 +254,20 @@ std::string character_ai::get_pose_code(const std::string& pose) {
 		{"hand_on_hip", "2"}
 	};
 
+	static const std::unordered_map<std::string, std::string> sayori_poses = {
+		{"arm_at_side", "1"},
+		{"arm_in_air", "2"}
+	};
+
 	const auto& pose_map = (character_ == ddlc_character::MONIKA)
 		? monika_poses
 		: (character_ == ddlc_character::YURI)
 		? yuri_poses
 		: (character_ == ddlc_character::NATSUKI)
 		? natsuki_poses
-		: monika_poses;
+		: (character_ == ddlc_character::SAYORI)
+		? sayori_poses
+		: throw std::runtime_error("Unknown character when getting pose code");
 
 	auto it = pose_map.find(pose);
 	if (it != pose_map.end()) {
@@ -360,13 +367,43 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 		{"overjoyed", "z"}
 	};
 
+	static const std::unordered_map<std::string, std::string> sayori_expressions = {
+		{"smile", "a"},
+		{"neutral", "b"},
+		{"talk", "c"},
+		{"smile_sincere", "d"},
+		{"hesitant", "e"},
+		{"concern", "f"},
+		{"concern_open", "g"},
+		{"concern_talk", "h"},
+		{"serious", "i"},
+		{"serious_talk", "j"},
+		{"soft_sorrow", "k"},
+		{"nervous_laugh", "l"},
+		{"surprised", "m"},
+		{"amazed_ooh", "n"},
+		{"serious_nervous", "o"},
+		{"cute_moan", "p"},
+		{"warm_smile", "q"},
+		{"joyful", "r"},
+		{"joyful_blush", "s"},
+		{"sincere_cry", "t"},
+		{"sad_cry", "u"},
+		{"cry_blush", "v"},
+		{"cry", "w"},
+		{"happy", "x"},
+		{"smile_sincere_blush", "y"}
+	};
+
 	const auto& expr_map = (character_ == ddlc_character::MONIKA)
 		? monika_expressions
 		: (character_ == ddlc_character::YURI)
 		? yuri_expressions
 		: (character_ == ddlc_character::NATSUKI)
 		? natsuki_expressions
-		: monika_expressions;
+		: (character_ == ddlc_character::SAYORI)
+		? sayori_expressions
+		: throw std::runtime_error("Unknown character when getting expression code");
 
 	auto it = expr_map.find(expression);
 	if (it != expr_map.end()) {
