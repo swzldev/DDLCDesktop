@@ -31,6 +31,9 @@ character_logic::character_logic() {
 	else if (character_str == "natsuki") {
 		character = ddlc_character::NATSUKI;
 	}
+	else if (character_str == "sayori") {
+		character = ddlc_character::SAYORI;
+	}
 	else {
 		throw std::runtime_error("Invalid character specified in config.json: '" + character_str + "'");
 	}
