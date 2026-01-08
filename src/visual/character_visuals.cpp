@@ -54,6 +54,7 @@ void character_visuals::set_character(ddlc_character character) {
 
 void character_visuals::set_saying(const std::string& saying) {
 	saying_target_ = saying;
+	saying_ = ""; // reset
 	saying_index_ = 0;
 	saying_timer_ = 0.0f;
 	saying_target_ = saying;
