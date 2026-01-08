@@ -108,6 +108,15 @@
   <li>Closing the app: To close the app, press the escape key (it's pretty jammy, I know, and I may change it in the future). the character will be notified when you close their window and the next time you open them they won't have forgotten.</li>
 </ul>
 
+<h3>Resetting conversations</h3>
+<p>By default, the app will cache previous conversations and interactions to provide context and a more immersive experience. However, if you want to reset the conversation history, you can use the utility <code>reset.bat</code> included with JustMonika.exe, which will delete the conversation history file and do some additional cleanup. When changing characters or behaviour presets it's reccomended to do this so that the character doesn't act weird.</p>
+
+> [!TIP]
+> You can also manually delete the file <code>character_state.json</code> generated after the app closes.
+
+> [!TIP]
+> You can disable conversation history by setting the <code>"openai_message_history_size"</code> field in config.json to 0 (Not reccomended). Increasing this value will also improve context, but may increase costs per interaction for long conversations.
+
 <h2>Changelog</h2>
 
 <h3>Unreleased</h3>
