@@ -134,8 +134,14 @@ void character_visuals::update_sprites() {
 	fs::path bl_path = normalize_path(chr_images_path / (pose_left_ + "l.png"));
 	fs::path br_path = normalize_path(chr_images_path / (pose_right_ + "r.png"));
 
-	if (!fs::exists(head_path) || !fs::exists(bl_path) || !fs::exists(br_path)) {
-		throw std::runtime_error("Sprite file not found in character_visuals::update_sprites");
+	if (!fs::exists(head_path)) {
+		throw std::runtime_error("Head sprite file not found: " + head_path.string());
+	}
+	else if (!fs::exists(bl_path)) {
+		throw std::runtime_error("Pose left sprite file not found: " + bl_path.string());
+	}
+	else if (!fs::exists(br_path)) {
+		throw std::runtime_error("Pose right sprite file not found: " + br_path.string());
 	}
 
 	head_ = sprite::load_from_file(head_path.string());
