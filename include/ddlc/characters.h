@@ -128,12 +128,37 @@
 * b		-neutral
 * c		-talk
 * d		-smile_sincere
-* e		-open_smile
+* e		-hesitant
+* f		-concern
+* g		-concern_open
+* h		-concern_talk
+* i		-serious
+* j		-serious_talk
+* k		-soft_sorrow
+* l		-nervous_laugh
+* m		-surprised
+* n		-amazed_ooh
+* o		-serious_nervous
+* p		-cute_moan
+* q		-warm_smile
+* r		-joyful
+* s		-joyful_blush
+* t		-sincere_cry
+* u		-sad_cry
+* v		-cry_blush
+* w		-cry
+* x		-happy
+* y		-smile_sincere_blush
 * 
 * Poses map:
 * left:
+* 1		-arm_at_side
+* 2		-arm_in_air
 * 
 * right:
+* 1		-arm_at_side
+* 2		-arm_in_air
+* 
 */
 
 enum class ddlc_character {
