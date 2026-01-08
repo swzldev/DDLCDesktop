@@ -332,7 +332,7 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 		{"soft_smile", "u"},
 		{"hesitant_worry", "v"},
 		{"relieved_breath", "w"},
-		{"obsessive_eyes_joy", "y"},
+		{"obsessive_eyes_joy", "y1"},
 		{"obsessive_nervous", "y2"},
 		{"obsessive_manic_delight", "y3"},
 		{"obsessive_ooh", "y4"},
