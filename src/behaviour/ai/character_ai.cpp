@@ -316,7 +316,7 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 		{"amazed", "f"},
 		{"serious", "g"},
 		{"serious_open_slightly", "h"},
-		{"eyes_dilated_open", "h2"},
+		{"eyes_dilated_open", "hisui"},
 		{"serious_smile", "i"},
 		{"serious_open_wide", "j"},
 		{"breathe_eyes_closed", "k"},
