@@ -56,14 +56,28 @@
   "openai_model": "gpt-4o-mini",
   "openai_message_history_size": 6,
   "user_name": "&lt;your name&gt;",
-  "behaviour_preset": "default"
+  "behaviour_preset": "default",
+  "character": "monika"
 }
 </code></pre>
 <p>You will need to fill in your OpenAI API key in order for the character to be able to talk to you. You can get an API key by signing up for an account at <a href="https://platform.openai.com/signup">OpenAI</a> and generating a key in the API section. Note: you may have to add credit for it to work, but don't worry, it's pretty afforable, just 5$ of credit will last you thousands of conversations (assuming you stick to the gpt-4o-mini model).</p>
 
-<p>Once you have your API key, replace <code>&lt;your api key&gt;</code> with your actual key. You can also change the <code>user_name</code> field to whatever you want them to call you, and lastly, if you want a custom behaviour you can change the <code>"behaviour_preset"</code> to any one of the following (more will be added in the future):</p>
+<p>Once you have your API key, replace <code>&lt;your api key&gt;</code> with your actual key.</p>
 
-<h4>Monika:</h4>
+<p>You can change the <code>user_name</code> field to whatever you want them to call you.</p>
+
+<p>If you want a custom character/behaviour you can change the <code>"character"</code> and <code>"behaviour_preset"</code> to any one of the following (more will be added in the future):</p>
+
+<h4>Characters:</h4>
+<ul>
+  <li><code>"monika"</code> - Monika (default)</li>
+  <li><code>"yuri"</code> - Yuri</li>
+  <li><code>"natsuki"</code> - Natsuki</li>
+  <li><code>"sayori"</code> - Sayori</li>
+</ul>
+
+<h4>Behaviour Presets:</h4>
+<h5>Monika:</h5>
 <ul>
   <li><code>"postgame"</code> - Postgame Monika (default)</li>
   <li><code>"romantic"</code> - Monika acts more flirty and romantic</li>
@@ -71,15 +85,15 @@
   <li><code>"obsessive"</code> - Monika acts more crazy, confident and obsessive</li>
   <li><code>"shy"</code> - Monika acts more shy and playful</li>
 </ul>
-<h4>Yuri:</h4>
+<h5>Yuri:</h5>
 <ul>
   <li><code>"postgame"</code> - Postgame Yuri (default)</li>
 </ul>
-<h4>Natsuki:</h4>
+<h5>Natsuki:</h5>
 <ul>
   <li><code>"postgame"</code> - Postgame Natsuki (default)</li>
 </ul>
-<h4>Sayori:</h4>
+<h5>Sayori:</h5>
 <ul>
   <li><code>"postgame"</code> - Postgame Sayori (default)</li>
 </ul>
