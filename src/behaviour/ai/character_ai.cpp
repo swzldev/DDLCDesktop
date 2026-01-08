@@ -124,8 +124,12 @@ std::string character_ai::get_character_name() const {
 		return "Monika";
 	case ddlc_character::YURI:
 		return "Yuri";
+	case ddlc_character::NATSUKI:
+		return "Natsuki";
+	case ddlc_character::SAYORI:
+		return "Sayori";
 	default:
-		return "You"; // fallback
+		return "Character"; // fallback
 	}
 }
 
