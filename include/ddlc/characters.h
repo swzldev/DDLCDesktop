@@ -120,10 +120,25 @@
 * right:
 * 1		-arm_at_side
 * 2		-hand_on_hip
+* 
+* 
+* SAYORI:
+* Emotions map:
+* a		-smile
+* b		-neutral
+* c		-talk
+* d		-smile_sincere
+* e		-open_smile
+* 
+* Poses map:
+* left:
+* 
+* right:
 */
 
 enum class ddlc_character {
 	MONIKA,
 	YURI,
-	NATSUKI
+	NATSUKI,
+	SAYORI,
 };

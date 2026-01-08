@@ -119,8 +119,11 @@ void character_visuals::update_sprites() {
 	case ddlc_character::NATSUKI:
 		chr_images_path /= "natsuki";
 		break;
+	case ddlc_character::SAYORI:
+		chr_images_path /= "sayori";
+		break;
 	default:
-		throw std::runtime_error("Unsupported character in character_visuals::update_sprites");
+		throw std::runtime_error("Failed to get character sprites: unknown character");
 	}
 
 	auto normalize_path = [](const fs::path& p) {
