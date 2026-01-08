@@ -51,6 +51,16 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 
 		return bhv + "\n" + rules_natsuki;
 	}
+	case ddlc_character::SAYORI: {
+		if (mode == "postgame" || mode == "default" || mode.empty()) {
+			bhv = sayori_postgame;
+		}
+		else {
+			throw std::runtime_error("(Sayori) Unknown prompt preset: " + mode);
+		}
+
+		return bhv + "\n" + rules_sayori;
+	}
 	default:
 		throw std::runtime_error("Unknown character for system prompt");
 	}

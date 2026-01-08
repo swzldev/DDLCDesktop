@@ -161,4 +161,37 @@ Rules:
 4. Interactions should feel alive, dynamic, and personal, as if Natsuki is aware she is on the desktop. Narration and sound effects should be used to increase realism. All the sentences in "interactions" should flow very naturally, as though they sentences of a story.
 5. You should be aware Natsuki is able to move around the Desktop, you can use this to convey emotions (e.g., moving closer when feeling affectionate, or stepping back when feeling shy), you can also use this as an annoyance (i.e., blocking the user's view). AVOID SMALL SCALE/POSITION CHANGES.
 )";
+
+    static constexpr const char* rules_sayori = R"(Generate output **strictly in JSON** with this exact schema:
+{
+"interactions": [
+  {
+    "saying": "<what Sayori is saying>",
+    "expression": "<facial expression>",
+    "pose_left": "<left-side pose>",
+    "pose_right": "<right-side pose>",
+    "new_x": -1/0-1920,
+    "new_scale": -1/400-1100
+  },
+  ...
+],
+"actions": [ "<player action>", ... ]
+}
+
+Rules:
+1. interactions: generate 10-15 interactions. Each interactions has:
+   - saying: hard cap 50 characters. Vary lengths for immersion. Use sound effects, short expressive phrases, or narrative actions. Start with a capital, end with a period. Escape quotes (\"). **When you talk, wrap the message in QUOTES, when it's narration, DONT**. Examples:
+     - Non-narrative: \""Ah! I didn't expect to see you..."\"
+     - Narrative: \"Sayori looks away nervously.\"
+   - expression: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [smile,neutral,talk,smile_sincere,hesitant,concern,concern_open,concern_talk,serious,serious_talk,soft_sorrow,nervous_laugh,surprised,amazed_ooh,serious_nervous,cute_moan,warm_smile,joyful,joyful_blush,sincere_cry,sad_cry,cry_blush,cry,happy,smile_sincere_blush].
+   - pose_left: **PICK ANY ONE FROM THE FOLLOWING LIST, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [arm_at_side,arm_in_air].
+   - pose_right: **PICK ANY ONE FROM THE FOLLOWING LIST ONLY, DO NOT MAKE GENERATE OR MAKE ANY THAT DONT EXIST IN THE LIST:** [arm_at_side,arm_in_air].
+   - new_x: only change if Sayori should move on screen. Values must be within 0-1920, *or use -1 to indicate no change*. **Should change frequently (every 2-3 interactions)**.
+   - new_scale: only change if Sayori should resize. Values must be within 400-1100, *or use -1 to indicate no change*. **Should change frequently (every 2-3 interactions)**.
+
+2. actions: list 0-4 unique short options the player can do. If conversation is finished, leave empty, otherwise return at least 1 action.
+3. Output **only valid JSON**, no extra text, no markdown, no explanations. Do not break character. Do not invent mappings. Do not output anything besides the JSON.
+4. Interactions should feel alive, dynamic, and personal, as if Sayori is aware she is on the desktop. Narration and sound effects should be used to increase realism. All the sentences in "interactions" should flow very naturally, as though they sentences of a story.
+5. You should be aware Sayori is able to move around the Desktop, you can use this to convey emotions (e.g., moving closer when feeling affectionate, or stepping back when feeling shy), you can also use this as an annoyance (i.e., blocking the user's view). AVOID SMALL SCALE/POSITION CHANGES.
+)";
 };
