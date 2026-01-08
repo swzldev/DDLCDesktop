@@ -1,15 +1,16 @@
 <div align="center">
   <img src=".\assets\logo-circle.png" alt="Logo" height="230px">
-  <h1>DDLC Desktop.</h1>
+  <h1>DDLC Desktop</h1>
   <p>Ever wondered what it would be like to have your own DDLC character on your desktop? Well now you can!</p>
   <p>
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
-    <img src="https://img.shields.io/badge/latest_version-0.2.0-yellow" alt="Latest: 0.2.0">
+    <img src="https://img.shields.io/badge/latest_version-1.0.0--alpha-yellow" alt="Latest: 1.0.0-alpha">
   </p>
 
-  [Features] | [Installation] | [Controls] | [Changelog] | [Contributing] | [License]
+  [Discord] | [Features] | [Installation] | [Controls] | [Changelog] | [Contributing] | [License]
 </div>
 
+[Discord]: https://discord.gg/x6a9AF2aSx
 [Features]: #features
 [Installation]: #installation
 [Controls]: #controls
@@ -31,7 +32,7 @@
 <h2>Installation</h2>
 <p>Installation is fairly simple however there are a few nuances before you can be up and running.</p>
 
-<p>First install the application binaries from the <a href="https://github.com/swzldev/JustMonika/releases">releases</a> page. It should be called something like: <code>JustMonika-*.*.*-Windows.zip</code></p>
+<p>First install the application binaries from the <a href="https://github.com/swzldev/DDLCDesktop/releases">releases</a> page. It should be called something like: <code>DDLCDesktop-*.*.*.zip</code></p>
 <p>Once downloaded, extract the contents somewhere (make sure it's not somewhere with limited permissions such as Program Files or System32).</p>
 
 <p>Once extracted simply follow the instructions below:</p>
@@ -98,6 +99,8 @@
   <li><code>"postgame"</code> - Postgame Sayori (default)</li>
 </ul>
 
+<p>Stuck? Join the <a href="https://discord.gg/x6a9AF2aSx">discord</a>.</p>
+
 <h2>Controls</h2>
 <p>The controls are made up of a number of events that Monika listens for:</p>
 
@@ -119,7 +122,7 @@
 
 <h2>Changelog</h2>
 
-<h3>Unreleased</h3>
+<h3>1.0.0</h3>
 <ul>
   <li>The characters are now able to move freely around the desktop and resize themselves.</li>
   <li>Fixed a bug where the system prompt was erased causing crashes.</li>
