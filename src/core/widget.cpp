@@ -1,6 +1,7 @@
 #include <core/widget.h>
 
 #include <chrono>
+#include <filesystem>
 
 #include <core/window.h>
 #include <core/renderer.h>
@@ -8,6 +9,8 @@
 #include <behaviour/character_logic.h>
 #include <behaviour/character_interaction.h>
 #include <visual/sprite.h>
+
+namespace fs = std::filesystem;
 
 widget::~widget() {
 	if (window_) {
@@ -58,6 +61,26 @@ void widget::stop() {
 }
 
 widget::widget() {
+	// pre-init checks
+
+	// assets folder
+	if (!fs::exists("./assets/") || !fs::is_directory("./assets/")) {
+		throw std::runtime_error("Assets directory './assets/' not found (you may have a corrupted installation)");
+	}
+	// images folder
+	if (!fs::exists("./assets/images/") || !fs::is_directory("./assets/images/")) {
+		throw std::runtime_error("Assets images directory './assets/images/' not found (did you read the installation instructions on the github?)");
+	}
+	// gui folder
+	if (!fs::exists("./assets/gui/") || !fs::is_directory("./assets/gui/")) {
+		throw std::runtime_error("Assets GUI directory './assets/gui/' not found (did you read the installation instructions on the github?)");
+	}
+
+	// config.json
+	if (!fs::exists("config.json") || !fs::is_regular_file("config.json")) {
+		throw std::runtime_error("Configuration file 'config.json' not found (you may have a corrupted installation)");
+	}
+
 	window_ = new window();
 	renderer_ = window_->get_renderer();
 }
