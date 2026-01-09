@@ -89,6 +89,8 @@ void window::resize(int size) {
 		size, size,
 		SWP_NOMOVE | SWP_NOACTIVATE
 	);
+
+	update_surface();
 }
 
 void window::poll_events() const {
@@ -97,6 +99,60 @@ void window::poll_events() const {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+}
+
+void window::update_surface() const {
+	HDC screen = GetDC(nullptr);
+	HDC mem = CreateCompatibleDC(screen);
+
+	BITMAPINFO bmi = {};
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = width_;
+	bmi.bmiHeader.biHeight = -height_;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biCompression = BI_RGB;
+
+	void* bits = nullptr;
+	HBITMAP bmp = CreateDIBSection(screen, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+	if (!bmp) {
+		DeleteDC(mem);
+		ReleaseDC(nullptr, screen);
+		throw std::runtime_error("Failed to create DIB section");
+	}
+
+	// clear
+	uint32_t* px = static_cast<uint32_t*>(bits);
+	uint32_t value = (1u << 24);
+	for (int i = 0; i < width_ * height_; ++i) {
+		px[i] = value;
+	}
+
+	SelectObject(mem, bmp);
+
+	BLENDFUNCTION bf = {};
+	bf.BlendOp = AC_SRC_OVER;
+	bf.SourceConstantAlpha = 255;
+	bf.AlphaFormat = AC_SRC_ALPHA;
+
+	POINT ptDst = { pos_x_, pos_y_ };
+	SIZE size = { width_, height_ };
+	POINT src = { 0, 0 };
+
+	UPDATELAYEREDWINDOWINFO ulwi = {};
+	ulwi.cbSize = sizeof(ulwi);
+	ulwi.hdcSrc = mem;
+	ulwi.psize = &size;
+	ulwi.pptSrc = &src;
+	ulwi.pptDst = &ptDst;
+	ulwi.pblend = &bf;
+	ulwi.dwFlags = ULW_ALPHA;
+
+	UpdateLayeredWindowIndirect(hwnd_, &ulwi);
+
+	DeleteObject(bmp);
+	DeleteDC(mem);
+	ReleaseDC(nullptr, screen);
 }
 
 void window::create_renderer() {

@@ -56,6 +56,8 @@ private:
 	int mouse_x_ = 0;
 	int mouse_y_ = 0;
 
+	void update_surface() const;
+
 	void create_renderer();
 
 	void invoke(const std::vector<std::function<void()>>& event) const;
