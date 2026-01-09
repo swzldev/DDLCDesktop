@@ -124,6 +124,13 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	window* win = reinterpret_cast<window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
 	switch (uMsg) {
+	case WM_MOUSEMOVE:
+	{
+		if (win) {
+			win->invoke(win->on_mouse_move);
+		}
+		return 0;
+	}
 	case WM_NCHITTEST:
 	{
 		return HTCLIENT;
