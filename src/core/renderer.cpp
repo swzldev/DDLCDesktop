@@ -225,7 +225,7 @@ void renderer::draw_sprite(sprite* spr, float x, float y) {
         nullptr
     );
 }
-void renderer::draw_text(const std::wstring& text, float x, float y, float width, float height, int size, float outline) {
+void renderer::draw_text(const std::wstring& text, float x, float y, float width, float height, float size, float outline) {
     if (!d2d_brush_) {
         return;
     }
@@ -297,7 +297,7 @@ bool renderer::is_transparent_pixel(POINT pt) const {
 	return false; // temporary
 }
 
-D2D1_SIZE_F renderer::measure_text(const std::wstring& text, int size) {
+D2D1_SIZE_F renderer::measure_text(const std::wstring& text, float size) {
     // create text format with the desired font size
     if (!create_text_format({ L"Aller", L"Segoe UI", L"Arial" }, size)) {
         return D2D1::SizeF(0, 0);
@@ -415,9 +415,9 @@ void renderer::create_render_target() {
     }
 }
 
-bool renderer::create_text_format(const std::vector<std::wstring>& font_families, int em) {
+bool renderer::create_text_format(const std::vector<std::wstring>& font_families, float size) {
     float base_font_size = height_ / 100.0f;
-	float font_size = base_font_size * em;
+	float font_size = base_font_size * size;
 
     for (const auto& family : font_families) {
         HRESULT hr = dwrite_factory_->CreateTextFormat(

@@ -27,11 +27,11 @@ public:
 	void end_draw();
 
 	void draw_sprite(sprite* spr, float x = 0.0f, float y = 0.0f);
-	void draw_text(const std::wstring& text, float x, float y, float width, float height, int size = 4, float outline = 0.0f);
+	void draw_text(const std::wstring& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f);
 
 	bool is_transparent_pixel(POINT pt) const;
 
-	D2D1_SIZE_F measure_text(const std::wstring& text, int size = 4);
+	D2D1_SIZE_F measure_text(const std::wstring& text, float size = 4.0f);
 
 private:
 	ComPtr<ID3D11Device> d3d_device_;
@@ -57,5 +57,5 @@ private:
 
 	void create_render_target();
 
-	bool create_text_format(const std::vector<std::wstring>& font_families, int em);
+	bool create_text_format(const std::vector<std::wstring>& font_families, float size);
 };
