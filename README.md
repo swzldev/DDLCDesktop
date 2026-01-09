@@ -4,7 +4,7 @@
   <p>Ever wondered what it would be like to have your own DDLC character on your desktop? Well now you can!</p>
   <p>
     <img src="https://img.shields.io/badge/status-in_development-purple" alt="Status: In development">
-    <img src="https://img.shields.io/badge/latest_version-1.0.0--alpha-yellow" alt="Latest: 1.0.0-alpha">
+    <img src="https://img.shields.io/badge/latest_version-1.0.0--beta-yellow" alt="Latest: 1.0.0-beta">
   </p>
 
   [Discord] | [Features] | [Installation] | [Controls] | [Changelog] | [Contributing] | [License]
@@ -108,7 +108,7 @@
   <li>Opening the app: Opening the app will prompt the chosen character to start up a conversation.</li>
   <li>Clicking them: Clicking them when they're not speaking will prompt them to begin a conversation. Whilst in a conversation, clicking will move to the next sentence.</li>
   <li>Choosing an action: After a conversation has finished, they may give a number of options you can choose to reply with by pressing the corresponding key: 1, 2, 3 or 4.</li>
-  <li>Closing the app: To close the app, press the escape key (it's pretty jammy, I know, and I may change it in the future). the character will be notified when you close their window and the next time you open them they won't have forgotten.</li>
+  <li>Closing the app: To close the app you can press the 'close' button at the bottom of the dialogue box, the character will be notified when you close their window and the next time you open them they won't have forgotten.</li>
 </ul>
 
 <h3>Resetting conversations</h3>
@@ -122,12 +122,13 @@
 
 <h2>Changelog</h2>
 
-<h3>Unreleased</h3>
+<h3>1.0.0-beta [09/01/2026]</h3>
 <ul>
   <li>Fixed Natsuki and Sayori not having a name.</li>
   <li>Fixed some Yuri head sprite names being incorrect.</li>
   <li>Fixed the window click through bug, now you are only able to click Monika and anywhere else will pass through.</li>
   <li>Improved stroke rendering - it's now much cleaner at bigger font sizes and replicates the game much more closely.</li>
+  <li>Removed old escape to close bind in place of a new "close" button.</li>
 </ul>
 
 <h3>1.0.0-alpha [07/01/2026]</h3>
