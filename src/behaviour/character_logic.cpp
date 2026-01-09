@@ -6,13 +6,16 @@
 
 #include <nlohmann/json.hpp>
 
-#include <core/input.h>
 #include <core/sys.h>
+#include <core/window.h>
+#include <core/input.h>
 #include <behaviour/character_interaction.h>
 
 using json = nlohmann::json;
 
-character_logic::character_logic() {
+character_logic::character_logic(window* window) {
+	window_ = window;
+
 	std::ifstream cfg("config.json");
 	if (!cfg.is_open()) {
 		throw std::runtime_error("Failed to open config.json (you will need to recreate it yourself or reinstall)");
@@ -38,10 +41,10 @@ character_logic::character_logic() {
 	else {
 		throw std::runtime_error("Invalid character specified in config.json: '" + character_str + "'");
 	}
-	visuals.set_character(character);
+	visuals = new character_visuals(window->get_renderer(), character);
 
 	// set buttons
-	visuals.add_text_button("Exit", exit_button_click_handler);
+	visuals->add_text_button("Exit", exit_button_click_handler);
 
 	// create ai
 	ai = new character_ai(character);
@@ -66,8 +69,8 @@ void character_logic::handle_interaction(const character_interaction& interactio
 	if (state_ == logic_state::IDLE) {
 		begin_think(interaction);
 	}
-	else if (state_ == logic_state::TALKING && visuals.is_speaking()) {
-		visuals.finish_speaking(); // mouse down while speaking -> quick skip
+	else if (state_ == logic_state::TALKING && visuals->is_speaking()) {
+		visuals->finish_speaking(); // mouse down while speaking -> quick skip
 	}
 	else if (state_ == logic_state::TALKING) {
 		// in conversations, mouse down means advance interaction
@@ -87,10 +90,10 @@ void character_logic::handle_interaction(const character_interaction& interactio
 				for (int i = 0; i < num_actions; i++) {
 					message += std::to_string(i + 1) + ") " + current_state.actions[i] + "    ";
 				}
-				visuals.set_saying(message);
+				visuals->set_saying(message);
 			}
 			else {
-				visuals.set_saying("");
+				visuals->set_saying("");
 				state_ = logic_state::IDLE;
 			}
 		}
@@ -99,12 +102,12 @@ void character_logic::handle_interaction(const character_interaction& interactio
 
 void character_logic::tick(float delta_time) {
 	if (state_ == logic_state::THINKING) {
-		if (!visuals.is_speaking()) {
+		if (!visuals->is_speaking()) {
 			// constantly think
 			display_think();
 		}
 		if (ai->is_response_ready()) {
-			visuals.set_chars_per_second(50.0f);
+			visuals->set_chars_per_second(50.0f);
 			current_state = ai->get_response();
 			if (!current_state.interactions.empty()) {
 				state_ = logic_state::TALKING;
@@ -114,7 +117,7 @@ void character_logic::tick(float delta_time) {
 			}
 			else {
 				state_ = logic_state::IDLE;
-				visuals.set_saying("");
+				visuals->set_saying("");
 			}
 		}
 	}
@@ -132,7 +135,7 @@ void character_logic::tick(float delta_time) {
 		}
 	}
 
-	visuals.tick(delta_time);
+	visuals->tick(delta_time);
 }
 
 void character_logic::shutdown() {
@@ -171,29 +174,29 @@ void character_logic::begin_think(const character_interaction& interaction) {
 
 void character_logic::display_think() {
 	// slow effect while thinking
-	visuals.set_chars_per_second(2.0f);
-	visuals.set_saying("...");
+	visuals->set_chars_per_second(2.0f);
+	visuals->set_saying("...");
 }
 
 void character_logic::display_current_interaction() {
 	if (interaction_index_ < current_state.interactions.size()) {
 		const auto& inter = current_state.interactions[interaction_index_];
-		visuals.set_saying(inter.saying);
+		visuals->set_saying(inter.saying);
 
-		visuals.set_expression(inter.expression);
-		visuals.set_pose(inter.pose_left, inter.pose_right);
+		visuals->set_expression(inter.expression);
+		visuals->set_pose(inter.pose_left, inter.pose_right);
 
 		const int screen_width = sys::display_width();
 		const int screen_height = sys::display_height();
 
-		int new_x = inter.new_x == -1 ? visuals.get_x() : inter.new_x;
+		int new_x = inter.new_x == -1 ? visuals->get_x() : inter.new_x;
 
 		// pre-apply scale
 		if (inter.new_scale != -1) {
-			visuals.set_scale(inter.new_scale);
+			visuals->set_scale(inter.new_scale);
 		}
 
-		int scale = visuals.get_scale();
+		int scale = visuals->get_scale();
 
 		// clamp position to screen bounds (or move if scale means position is out of bounds)
 		// note x and y = top left (not centre)
@@ -207,6 +210,6 @@ void character_logic::display_current_interaction() {
 		// stick to the bottom of the screen
 		int new_y = screen_height - scale;
 
-		visuals.set_position(new_x, new_y);
+		visuals->set_position(new_x, new_y);
 	}
 }

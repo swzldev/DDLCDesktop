@@ -11,9 +11,11 @@ enum class logic_state {
 	AWAITING_CHOICE,
 };
 
+class window;
+
 class character_logic {
 public:
-	character_logic();
+	character_logic(window* window);
 	~character_logic();
 
 	void handle_interaction(const character_interaction& interaction);
@@ -22,11 +24,13 @@ public:
 
 	void shutdown();
 
-	character_visuals visuals;
+	character_visuals* visuals;
 	character_ai* ai;
 	character_state current_state;
 
 private:
+	window* window_ = nullptr;
+
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
