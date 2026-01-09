@@ -7,7 +7,6 @@
 #include <dwrite.h>
 #include <wrl/client.h>
 
-#include <core/window.h>
 #include <visual/sprite.h>
 
 #pragma comment(lib, "d3d11.lib")
@@ -16,6 +15,8 @@
 #pragma comment(lib, "dwrite.lib")
 
 using namespace Microsoft::WRL;
+
+class window;
 
 class renderer {
 public:
