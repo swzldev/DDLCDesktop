@@ -252,9 +252,6 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 	width *= sf;
 	height *= sf;
 
-    // set brush color
-    d2d_brush_->SetColor(text_color_);
-
     // center the container box around x, y
     D2D1_RECT_F layout_rect = D2D1::RectF(
         x - width / 2.0f,
@@ -292,7 +289,7 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
     }
 
     // main text
-    d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::White));
+    d2d_brush_->SetColor(text_color_);
     d2d_ctx_->DrawTextW(
         text.c_str(),
         static_cast<UINT32>(text.length()),
