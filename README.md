@@ -21,6 +21,11 @@
 > [!IMPORTANT]
 > This application does not work out of the box - make sure you read the installation instructions carefully before use.
 
+> [!IMPORTANT]
+> Disclaimer: This is an unofficial, fan-made application and is not affiliated with, endorsed by, or approved by Team Salvato.
+> *Doki Doki Literature Club* and all related characters, assets, and trademarks are © Team Salvato.
+> This application does not include or distribute any copyrighted assets. Users must own a legitimate copy of Doki Doki Literature Club and provide their own game files.
+
 <h2>Features</h2>
 <ul>
   <li>An interactive DDLC character that sits on your desktop and talks to you.</li>
