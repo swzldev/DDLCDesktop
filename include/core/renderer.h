@@ -64,6 +64,8 @@ private:
 	ComPtr<IDWriteFactory> dwrite_factory_;
 	ComPtr<IDWriteTextFormat> dwrite_text_format_;
 
+	ComPtr<ID3D11Texture2D> cached_frame_;
+
 	D2D_COLOR_F text_color_ = D2D1::ColorF(D2D1::ColorF::White);
 	D2D_COLOR_F stroke_color_ = D2D1::ColorF(D2D1::ColorF::Black);
 

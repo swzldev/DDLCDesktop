@@ -157,6 +157,9 @@ void renderer::resize(int width, int height) {
     if (swapchain_) {
         swapchain_.Reset();
     }
+    if (cached_frame_) {
+        cached_frame_.Reset();
+    }
 
 	create_render_target();
 
@@ -178,6 +181,36 @@ void renderer::end_draw() {
         // handle device lost
         if (hr == D2DERR_RECREATE_TARGET) {
             create_render_target();
+        }
+    }
+
+    // cache current back buffer
+    if (!cached_frame_) {
+        D3D11_TEXTURE2D_DESC desc = {};
+        desc.Width = static_cast<UINT>(width_);
+        desc.Height = static_cast<UINT>(height_);
+        desc.MipLevels = 1;
+        desc.ArraySize = 1;
+        desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        desc.SampleDesc.Count = 1;
+        desc.SampleDesc.Quality = 0;
+        desc.Usage = D3D11_USAGE_STAGING;
+        desc.BindFlags = 0;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+        desc.MiscFlags = 0;
+
+        hr = d3d_device_->CreateTexture2D(&desc, nullptr, &cached_frame_);
+        if (FAILED(hr)) {
+            throw std::runtime_error("Failed to create cached frame texture");
+        }
+    }
+
+    // get back buffer and copy into cache
+    {
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> back_buffer;
+        hr = swapchain_->GetBuffer(0, __uuidof(ID3D11Texture2D), &back_buffer);
+        if (SUCCEEDED(hr) && cached_frame_) {
+            d3d_ctx_->CopyResource(cached_frame_.Get(), back_buffer.Get());
         }
     }
 
@@ -302,52 +335,31 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 std::vector<uint8_t> renderer::get_alpha_map() {
     std::vector<uint8_t> alpha_map(width_ * height_, 0);
 
-	// create temporary staging texture
+    if (!cached_frame_) {
+        // no frame cached yet
+        return alpha_map;
+    }
+
     D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = width_;
-    desc.Height = height_;
-    desc.MipLevels = 1;
-    desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    desc.SampleDesc.Count = 1;
-    desc.SampleDesc.Quality = 0;
-    desc.Usage = D3D11_USAGE_STAGING;
-    desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    cached_frame_->GetDesc(&desc);
 
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> staging_texture;
-    HRESULT hr = d3d_device_->CreateTexture2D(&desc, nullptr, &staging_texture);
+    // map cached texture directly
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    HRESULT hr = d3d_ctx_->Map(cached_frame_.Get(), 0, D3D11_MAP_READ, 0, &mapped);
     if (FAILED(hr)) {
         return alpha_map;
     }
 
-    // get back buffer
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> back_buffer;
-    hr = swapchain_->GetBuffer(0, __uuidof(ID3D11Texture2D), &back_buffer);
-    if (FAILED(hr)) {
-        return alpha_map;
-    }
-
-	// copy to staged texture
-    d3d_ctx_->CopyResource(staging_texture.Get(), back_buffer.Get());
-
-    // map to read data
-    D3D11_MAPPED_SUBRESOURCE mapped;
-    hr = d3d_ctx_->Map(staging_texture.Get(), 0, D3D11_MAP_READ, 0, &mapped);
-    if (FAILED(hr)) {
-        return alpha_map;
-    }
-
-    // extract alpha
     const uint8_t* src = static_cast<const uint8_t*>(mapped.pData);
     for (int y = 0; y < height_; ++y) {
         for (int x = 0; x < width_; ++x) {
-            int src_index = y * mapped.RowPitch + x * 4;
-            int dst_index = y * width_ + x;
+            const int src_index = y * static_cast<int>(mapped.RowPitch) + x * 4;
+            const int dst_index = y * width_ + x;
             alpha_map[dst_index] = src[src_index + 3];
         }
     }
 
-    d3d_ctx_->Unmap(staging_texture.Get(), 0);
+    d3d_ctx_->Unmap(cached_frame_.Get(), 0);
 
     return alpha_map;
 }
