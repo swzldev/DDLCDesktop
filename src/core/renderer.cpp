@@ -192,6 +192,13 @@ void renderer::end_draw() {
     }
 }
 
+void renderer::set_text_color(D2D_COLOR_F color) {
+	text_color_ = color;
+}
+void renderer::set_stroke_color(D2D_COLOR_F color) {
+	stroke_color_ = color;
+}
+
 void renderer::draw_sprite(sprite* spr, float x, float y) {
     if (!spr) {
         return;
@@ -244,7 +251,7 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 	height *= sf;
 
     // set brush color
-    d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::White));
+    d2d_brush_->SetColor(text_color_);
 
     // center the container box around x, y
     D2D1_RECT_F layout_rect = D2D1::RectF(
@@ -256,7 +263,7 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 
     // stroke
     if (outline > 0.0f) {
-        d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+        d2d_brush_->SetColor(stroke_color_);
         float outline_thickness = outline * (sf / sys::display_width());
         const int samples = 16;
 

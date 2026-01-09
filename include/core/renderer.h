@@ -26,6 +26,9 @@ public:
 	void begin_draw();
 	void end_draw();
 
+	void set_text_color(D2D_COLOR_F color);
+	void set_stroke_color(D2D_COLOR_F color);
+
 	void draw_sprite(sprite* spr, float x = 0.0f, float y = 0.0f);
 	void draw_text(const std::wstring& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f);
 
@@ -51,6 +54,9 @@ private:
 
 	ComPtr<IDWriteFactory> dwrite_factory_;
 	ComPtr<IDWriteTextFormat> dwrite_text_format_;
+
+	D2D_COLOR_F text_color_ = D2D1::ColorF(D2D1::ColorF::White);
+	D2D_COLOR_F stroke_color_ = D2D1::ColorF(D2D1::ColorF::Black);
 
 	int width_;
 	int height_;
