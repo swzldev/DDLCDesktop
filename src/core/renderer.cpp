@@ -8,6 +8,8 @@
 #include <dwrite_3.h>
 #include <wrl/client.h>
 
+#include <core/sys.h>
+
 renderer::renderer(HWND hwnd, int width, int height) {
     HRESULT hr = S_OK;
 
@@ -252,29 +254,30 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
         y + height / 2.0f
     );
 
-    // stroke
+    // stroke with circular sampling
     d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
-    float outline_thickness = 1.5f * sf;
+    float outline_thickness = 2.0f * (sf / sys::display_width());
+    const int samples = 16;
 
-    for (int ox = -1; ox <= 1; ox++) {
-        for (int oy = -1; oy <= 1; oy++) {
-            if (ox == 0 && oy == 0) continue;
+    for (int i = 0; i < samples; i++) {
+        float angle = (2.0f * 3.14159f * i) / samples;
+        float ox = cosf(angle) * outline_thickness;
+        float oy = sinf(angle) * outline_thickness;
 
-            D2D1_RECT_F outline_rect = D2D1::RectF(
-                layout_rect.left + ox * outline_thickness,
-                layout_rect.top + oy * outline_thickness,
-                layout_rect.right + ox * outline_thickness,
-                layout_rect.bottom + oy * outline_thickness
-            );
+        D2D1_RECT_F outline_rect = D2D1::RectF(
+            layout_rect.left + ox,
+            layout_rect.top + oy,
+            layout_rect.right + ox,
+            layout_rect.bottom + oy
+        );
 
-            d2d_ctx_->DrawTextW(
-                text.c_str(),
-                static_cast<UINT32>(text.length()),
-                dwrite_text_format_.Get(),
-                &outline_rect,
-                d2d_brush_.Get()
-            );
-        }
+        d2d_ctx_->DrawTextW(
+            text.c_str(),
+            static_cast<UINT32>(text.length()),
+            dwrite_text_format_.Get(),
+            &outline_rect,
+            d2d_brush_.Get()
+        );
     }
 
     // main text
