@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 #include <cstdint>
 #include <Windows.h>
 #include <dcomp.h>
@@ -42,6 +43,8 @@ public:
 	std::vector<uint8_t> get_alpha_map();
 
 	D2D1_SIZE_F measure_text(const std::wstring& text, float size = 4.0f);
+
+	std::vector<std::function<void()>> post_draw_queue;
 
 private:
 	window* window_;

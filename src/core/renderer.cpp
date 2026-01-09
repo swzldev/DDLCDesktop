@@ -225,6 +225,12 @@ void renderer::end_draw() {
     if (FAILED(hr)) {
         throw std::runtime_error("Failed to commit composition");
     }
+
+	// execute post-draw queue
+    for (const auto& func : post_draw_queue) {
+        func();
+    }
+	post_draw_queue.clear();
 }
 
 void renderer::set_text_color(D2D_COLOR_F color) {
