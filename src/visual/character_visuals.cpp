@@ -16,7 +16,7 @@ character_visuals::character_visuals(renderer* renderer, ddlc_character characte
 	character_ = character;
 
 	window_->on_mouse_click.push_back([this]() {
-		on_mouse_click();
+		return on_mouse_click();
 	});
 
 	// load textbox sprite
@@ -187,10 +187,12 @@ void character_visuals::draw_all_buttons() {
 	}
 }
 
-void character_visuals::on_mouse_click() {
+int character_visuals::on_mouse_click() {
 	if (current_button_) {
 		current_button_->on_click();
+		return 1; // handled
 	}
+	return 0; // not handled
 }
 
 void character_visuals::update_sprites() {

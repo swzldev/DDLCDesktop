@@ -82,7 +82,7 @@ private:
 
 	void draw_all_buttons();
 
-	void on_mouse_click();
+	int on_mouse_click();
 
 	void update_sprites();
 };
