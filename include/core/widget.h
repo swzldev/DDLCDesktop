@@ -35,6 +35,10 @@ public:
 		return window_->size();
 	}
 
+	inline character_logic* get_logic() {
+		return logic_;
+	}
+
 private:
 	widget();
 
