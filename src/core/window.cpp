@@ -5,7 +5,11 @@
 
 #include <stdexcept>
 
-window::window() {
+#include <core/widget.h>
+
+window::window(widget* widget) {
+	widget_ = widget;
+
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 	
 	// set DPI awareness
@@ -123,11 +127,12 @@ void window::update_surface() const {
 		throw std::runtime_error("Failed to create DIB section");
 	}
 
-	// clear
+	// clear (using alpha map)
+	std::vector<uint8_t> alpha_map = renderer_->get_alpha_map();
 	uint32_t* px = static_cast<uint32_t*>(bits);
-	uint32_t value = (1u << 24);
 	for (int i = 0; i < width_ * height_; ++i) {
-		px[i] = value;
+		uint8_t a = alpha_map[i];
+		px[i] = (static_cast<uint32_t>(a) << 24);
 	}
 
 	SelectObject(mem, bmp);

@@ -6,13 +6,15 @@
 
 #include <core/renderer.h>
 
+class widget;
+
 class window {
 public:
 	static constexpr int DEF_WINDOW_HEIGHT = 450;
 	static constexpr int DEF_WINDOW_WIDTH = 450;
 
 public:
-	window();
+	window(widget* widget);
 	~window();
 
 	void show(bool focus = false) const;
@@ -45,6 +47,7 @@ public:
 
 private:
 	HWND hwnd_;
+	widget* widget_;
 	renderer* renderer_;
 	bool should_close_ = false;
 
