@@ -29,29 +29,29 @@ void character_visuals::tick(float delta_time) {
 	}
 }
 
-void character_visuals::draw(renderer* renderer) const {
-	if (!renderer) {
+void character_visuals::draw() const {
+	if (!renderer_) {
 		return;
 	}
 
 	// draw body parts
-	renderer->draw_sprite(body_left_);
-	renderer->draw_sprite(body_right_);
-	renderer->draw_sprite(head_);
+	renderer_->draw_sprite(body_left_);
+	renderer_->draw_sprite(body_right_);
+	renderer_->draw_sprite(head_);
 
 	// draw textbox
 	if (!saying_target_.empty()) {
 		// draw textbox background
-		renderer->draw_sprite(textbox_, 0, 0.7f);
+		renderer_->draw_sprite(textbox_, 0, 0.7f);
 
 		// draw text buttons
-		draw_all_buttons(renderer);
+		draw_all_buttons();
 
 		// draw text
 		std::wstring wtext(saying_.begin(), saying_.end());
-		renderer->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
-		renderer->set_stroke_color(D2D1::ColorF(D2D1::ColorF::Black));
-		renderer->draw_text(wtext, 0.5f, 0.9f, 0.95f, 0.35f, 3, 6.5f);
+		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
+		renderer_->set_stroke_color(D2D1::ColorF(D2D1::ColorF::Black));
+		renderer_->draw_text(wtext, 0.5f, 0.9f, 0.95f, 0.35f, 3, 6.5f);
 	}
 }
 
@@ -116,7 +116,7 @@ int character_visuals::get_scale() {
 	return widget::get_instance().size();
 }
 
-void character_visuals::draw_all_buttons(renderer* renderer) const {
+void character_visuals::draw_all_buttons() const {
 	const float button_pad = 0.02f;
 	const float buttons_y = 0.86f;
 
@@ -136,7 +136,7 @@ void character_visuals::draw_all_buttons(renderer* renderer) const {
 		std::wstring wtext(button.text.begin(), button.text.end());
 
 		// measure (size 2.5)
-		D2D1_SIZE_F text_size = renderer->measure_text(wtext, 2.5f);
+		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, 2.5f);
 
 		float width_normalized = text_size.width / sys::display_width() + button_pad * 2;
 		float height_normalized = text_size.height / sys::display_height() + button_pad * 2;
@@ -149,12 +149,12 @@ void character_visuals::draw_all_buttons(renderer* renderer) const {
 	}
 
 	D2D_COLOR_F btn_col = D2D1::ColorF(D2D1::ColorF::ColorF(1.0f, 1.0f, 1.0f, 0.5f));
-	renderer->set_text_color(btn_col);
+	renderer_->set_text_color(btn_col);
 
 	float bx = 0.5f - (total_width / 2.0f);
 	for (const auto& data : predraw_data) {
 		// label only button
-		renderer->draw_text(
+		renderer_->draw_text(
 			data.text,
 			bx + (data.width / 2),
 			buttons_y,

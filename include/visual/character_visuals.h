@@ -13,14 +13,14 @@ public:
 	static constexpr auto ASSETS_DIR = "./assets";
 
 public:
-	character_visuals(ddlc_character character = ddlc_character::MONIKA)
-		: character_(character) {
+	character_visuals(renderer* renderer, ddlc_character character = ddlc_character::MONIKA)
+		: renderer_(renderer), character_(character) {
 		update_sprites();
 	}
 
 	void tick(float delta_time);
 
-	void draw(renderer* renderer) const;
+	void draw() const;
 
 	void set_character(ddlc_character character);
 
@@ -54,6 +54,8 @@ public:
 	}
 
 private:
+	renderer* renderer_ = nullptr;
+
 	ddlc_character character_;
 	std::string pose_left_ = "1";
 	std::string pose_right_ = "1";
@@ -80,7 +82,7 @@ private:
 	};
 	std::vector<text_button> text_buttons_;
 
-	void draw_all_buttons(renderer* renderer) const;
+	void draw_all_buttons() const;
 
 	void update_sprites();
 };
