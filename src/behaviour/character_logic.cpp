@@ -55,6 +55,12 @@ character_logic::character_logic(window* window) {
 		ai->load_state("character_state.json");
 	}
 
+	window_->on_mouse_click.push_back([this]() {
+		character_interaction interaction(character_interaction::kind::CLICK);
+		handle_interaction(interaction);
+		return 0;
+	});
+
 	// window opened
 	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
 	begin_think(interaction);
