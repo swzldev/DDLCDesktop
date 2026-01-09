@@ -26,6 +26,12 @@ public:
 
 	inline int size() const { return width_; }
 
+	inline int mouse_x() const { return mouse_x_; }
+	inline int mouse_y() const { return mouse_y_; }
+
+	inline int mouse_x_normalized() const { return mouse_x_ / width_; }
+	inline int mouse_y_normalized() const { return mouse_y_ / height_; }
+
 	void poll_events() const;
 
 	inline bool should_close() const { return should_close_; }
@@ -40,10 +46,15 @@ private:
 	HWND hwnd_;
 	renderer* renderer_;
 	bool should_close_ = false;
+
 	int width_ = DEF_WINDOW_WIDTH;
 	int height_ = DEF_WINDOW_HEIGHT;
+
 	int pos_x_ = 100;
 	int pos_y_ = 100;
+
+	int mouse_x_ = 0;
+	int mouse_y_ = 0;
 
 	void create_renderer();
 

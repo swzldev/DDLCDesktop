@@ -1,6 +1,7 @@
 #include <core/window.h>
 
 #include <Windows.h>
+#include <windowsx.h>
 
 #include <stdexcept>
 
@@ -127,6 +128,10 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_MOUSEMOVE:
 	{
 		if (win) {
+			// set mouse x & y
+			win->mouse_x_ = GET_X_LPARAM(lParam);
+			win->mouse_y_ = GET_Y_LPARAM(lParam);
+
 			win->invoke(win->on_mouse_move);
 		}
 		return 0;
@@ -143,10 +148,10 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		return 0;
 	}
 	case WM_SIZE: {
-		int x = LOWORD(lParam);
-		int y = HIWORD(lParam);
-
 		if (win->renderer_) {
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+
 			win->renderer_->resize(x, y);
 		}
 		return 0;
