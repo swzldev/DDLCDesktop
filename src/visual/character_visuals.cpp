@@ -4,7 +4,6 @@
 #include <string>
 #include <stdexcept>
 
-#include <core/sys.h>
 #include <core/widget.h>
 
 #undef max
@@ -153,8 +152,8 @@ void character_visuals::draw_all_buttons() const {
 		// measure (size 2.5)
 		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, 2.5f);
 
-		float width_normalized = text_size.width / sys::display_width() + button_pad * 2;
-		float height_normalized = text_size.height / sys::display_height() + button_pad * 2;
+		float width_normalized = text_size.width / window_->size() + button_pad * 2;
+		float height_normalized = text_size.height / window_->size() + button_pad * 2;
 		// ^^ convert to normalized width (0-1)
 
 		height = std::max(height, height_normalized);
