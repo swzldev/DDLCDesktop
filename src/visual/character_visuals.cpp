@@ -36,10 +36,13 @@ void character_visuals::draw(renderer* renderer) const {
 	renderer->draw_sprite(body_right_);
 	renderer->draw_sprite(head_);
 
-	// draw saying text
+	// draw textbox
 	if (!saying_target_.empty()) {
 		// draw textbox background
 		renderer->draw_sprite(textbox_, 0, 325);
+
+		// draw text buttons
+		draw_all_buttons(renderer);
 
 		// draw text
 		std::wstring wtext(saying_.begin(), saying_.end());
@@ -106,6 +109,21 @@ void character_visuals::set_scale(int scale) {
 }
 int character_visuals::get_scale() {
 	return widget::get_instance().size();
+}
+
+void character_visuals::draw_all_buttons(renderer* renderer) const {
+	const int button_gap = 10;
+
+	for (size_t i = 0; i < text_buttons_.size(); ++i) {
+		const auto& button = text_buttons_[i];
+		std::wstring wtext(button.text.begin(), button.text.end());
+		int button_x = 225 + (i * (100 + button_gap));
+		int button_y = 540;
+		int button_width = 100;
+		int button_height = 30;
+		// draw button text
+		renderer->draw_text(wtext, button_x + 10, button_y + 5, button_width - 20, button_height - 10, 3);
+	}
 }
 
 void character_visuals::update_sprites() {
