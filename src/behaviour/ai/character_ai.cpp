@@ -42,7 +42,18 @@ character_ai::character_ai(ddlc_character character) {
 }
 character_ai::~character_ai() {
 	if (pending_response_.valid()) {
-		pending_response_.wait();
+		auto status = pending_response_.wait_for(std::chrono::seconds(2));
+
+		if (status == std::future_status::timeout) {
+			log::print("Warning: Abandoning pending AI response on shutdown\n");
+		}
+		else {
+			try {
+				pending_response_.get();
+			}
+			catch (...) {
+			}
+		}
 	}
 
 	delete openai_;
