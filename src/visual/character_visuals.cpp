@@ -116,7 +116,7 @@ int character_visuals::get_scale() {
 
 void character_visuals::draw_all_buttons(renderer* renderer) const {
 	const float button_pad = 0.02f;
-	const float buttons_y = 0.85f;
+	const float buttons_y = 0.86f;
 
 	struct button_predraw_data {
 		std::wstring text;
@@ -133,8 +133,8 @@ void character_visuals::draw_all_buttons(renderer* renderer) const {
 		// convert to wstring
 		std::wstring wtext(button.text.begin(), button.text.end());
 
-		// measure (size 2)
-		D2D1_SIZE_F text_size = renderer->measure_text(wtext, 2);
+		// measure (size 2.5)
+		D2D1_SIZE_F text_size = renderer->measure_text(wtext, 2.5f);
 
 		float width_normalized = text_size.width / sys::display_width() + button_pad * 2;
 		float height_normalized = text_size.height / sys::display_height() + button_pad * 2;
@@ -155,7 +155,7 @@ void character_visuals::draw_all_buttons(renderer* renderer) const {
 			buttons_y,
 			data.width,
 			data.height,
-			2
+			2.5f
 			/* no stroke */
 		);
 
