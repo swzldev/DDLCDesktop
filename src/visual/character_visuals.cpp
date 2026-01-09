@@ -15,6 +15,10 @@ character_visuals::character_visuals(renderer* renderer, ddlc_character characte
 	window_ = renderer_->get_window();
 	character_ = character;
 
+	window_->on_mouse_click.push_back([this]() {
+		on_mouse_click();
+	});
+
 	// load textbox sprite
 	std::string textbox_path = (fs::path(ASSETS_DIR) / "gui/textbox.png").make_preferred().string();
 	textbox_ = sprite::load_from_file(textbox_path);
@@ -43,7 +47,7 @@ void character_visuals::tick(float delta_time) {
 	}
 }
 
-void character_visuals::draw() const {
+void character_visuals::draw() {
 	if (!renderer_) {
 		return;
 	}
@@ -130,11 +134,12 @@ int character_visuals::get_scale() {
 	return widget::get_instance().size();
 }
 
-void character_visuals::draw_all_buttons() const {
+void character_visuals::draw_all_buttons() {
 	const float button_pad = 0.01f;
 	const float buttons_y = 0.865f;
 
 	struct button_predraw_data {
+		const text_button* btn;
 		std::wstring text;
 		float width;
 		float height;
@@ -159,7 +164,7 @@ void character_visuals::draw_all_buttons() const {
 		height = std::max(height, height_normalized);
 		total_width += width_normalized;
 
-		predraw_data.push_back({ wtext, width_normalized, height_normalized });
+		predraw_data.push_back({ &button, wtext, width_normalized, height_normalized });
 	}
 
 	D2D_COLOR_F btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.4f);
@@ -176,9 +181,13 @@ void character_visuals::draw_all_buttons() const {
 		float bottom = buttons_y + (data.height / 2) - button_pad * 2;
 
 		if (mx >= left && mx <= right && my >= top && my <= bottom) {
+			current_button_ = data.btn;
 			btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 		else {
+			if (current_button_ == data.btn) {
+				current_button_ = nullptr;
+			}
 			btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.4f);
 		}
 
@@ -197,6 +206,12 @@ void character_visuals::draw_all_buttons() const {
 
 		// advance x
 		bx += data.width;
+	}
+}
+
+void character_visuals::on_mouse_click() {
+	if (current_button_) {
+		current_button_->on_click();
 	}
 }
 

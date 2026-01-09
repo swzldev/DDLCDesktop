@@ -17,7 +17,7 @@ public:
 
 	void tick(float delta_time);
 
-	void draw() const;
+	void draw();
 
 	void set_character(ddlc_character character);
 
@@ -78,9 +78,12 @@ private:
 		std::string text;
 		std::function<void()> on_click;
 	};
+	const text_button* current_button_ = nullptr;
 	std::vector<text_button> text_buttons_;
 
-	void draw_all_buttons() const;
+	void draw_all_buttons();
+
+	void on_mouse_click();
 
 	void update_sprites();
 };
