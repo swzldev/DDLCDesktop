@@ -297,6 +297,37 @@ bool renderer::is_transparent_pixel(POINT pt) const {
 	return false; // temporary
 }
 
+D2D1_SIZE_F renderer::measure_text(const std::wstring& text, int size) {
+    // create text format with the desired font size
+    if (!create_text_format({ L"Aller", L"Segoe UI", L"Arial" }, size)) {
+        return D2D1::SizeF(0, 0);
+    }
+
+    // create text layout (no constraints)
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
+    HRESULT hr = dwrite_factory_->CreateTextLayout(
+        text.c_str(),
+        static_cast<UINT32>(text.length()),
+        dwrite_text_format_.Get(),
+        FLT_MAX,
+        FLT_MAX,
+        &text_layout
+    );
+    if (FAILED(hr)) {
+        return D2D1::SizeF(0, 0);
+    }
+
+    // text metrics
+    DWRITE_TEXT_METRICS metrics;
+    hr = text_layout->GetMetrics(&metrics);
+    if (FAILED(hr)) {
+        return D2D1::SizeF(0, 0);
+    }
+
+    // return text size
+    return D2D1::SizeF(metrics.width, metrics.height);
+}
+
 void renderer::create_render_target() {
     HRESULT hr = S_OK;
 

@@ -31,6 +31,8 @@ public:
 
 	bool is_transparent_pixel(POINT pt) const;
 
+	D2D1_SIZE_F measure_text(const std::wstring& text, int size = 4);
+
 private:
 	ComPtr<ID3D11Device> d3d_device_;
 	ComPtr<ID3D11DeviceContext> d3d_ctx_;
