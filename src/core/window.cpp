@@ -47,6 +47,11 @@ window::window(widget* widget) {
 
 	// show window
 	show();
+
+	// initial surface update
+	renderer_->post_draw_queue.push_back([this]() {
+		update_surface();
+	});
 }
 window::~window() {
 	if (hwnd_) {
