@@ -45,7 +45,7 @@ void widget::main_loop() {
 		renderer_->begin_draw();
 
 		character_logic_.tick(delta_time);
-		character_logic_.visuals.draw(renderer_);
+		character_logic_.visuals.draw();
 
 		renderer_->end_draw();
 
