@@ -144,13 +144,11 @@ void character_logic::tick(float delta_time) {
 	visuals->tick(delta_time);
 }
 
-void character_logic::shutdown() {
-	ai->handle_close_interaction();
-
-	ai->save_state("character_state.json");
-}
-
 void character_logic::close_button_click() {
+	ai->handle_close_interaction();
+	ai->save_state("character_state.json");
+
+	window_->close();
 }
 
 int character_logic::get_choice_input(int num_choices) {

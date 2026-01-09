@@ -22,8 +22,6 @@ public:
 
 	void tick(float delta_time);
 
-	void shutdown();
-
 	character_visuals* visuals;
 	character_ai* ai;
 	character_state current_state;
