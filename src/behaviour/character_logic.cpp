@@ -63,6 +63,10 @@ character_logic::~character_logic() {
 		delete ai;
 		ai = nullptr;
 	}
+	if (visuals) {
+		delete visuals;
+		visuals = nullptr;
+	}
 }
 
 void character_logic::handle_interaction(const character_interaction& interaction) {
