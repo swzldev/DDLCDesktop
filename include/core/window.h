@@ -29,8 +29,8 @@ public:
 	inline int mouse_x() const { return mouse_x_; }
 	inline int mouse_y() const { return mouse_y_; }
 
-	inline int mouse_x_normalized() const { return mouse_x_ / width_; }
-	inline int mouse_y_normalized() const { return mouse_y_ / height_; }
+	inline float mouse_x_normalized() const { return mouse_x_ / static_cast<float>(width_); }
+	inline float mouse_y_normalized() const { return mouse_y_ / static_cast<float>(height_); }
 
 	void poll_events() const;
 
