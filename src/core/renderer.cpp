@@ -299,8 +299,57 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
     );
 }
 
-bool renderer::is_transparent_pixel(POINT pt) const {
-	return false; // temporary
+std::vector<uint8_t> renderer::get_alpha_map() {
+    std::vector<uint8_t> alpha_map(width_ * height_, 0);
+
+	// create temporary staging texture
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = width_;
+    desc.Height = height_;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Usage = D3D11_USAGE_STAGING;
+    desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> staging_texture;
+    HRESULT hr = d3d_device_->CreateTexture2D(&desc, nullptr, &staging_texture);
+    if (FAILED(hr)) {
+        return alpha_map;
+    }
+
+    // get back buffer
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> back_buffer;
+    hr = swapchain_->GetBuffer(0, __uuidof(ID3D11Texture2D), &back_buffer);
+    if (FAILED(hr)) {
+        return alpha_map;
+    }
+
+	// copy to staged texture
+    d3d_ctx_->CopyResource(staging_texture.Get(), back_buffer.Get());
+
+    // map to read data
+    D3D11_MAPPED_SUBRESOURCE mapped;
+    hr = d3d_ctx_->Map(staging_texture.Get(), 0, D3D11_MAP_READ, 0, &mapped);
+    if (FAILED(hr)) {
+        return alpha_map;
+    }
+
+    // extract alpha
+    const uint8_t* src = static_cast<const uint8_t*>(mapped.pData);
+    for (int y = 0; y < height_; ++y) {
+        for (int x = 0; x < width_; ++x) {
+            int src_index = y * mapped.RowPitch + x * 4;
+            int dst_index = y * width_ + x;
+            alpha_map[dst_index] = src[src_index + 3];
+        }
+    }
+
+    d3d_ctx_->Unmap(staging_texture.Get(), 0);
+
+    return alpha_map;
 }
 
 D2D1_SIZE_F renderer::measure_text(const std::wstring& text, float size) {

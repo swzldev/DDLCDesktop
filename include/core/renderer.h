@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <string>
+#include <cstdint>
 #include <Windows.h>
 #include <dcomp.h>
 #include <d3d11.h>
@@ -36,7 +39,7 @@ public:
 	void draw_sprite(sprite* spr, float x = 0.0f, float y = 0.0f);
 	void draw_text(const std::wstring& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f);
 
-	bool is_transparent_pixel(POINT pt) const;
+	std::vector<uint8_t> get_alpha_map();
 
 	D2D1_SIZE_F measure_text(const std::wstring& text, float size = 4.0f);
 
