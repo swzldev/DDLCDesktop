@@ -126,11 +126,11 @@
 <ul>
   <li>Fixed Natsuki and Sayori not having a name.</li>
   <li>Fixed some Yuri head sprite names being incorrect.</li>
-  <li>Fixed the window click through bug, now when resizing the window updates accordingly.</li>
+  <li>Fixed the window click through bug, now you are only able to click Monika and anywhere else will pass through.</li>
   <li>Improved stroke rendering - it's now much cleaner at bigger font sizes and replicates the game much more closely.</li>
 </ul>
 
-<h3>1.0.0</h3>
+<h3>1.0.0-alpha [07/01/2026]</h3>
 <ul>
   <li>The characters are now able to move freely around the desktop and resize themselves.</li>
   <li>Fixed a bug where the system prompt was erased causing crashes.</li>
