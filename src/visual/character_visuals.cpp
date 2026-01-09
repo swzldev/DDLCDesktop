@@ -131,8 +131,8 @@ int character_visuals::get_scale() {
 }
 
 void character_visuals::draw_all_buttons() const {
-	const float button_pad = 0.02f;
-	const float buttons_y = 0.86f;
+	const float button_pad = 0.01f;
+	const float buttons_y = 0.865f;
 
 	struct button_predraw_data {
 		std::wstring text;
