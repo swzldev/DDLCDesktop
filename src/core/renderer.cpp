@@ -256,7 +256,7 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 
     // stroke with circular sampling
     d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
-    float outline_thickness = 2.0f * (sf / sys::display_width());
+    float outline_thickness = 6.5f * (sf / sys::display_width());
     const int samples = 16;
 
     for (int i = 0; i < samples; i++) {
