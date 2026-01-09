@@ -13,10 +13,7 @@ public:
 	static constexpr auto ASSETS_DIR = "./assets";
 
 public:
-	character_visuals(renderer* renderer, ddlc_character character = ddlc_character::MONIKA)
-		: renderer_(renderer), character_(character) {
-		update_sprites();
-	}
+	character_visuals(renderer* renderer, ddlc_character character = ddlc_character::MONIKA);
 
 	void tick(float delta_time);
 

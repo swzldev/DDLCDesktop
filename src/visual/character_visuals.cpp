@@ -11,6 +11,20 @@
 
 namespace fs = std::filesystem;
 
+character_visuals::character_visuals(renderer* renderer, ddlc_character character) {
+	renderer_ = renderer;
+	character_ = character;
+
+	// load textbox sprite
+	std::string textbox_path = (fs::path(ASSETS_DIR) / "gui/textbox.png").make_preferred().string();
+	textbox_ = sprite::load_from_file(textbox_path);
+	if (!textbox_) {
+		throw std::runtime_error("Failed to load textbox sprite from " + textbox_path);
+	}
+
+	update_sprites();
+}
+
 void character_visuals::tick(float delta_time) {
 	if (saying_index_ < saying_target_.length()) {
 		saying_timer_ += delta_time;
@@ -209,12 +223,4 @@ void character_visuals::update_sprites() {
 	head_ = sprite::load_from_file(head_path.string());
 	body_left_ = sprite::load_from_file(bl_path.string());
 	body_right_ = sprite::load_from_file(br_path.string());
-
-	// load textbox sprite (if needed)
-	if (!textbox_) {
-		fs::path textbox_path = normalize_path(fs::path(ASSETS_DIR) / "gui/textbox.png");
-		if (fs::exists(textbox_path)) {
-			textbox_ = sprite::load_from_file(textbox_path.string());
-		}
-	}
 }
