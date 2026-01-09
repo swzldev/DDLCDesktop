@@ -77,7 +77,7 @@ widget::widget() {
 		throw std::runtime_error("Configuration file 'config.json' not found (you may have a corrupted installation)");
 	}
 
-	window_ = new window();
+	window_ = new window(this);
 	renderer_ = window_->get_renderer();
 	logic_ = new character_logic(window_);
 }
