@@ -45,9 +45,6 @@ window::window(widget* widget) {
 	// create renderer
 	create_renderer();
 
-	// create a timer for update logic
-	SetTimer(hwnd_, 1, 16, NULL); // ~60 FPS
-
 	// show window
 	show();
 }
@@ -132,10 +129,12 @@ void window::update_surface() const {
 	}
 
 	// clear (using alpha map)
+	const uint8_t alpha_threshold = 5;
+
 	std::vector<uint8_t> alpha_map = renderer_->get_alpha_map();
 	uint32_t* px = static_cast<uint32_t*>(bits);
 	for (int i = 0; i < width_ * height_; ++i) {
-		uint8_t a = alpha_map[i];
+		uint8_t a = alpha_map[i] > alpha_threshold ? 1 : 0;
 		px[i] = (static_cast<uint32_t>(a) << 24);
 	}
 
