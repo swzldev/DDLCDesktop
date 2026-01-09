@@ -190,14 +190,13 @@ void renderer::end_draw() {
     }
 }
 
-void renderer::draw_sprite(sprite* spr, int x, int y) {
+void renderer::draw_sprite(sprite* spr, float x, float y) {
     if (!spr) {
         return;
     }
 
-	float scale_f = height_ / 450.0f;
-	float ax = x * scale_f;
-	float ay = y * scale_f;
+	float ax = x * width_;
+	float ay = y * width_;
 
     ID2D1Bitmap* bitmap = spr->create_d2d_bitmap(d2d_ctx_.Get());
     if (!bitmap) {
@@ -234,13 +233,13 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
         return;
 	}
 
-    float scale_f = height_ / 450.0f;
+    float sf = height_;
 
-	x *= scale_f;
-	y *= scale_f;
+	x *= sf;
+	y *= sf;
 
-	width *= scale_f;
-	height *= scale_f;
+	width *= sf;
+	height *= sf;
 
     // set brush color
     d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::White));
@@ -255,7 +254,7 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 
     // stroke
     d2d_brush_->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
-    float outline_thickness = 1.5f * scale_f;
+    float outline_thickness = 1.5f * sf;
 
     for (int ox = -1; ox <= 1; ox++) {
         for (int oy = -1; oy <= 1; oy++) {

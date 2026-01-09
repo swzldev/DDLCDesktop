@@ -26,7 +26,7 @@ public:
 	void begin_draw();
 	void end_draw();
 
-	void draw_sprite(sprite* spr, int x = 0, int y = 0);
+	void draw_sprite(sprite* spr, float x = 0.0f, float y = 0.0f);
 	void draw_text(const std::wstring& text, float x, float y, float width, float height, int em = 4);
 
 	bool is_transparent_pixel(POINT pt) const;
