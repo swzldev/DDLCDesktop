@@ -30,7 +30,9 @@ public:
 
 	inline bool should_close() const { return should_close_; }
 
+	// events
 	std::vector<std::function<void()>> on_mouse_click;
+	std::vector<std::function<void()>> on_mouse_move;
 
 	inline renderer* get_renderer() const { return renderer_; }
 
