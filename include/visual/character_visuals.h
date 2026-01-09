@@ -79,6 +79,8 @@ private:
 	};
 	std::vector<text_button> text_buttons_;
 
+	void on_mouse_move();
+
 	void draw_all_buttons() const;
 
 	void update_sprites();
