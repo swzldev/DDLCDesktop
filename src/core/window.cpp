@@ -80,7 +80,9 @@ void window::set_position(int x, int y) {
 		SWP_NOSIZE | SWP_NOACTIVATE
 	);
 
-	update_surface();
+	renderer_->post_draw_queue.push_back([this]() {
+		update_surface();
+	});
 }
 void window::resize(int size) {
 	if (size <= 0) {
@@ -96,7 +98,9 @@ void window::resize(int size) {
 		SWP_NOMOVE | SWP_NOACTIVATE
 	);
 
-	update_surface();
+	renderer_->post_draw_queue.push_back([this]() {
+		update_surface();
+	});
 }
 
 void window::poll_events() const {
