@@ -4,7 +4,10 @@
 #include <string>
 #include <stdexcept>
 
+#include <core/sys.h>
 #include <core/widget.h>
+
+#undef max
 
 namespace fs = std::filesystem;
 
@@ -112,15 +115,52 @@ int character_visuals::get_scale() {
 }
 
 void character_visuals::draw_all_buttons(renderer* renderer) const {
-	const int button_gap = 10;
+	const float button_pad = 0.02f;
+	const float buttons_y = 0.85f;
 
-	for (size_t i = 0; i < text_buttons_.size(); ++i) {
-		const auto& button = text_buttons_[i];
+	struct button_predraw_data {
+		std::wstring text;
+		float width;
+		float height;
+		// ^^ including padding
+	};
+	std::vector<button_predraw_data> predraw_data;
+
+	float total_width = 0.0f; // normalized & with padding
+	float height = 0.0f;
+
+	for (const auto& button : text_buttons_) {
+		// convert to wstring
 		std::wstring wtext(button.text.begin(), button.text.end());
 
+		// measure (size 2)
+		D2D1_SIZE_F text_size = renderer->measure_text(wtext, 2);
 
+		float width_normalized = text_size.width / sys::display_width() + button_pad * 2;
+		float height_normalized = text_size.height / sys::display_height() + button_pad * 2;
+		// ^^ convert to normalized width (0-1)
 
-		// draw button text
+		height = std::max(height, height_normalized);
+		total_width += width_normalized;
+
+		predraw_data.push_back({ wtext, width_normalized, height_normalized });
+	}
+
+	float bx = 0.5f - (total_width / 2.0f);
+	for (const auto& data : predraw_data) {
+		// label only button
+		renderer->draw_text(
+			data.text,
+			bx + (data.width / 2),
+			buttons_y,
+			data.width,
+			data.height,
+			2
+			/* no stroke */
+		);
+
+		// advance x
+		bx += data.width;
 	}
 }
 
