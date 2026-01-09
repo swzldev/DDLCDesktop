@@ -51,6 +51,7 @@ public:
 	}
 
 private:
+	window* window_ = nullptr;
 	renderer* renderer_ = nullptr;
 
 	ddlc_character character_;
@@ -78,8 +79,6 @@ private:
 		std::function<void()> on_click;
 	};
 	std::vector<text_button> text_buttons_;
-
-	void on_mouse_move();
 
 	void draw_all_buttons() const;
 

@@ -13,6 +13,7 @@ namespace fs = std::filesystem;
 
 character_visuals::character_visuals(renderer* renderer, ddlc_character character) {
 	renderer_ = renderer;
+	window_ = renderer_->get_window();
 	character_ = character;
 
 	// load textbox sprite
@@ -21,10 +22,6 @@ character_visuals::character_visuals(renderer* renderer, ddlc_character characte
 	if (!textbox_) {
 		throw std::runtime_error("Failed to load textbox sprite from " + textbox_path);
 	}
-
-	renderer_->get_window()->on_mouse_move.push_back([this]() {
-		on_mouse_move();
-	});
 
 	update_sprites();
 }
@@ -132,9 +129,6 @@ void character_visuals::set_scale(int scale) {
 }
 int character_visuals::get_scale() {
 	return widget::get_instance().size();
-}
-
-void character_visuals::on_mouse_move() {
 }
 
 void character_visuals::draw_all_buttons() const {
