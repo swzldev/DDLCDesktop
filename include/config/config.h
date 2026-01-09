@@ -4,18 +4,18 @@
 
 class config {
 public:
-	static void load();
+	static config load();
 
-	static std::string openai_api_key;
-	static std::string openai_model;
-	static int openai_message_history_size;
+	std::string openai_api_key;
+	std::string openai_model;
+	int openai_message_history_size;
 
-	static std::string user_name;
-	static std::string behaviour_preset;
+	std::string user_name;
+	std::string behaviour_preset;
 
-	static bool enable_resize;
-	static bool enable_move;
+	bool enable_resize;
+	bool enable_move;
 
-	static int default_position;
-	static int default_size;
+	int default_position;
+	int default_size;
 };
