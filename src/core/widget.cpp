@@ -42,7 +42,7 @@ void widget::main_loop() {
 		input::tick();
 
 		window_->poll_events();
-		if (window_->should_close() || input::is_key_pressed(VK_ESCAPE)) {
+		if (window_->should_close()) {
 			stop();
 		}
 
