@@ -11,6 +11,9 @@ openai_api::openai_api(const std::string& api_key) {
 	curl_ = curl_easy_init();
 	curl_easy_setopt(curl_, CURLOPT_URL, "https://api.openai.com/v1/responses");
 	curl_easy_setopt(curl_, CURLOPT_POST, 1L);
+
+	curl_easy_setopt(curl_, CURLOPT_TIMEOUT, 30L);
+	curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT, 10L);
 }
 openai_api::~openai_api() {
 	curl_easy_cleanup(curl_);
