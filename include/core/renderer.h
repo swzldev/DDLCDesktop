@@ -22,6 +22,8 @@ public:
 	renderer(window* wnd, HWND hwnd, int width, int height);
 	~renderer() = default;
 
+	inline window* get_window() const { return window_; }
+
 	void resize(int width, int height);
 
 	void begin_draw();
