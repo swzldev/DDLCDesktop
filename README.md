@@ -122,6 +122,12 @@
 
 <h2>Changelog</h2>
 
+<h3>Unreleased</h3>
+<ul>
+  <li>Fixed Natsuki and Sayori not having a name.</li>
+  <li>Fixed some Yuri head sprite names being incorrect.</li>
+</ul>
+
 <h3>1.0.0</h3>
 <ul>
   <li>The characters are now able to move freely around the desktop and resize themselves.</li>

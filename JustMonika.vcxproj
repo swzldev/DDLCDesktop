@@ -138,6 +138,7 @@
     <ClCompile Include="src\config\config.cpp" />
     <ClCompile Include="src\core\input.cpp" />
     <ClCompile Include="src\core\renderer.cpp" />
+    <ClCompile Include="src\core\sys.cpp" />
     <ClCompile Include="src\core\widget.cpp" />
     <ClCompile Include="src\core\window.cpp" />
     <ClCompile Include="src\output\log.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="include\config\config.h" />
     <ClInclude Include="include\core\input.h" />
     <ClInclude Include="include\core\renderer.h" />
+    <ClInclude Include="include\core\sys.h" />
     <ClInclude Include="include\core\widget.h" />
     <ClInclude Include="include\core\window.h" />
     <ClInclude Include="include\ddlc\characters.h" />
