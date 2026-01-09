@@ -34,6 +34,7 @@ public:
 
 	void poll_events() const;
 
+	inline void close() { should_close_ = true; }
 	inline bool should_close() const { return should_close_; }
 
 	// events
