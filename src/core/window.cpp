@@ -100,7 +100,7 @@ void window::poll_events() const {
 
 void window::create_renderer() {
 	if (!renderer_) {
-		renderer_ = new renderer(hwnd_, width_, height_);
+		renderer_ = new renderer(this, hwnd_, width_, height_);
 	}
 }
 
