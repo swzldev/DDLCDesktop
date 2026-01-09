@@ -162,11 +162,26 @@ void character_visuals::draw_all_buttons() const {
 		predraw_data.push_back({ wtext, width_normalized, height_normalized });
 	}
 
-	D2D_COLOR_F btn_col = D2D1::ColorF(D2D1::ColorF::ColorF(1.0f, 1.0f, 1.0f, 0.5f));
-	renderer_->set_text_color(btn_col);
+	D2D_COLOR_F btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.5f);
 
 	float bx = 0.5f - (total_width / 2.0f);
 	for (const auto& data : predraw_data) {
+		// change color if hovered
+		POINT mouse_pt = { window_->mouse_x(), window_->mouse_y() };
+		if (mouse_pt.x >= bx * window_->size() &&
+			mouse_pt.x <= (bx + data.width) * window_->size() &&
+			mouse_pt.y >= buttons_y * window_->size() &&
+			mouse_pt.y <= (buttons_y + data.height) * window_->size()) {
+			// hovered
+			btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.75f);
+			renderer_->set_text_color(btn_col);
+		}
+		else {
+			// not hovered
+			btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.2f);
+			renderer_->set_text_color(btn_col);
+		}
+
 		// label only button
 		renderer_->draw_text(
 			data.text,
