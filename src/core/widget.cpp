@@ -26,12 +26,6 @@ widget::~widget() {
 void widget::main_loop() {
 	running_ = true;
 
-	// set hooks
-	window_->on_mouse_click.push_back([this]() {
-		character_interaction interaction(character_interaction::kind::CLICK);
-		logic_->handle_interaction(interaction);
-	});
-
 	// first tick delta time will be 0, but thats better
 	// than some crazy huge value
 	last_time_ = std::chrono::high_resolution_clock::now();
