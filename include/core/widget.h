@@ -44,5 +44,5 @@ private:
 
 	std::chrono::high_resolution_clock::time_point last_time_;
 
-	character_logic character_logic_;
+	character_logic* logic_;
 };

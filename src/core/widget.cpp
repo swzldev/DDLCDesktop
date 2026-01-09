@@ -17,6 +17,10 @@ widget::~widget() {
 		delete window_;
 		window_ = nullptr;
 	}
+	if (logic_) {
+		delete logic_;
+		logic_ = nullptr;
+	}
 }
 
 void widget::main_loop() {
@@ -25,7 +29,7 @@ void widget::main_loop() {
 	// set hooks
 	window_->on_mouse_click.push_back([this]() {
 		character_interaction interaction(character_interaction::kind::CLICK);
-		character_logic_.handle_interaction(interaction);
+		logic_->handle_interaction(interaction);
 	});
 
 	// first tick delta time will be 0, but thats better
@@ -44,8 +48,8 @@ void widget::main_loop() {
 
 		renderer_->begin_draw();
 
-		character_logic_.tick(delta_time);
-		character_logic_.visuals.draw();
+		logic_->tick(delta_time);
+		logic_->visuals->draw();
 
 		renderer_->end_draw();
 
@@ -55,7 +59,7 @@ void widget::main_loop() {
 	sprite::cleanup_all_sprites();
 }
 void widget::stop() {
-	character_logic_.shutdown();
+	logic_->shutdown();
 
 	running_ = false;
 }
@@ -83,4 +87,5 @@ widget::widget() {
 
 	window_ = new window();
 	renderer_ = window_->get_renderer();
+	logic_ = new character_logic(window_);
 }
