@@ -39,6 +39,9 @@ character_logic::character_logic() {
 	}
 	visuals.set_character(character);
 
+	// set buttons
+	visuals.add_text_button("Exit", exit_button_click_handler);
+
 	// create ai
 	ai = new character_ai(character);
 
@@ -135,6 +138,9 @@ void character_logic::shutdown() {
 	ai->handle_close_interaction();
 
 	ai->save_state("character_state.json");
+}
+
+void character_logic::exit_button_click_handler() {
 }
 
 int character_logic::get_choice_input(int num_choices) {

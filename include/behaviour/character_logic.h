@@ -30,6 +30,8 @@ private:
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
+	static void exit_button_click_handler();
+
 	int get_choice_input(int num_choices);
 
 	void begin_think(const character_interaction& interaction);
