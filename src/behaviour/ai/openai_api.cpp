@@ -14,6 +14,8 @@ openai_api::openai_api(const std::string& api_key) {
 
 	curl_easy_setopt(curl_, CURLOPT_TIMEOUT, 30L);
 	curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT, 10L);
+
+	curl_easy_setopt(curl_, CURLOPT_NOSIGNAL, 1L);
 }
 openai_api::~openai_api() {
 	curl_easy_cleanup(curl_);

@@ -178,7 +178,7 @@ void character_visuals::draw_all_buttons() const {
 		}
 		else {
 			// not hovered
-			btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.2f);
+			btn_col = D2D1::ColorF(1.0f, 0.0f, 1.0f, 0.2f);
 			renderer_->set_text_color(btn_col);
 		}
 
