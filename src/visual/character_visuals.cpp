@@ -49,6 +49,8 @@ void character_visuals::draw(renderer* renderer) const {
 
 		// draw text
 		std::wstring wtext(saying_.begin(), saying_.end());
+		renderer->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
+		renderer->set_stroke_color(D2D1::ColorF(D2D1::ColorF::Black));
 		renderer->draw_text(wtext, 0.5f, 0.9f, 0.95f, 0.35f, 3, 6.5f);
 	}
 }
@@ -145,6 +147,9 @@ void character_visuals::draw_all_buttons(renderer* renderer) const {
 
 		predraw_data.push_back({ wtext, width_normalized, height_normalized });
 	}
+
+	D2D_COLOR_F btn_col = D2D1::ColorF(D2D1::ColorF::ColorF(1.0f, 1.0f, 1.0f, 0.5f));
+	renderer->set_text_color(btn_col);
 
 	float bx = 0.5f - (total_width / 2.0f);
 	for (const auto& data : predraw_data) {
