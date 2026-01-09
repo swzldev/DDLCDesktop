@@ -2,6 +2,6 @@
 
 class sys {
 public:
-	int display_width();
-	int display_height();
+	static int display_width();
+	static int display_height();
 };

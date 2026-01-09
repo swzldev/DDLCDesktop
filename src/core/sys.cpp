@@ -1,14 +1,14 @@
-#include <core/system.h>
+#include <core/sys.h>
 
 #include <Windows.h>
 
-int system::display_width() {
+int sys::display_width() {
 	RECT desktop;
 	const HWND hDesktop = GetDesktopWindow();
 	GetWindowRect(hDesktop, &desktop);
 	return static_cast<int>(desktop.right);
 }
-int system::display_height() {
+int sys::display_height() {
 	RECT desktop;
 	const HWND hDesktop = GetDesktopWindow();
 	GetWindowRect(hDesktop, &desktop);
