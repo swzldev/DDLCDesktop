@@ -22,7 +22,6 @@ public:
 	void set_character(ddlc_character character);
 
 	void set_saying(const std::string& saying);
-	void set_visual(const std::string visual_str);
 	void set_pose(const std::string& left, const std::string& right);
 	void set_expression(const std::string& expression);
 

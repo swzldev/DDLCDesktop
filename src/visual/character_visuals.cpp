@@ -86,28 +86,6 @@ void character_visuals::set_saying(const std::string& saying) {
 	saying_target_ = saying;
 	is_speaking_ = true;
 }
-void character_visuals::set_visual(const std::string visual_str) {
-	std::string vis = visual_str;
-
-	// safety checks
-	if (vis.size() != 3) {
-		vis = "11a";
-	}
-	if (vis[0] != '1' || vis[0] != '2') {
-		vis[0] = '1';
-	}
-	if (vis[1] != '1' || vis[1] != '2') {
-		vis[1] = '1';
-	}
-	if (vis[2] < 'a' || vis[2] > 'r') {
-		vis[2] = 'a';
-	}
-
-	pose_left_ = std::string(1, visual_str[0]);
-	pose_right_ = std::string(1, visual_str[1]);
-	expression_ = visual_str[2];
-	update_sprites();
-}
 void character_visuals::set_pose(const std::string& left, const std::string& right) {
 	pose_left_ = left;
 	pose_right_ = right;
