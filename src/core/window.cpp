@@ -75,6 +75,8 @@ void window::set_position(int x, int y) {
 		0, 0,
 		SWP_NOSIZE | SWP_NOACTIVATE
 	);
+
+	update_surface();
 }
 void window::resize(int size) {
 	if (size <= 0) {
