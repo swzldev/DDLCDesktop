@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 
 #include <core/input.h>
+#include <core/sys.h>
 #include <behaviour/character_interaction.h>
 
 using json = nlohmann::json;
@@ -182,8 +183,8 @@ void character_logic::display_current_interaction() {
 		visuals.set_expression(inter.expression);
 		visuals.set_pose(inter.pose_left, inter.pose_right);
 
-		const int screen_width = 1920;  // TODO: get this properly
-		const int screen_height = 1080; // TODO: get this properly
+		const int screen_width = sys::display_width();
+		const int screen_height = sys::display_height();
 
 		int new_x = inter.new_x == -1 ? visuals.get_x() : inter.new_x;
 
