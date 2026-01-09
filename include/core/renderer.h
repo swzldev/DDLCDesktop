@@ -7,6 +7,7 @@
 #include <dwrite.h>
 #include <wrl/client.h>
 
+#include <core/window.h>
 #include <visual/sprite.h>
 
 #pragma comment(lib, "d3d11.lib")
@@ -18,7 +19,7 @@ using namespace Microsoft::WRL;
 
 class renderer {
 public:
-	renderer(HWND hwnd, int width, int height);
+	renderer(window* wnd, HWND hwnd, int width, int height);
 	~renderer() = default;
 
 	void resize(int width, int height);
@@ -37,6 +38,8 @@ public:
 	D2D1_SIZE_F measure_text(const std::wstring& text, float size = 4.0f);
 
 private:
+	window* window_;
+
 	ComPtr<ID3D11Device> d3d_device_;
 	ComPtr<ID3D11DeviceContext> d3d_ctx_;
 

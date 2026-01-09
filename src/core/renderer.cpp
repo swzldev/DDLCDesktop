@@ -10,7 +10,9 @@
 
 #include <core/sys.h>
 
-renderer::renderer(HWND hwnd, int width, int height) {
+renderer::renderer(window* wnd, HWND hwnd, int width, int height) {
+	window_ = wnd;
+
     HRESULT hr = S_OK;
 
     // create D3D11 device and context
