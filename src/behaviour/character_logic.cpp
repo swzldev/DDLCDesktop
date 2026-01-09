@@ -44,7 +44,9 @@ character_logic::character_logic(window* window) {
 	visuals = new character_visuals(window->get_renderer(), character);
 
 	// set buttons
-	visuals->add_text_button("Close", close_button_click);
+	visuals->add_text_button("Close", [this]() {
+		close_button_click();
+	});
 
 	// create ai
 	ai = new character_ai(character);

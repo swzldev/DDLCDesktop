@@ -34,7 +34,7 @@ private:
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
-	static void close_button_click();
+	void close_button_click();
 
 	int get_choice_input(int num_choices);
 
