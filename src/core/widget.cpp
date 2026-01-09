@@ -59,8 +59,6 @@ void widget::main_loop() {
 	sprite::cleanup_all_sprites();
 }
 void widget::stop() {
-	logic_->shutdown();
-
 	running_ = false;
 }
 
