@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <functional>
 
 #include <core/renderer.h>
 #include <visual/sprite.h>
@@ -47,6 +49,10 @@ public:
 		is_speaking_ = false;
 	}
 
+	void add_text_button(const std::string& text, const std::function<void()>& on_click) {
+		text_buttons_.push_back({ text, on_click });
+	}
+
 private:
 	ddlc_character character_;
 	std::string pose_left_ = "1";
@@ -66,6 +72,15 @@ private:
 	bool is_speaking_ = false;
 	float saying_timer_ = 0.0f;
 	float chars_per_second_ = 50.0f;
+
+	// buttons
+	struct text_button {
+		std::string text;
+		std::function<void()> on_click;
+	};
+	std::vector<text_button> text_buttons_;
+
+	void draw_all_buttons(renderer* renderer) const;
 
 	void update_sprites();
 };
