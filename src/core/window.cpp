@@ -163,9 +163,11 @@ void window::create_renderer() {
 	}
 }
 
-void window::invoke(const std::vector<std::function<void()>>& event) const {
+void window::invoke(const std::vector<std::function<int()>>& event) const {
 	for (const auto& func : event) {
-		func();
+		if (func() != 0) {
+			break;
+		}
 	}
 }
 
