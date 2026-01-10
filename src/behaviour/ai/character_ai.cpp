@@ -6,6 +6,7 @@
 #include <fstream>
 #include <chrono>
 #include <unordered_map>
+#include <format>
 
 #include <nlohmann/json.hpp>
 
@@ -147,8 +148,7 @@ std::string character_ai::get_character_name() const {
 
 std::string character_ai::now_str() const {
 	auto now = std::chrono::system_clock::now();
-	std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-	return std::ctime(&now_c);
+	return std::format("{:%Y-%m-%d %H:%M:%S}", std::chrono::floor<std::chrono::seconds>(now));
 }
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
@@ -194,6 +194,8 @@ std::string character_ai::interaction_to_message(const character_interaction& in
 		return "[" + now_str() + "] " + user_name + " clicked " + character_name + ".";
 	case character_interaction::kind::CHOICE_MADE:
 		return "[" + now_str() + "] " + user_name + ": \"" + interaction.str_data + "\" (Choice " + std::to_string(interaction.int_data) + ")";
+	case character_interaction::kind::CUSTOM_MESSAGE:
+		return "[" + now_str() + "] " + user_name + ": \"" + interaction.str_data + "\"";
 	case character_interaction::kind::WINDOW_OPEN:
 		return "[" + now_str() + "] " + user_name + " opened " + character_name + "'s window.";
 	default:
