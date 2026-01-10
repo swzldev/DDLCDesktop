@@ -44,7 +44,7 @@ character_logic::character_logic(window* window) {
 	visuals = new character_visuals(window->get_renderer(), character);
 
 	// set buttons
-	visuals->add_text_button("Close", [this]() {
+	visuals->add_text_button("Close", false, [this]() {
 		close_button_click();
 	});
 
@@ -105,9 +105,8 @@ void character_logic::handle_interaction(const character_interaction& interactio
 				visuals->set_saying(message);
 
 				// custom button
-				int btn = visuals->add_text_button("Custom", [this, btn]() {
+				visuals->add_text_button("Custom", true, [this]() {
 					custom_button_click();
-					visuals->remove_text_button(btn);
 				});
 			}
 			else {
@@ -181,18 +180,16 @@ void character_logic::custom_button_click() {
 	state_ = logic_state::AWAITING_INPUT;
 
 	// create actions button
-	int btn = visuals->add_text_button("Actions", [this, btn]() {
+	visuals->add_text_button("Actions", true, [this]() {
 		actions_button_click();
-		visuals->remove_text_button(btn);
 	});
 }
 void character_logic::actions_button_click() {
 	state_ = logic_state::AWAITING_CHOICE;
 
 	// create actions button
-	int btn = visuals->add_text_button("Custom", [this, btn]() {
+	visuals->add_text_button("Custom", true, [this]() {
 		custom_button_click();
-		visuals->remove_text_button(btn);
 	});
 }
 
