@@ -136,6 +136,12 @@ void character_logic::tick(float delta_time) {
 		int choice = get_choice_input(num_actions);
 
 		if (choice != -1) {
+			// remove custom button (if applicable)
+			if (custom_button_ != -1) {
+				visuals->remove_text_button(custom_button_);
+				custom_button_ = -1;
+			}
+
 			// user made a choice
 			character_interaction choice_interaction(character_interaction::kind::CHOICE_MADE);
 			choice_interaction.str_data = current_state.actions[choice];
@@ -163,7 +169,8 @@ void character_logic::custom_button_click() {
 	await_input();
 
 	// create actions button
-	visuals->add_text_button("Actions", true, [this]() {
+	actions_button_ = visuals->add_text_button("Actions", true, [this]() {
+		actions_button_ = -1;
 		actions_button_click();
 	});
 }
@@ -171,7 +178,8 @@ void character_logic::actions_button_click() {
 	await_choice(false);
 
 	// create custom button
-	visuals->add_text_button("Custom", true, [this]() {
+	custom_button_ = visuals->add_text_button("Custom", true, [this]() {
+		custom_button_ = -1;
 		custom_button_click();
 	});
 }
@@ -196,6 +204,12 @@ void character_logic::await_input() {
 
 	// start recording
 	input::begin_input_recording(&current_input_, 50, [this]() {
+		// remove actions button (if applicable)
+		if (actions_button_ != -1) {
+			visuals->remove_text_button(actions_button_);
+			actions_button_ = -1;
+		}
+
 		// on submit
 		character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
 		input_interaction.str_data = current_input_;

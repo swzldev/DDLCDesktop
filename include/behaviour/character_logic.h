@@ -33,6 +33,9 @@ private:
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
+	int actions_button_ = -1;
+	int custom_button_ = -1;
+
 	std::string current_input_;
 
 	void close_button_click();
