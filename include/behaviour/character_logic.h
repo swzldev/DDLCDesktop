@@ -6,6 +6,8 @@
 #include <ddlc/characters.h>
 #include <error/ddlcd_runtime_error.h>
 
+#include <nlohmann/json.hpp>
+
 enum class logic_state {
 	IDLE,
 	THINKING,
@@ -43,6 +45,8 @@ public:
 private:
 	window* window_ = nullptr;
 	ddlc_character character_ = ddlc_character::MONIKA;
+	bool first_tick_ = true;
+	bool did_cfg_load_ = false;
 
 	error_state error_state_ = error_state::NONE;
 	logic_state state_ = logic_state::IDLE;
@@ -65,6 +69,7 @@ private:
 
 	int get_choice_input(int num_choices);
 
+	void load_config(nlohmann::json j);
 	void reset_all();
 
 	void begin_think(const character_interaction& interaction);

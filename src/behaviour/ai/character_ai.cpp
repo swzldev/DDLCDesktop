@@ -22,45 +22,16 @@ character_ai::character_ai(ddlc_character character) {
 	character_ = character;
 
 	std::ifstream config("config.json");
-	if (!config.is_open()) {
-		throw ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json");
-	}
+	if (config.is_open()) {
+		json j;
+		config >> j;
+		config.close();
 
-	json j;
-	config >> j;
+		load_config(j);
 
-	// API config
-	std::string api = j.value("api", "openai");
-	std::string endpoint;
-	if (api == "openai") {
-		endpoint = "https://api.openai.com/v1/responses";
+		api_ = new ai_api(endpoint_, api_key_);
 	}
-	else if (api == "openrouter") {
-		endpoint = "https://openrouter.ai/api/v1/responses";
-	}
-	else {
-		throw std::runtime_error("Unsupported API specified in config.json: '" + api + "'");
-	}
-
-	std::string api_key = j.value("api_key", "");
-	if (api_key.empty()) {
-		throw std::runtime_error("API key not found in config.json (did you read the installation instructions on the github?)");
-	}
-
-	if (endpoint == "openai") {
-		model_ = j.value("model", "gpt-4o-mini");
-	}
-	else if (endpoint == "openrouter") {
-		model_ = j.value("model", "openrouter/openai/gpt-4o-mini");
-	}
-	message_history_size_ = j.value("message_history_size", 6);
-
-	// other config
-	user_name_ = j.value("user_name", "");
-	system_prompt_ = j.value("behaviour_preset", "");
-
-	api_ = new ai_api(endpoint, api_key);
-
+	
 	// initialize with system prompt
 	add_to_history("system", get_system_prompt());
 }
@@ -176,6 +147,37 @@ std::string character_ai::get_character_name() const {
 std::string character_ai::now_str() const {
 	auto now = std::chrono::system_clock::now();
 	return std::format("{:%Y-%m-%d %H:%M:%S}", std::chrono::floor<std::chrono::seconds>(now));
+}
+
+void character_ai::load_config(nlohmann::json j) {
+	// API config
+	std::string api = j.value("api", "openai");
+	if (api == "openai") {
+		endpoint_ = "https://api.openai.com/v1/responses";
+	}
+	else if (api == "openrouter") {
+		endpoint_ = "https://openrouter.ai/api/v1/responses";
+	}
+	else {
+		throw std::runtime_error("Unsupported API specified in config.json: '" + api + "'");
+	}
+
+	std::string api_key = j.value("api_key", "");
+	if (api_key.empty()) {
+		throw std::runtime_error("API key not found in config.json (did you read the installation instructions on the github?)");
+	}
+
+	if (api == "openai") {
+		model_ = j.value("model", "gpt-4o-mini");
+	}
+	else if (api == "openrouter") {
+		model_ = j.value("model", "openrouter/openai/gpt-4o-mini");
+	}
+	message_history_size_ = j.value("message_history_size", 6);
+
+	// other config
+	user_name_ = j.value("user_name", "");
+	system_prompt_ = j.value("behaviour_preset", "");
 }
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {

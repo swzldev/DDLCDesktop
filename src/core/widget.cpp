@@ -44,12 +44,8 @@ void widget::main_loop() {
 					stop();
 				}
 
-				renderer_->begin_draw();
-
 				logic_->tick(delta_time);
-				logic_->visuals->draw();
-
-				renderer_->end_draw();
+				render();
 
 				last_time_ = now;
 			}
@@ -70,7 +66,7 @@ void widget::stop() {
 }
 
 widget::widget() {
-	// pre-init checks
+	// filesystem checks
 
 	// assets folder
 	if (!fs::exists("./assets/") || !fs::is_directory("./assets/")) {
@@ -85,12 +81,14 @@ widget::widget() {
 		throw std::runtime_error("Assets GUI directory './assets/gui/' not found (did you read the installation instructions on the github?)");
 	}
 
-	// config.json
-	if (!fs::exists("config.json") || !fs::is_regular_file("config.json")) {
-		throw ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json");
-	}
-
+	// allocate
 	window_ = new window(this);
 	renderer_ = window_->get_renderer();
 	logic_ = new character_logic(window_);
+}
+
+void widget::render() {
+	renderer_->begin_draw();
+	logic_->visuals->draw();
+	renderer_->end_draw();
 }

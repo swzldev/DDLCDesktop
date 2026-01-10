@@ -49,4 +49,6 @@ private:
 	std::chrono::high_resolution_clock::time_point last_time_;
 
 	character_logic* logic_;
+
+	void render();
 };

@@ -24,31 +24,21 @@ character_logic::character_logic(window* window) {
 	window_ = window;
 
 	std::ifstream cfg("config.json");
-	if (!cfg.is_open()) {
-		throw ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json");
-	}
+	if (cfg.is_open()) {
+		json j;
+		cfg >> j;
+		cfg.close();
 
-	json j;
-	cfg >> j;
-
-	std::string character_str = j.value("character", "monika");
-	character_ = ddlc_character::MONIKA;
-	if (character_str == "monika") {
-		character_ = ddlc_character::MONIKA;
-	}
-	else if (character_str == "yuri") {
-		character_ = ddlc_character::YURI;
-	}
-	else if (character_str == "natsuki") {
-		character_ = ddlc_character::NATSUKI;
-	}
-	else if (character_str == "sayori") {
-		character_ = ddlc_character::SAYORI;
+		load_config(j);
+		did_cfg_load_ = true;
 	}
 	else {
-		throw std::runtime_error("Invalid character specified in config.json: '" + character_str + "'");
+		// default
+		character_ = ddlc_character::MONIKA;
 	}
-	visuals = new character_visuals(window->get_renderer(), character_);
+
+	// create visuals
+	visuals = new character_visuals(window_->get_renderer(), character_);
 
 	// set buttons
 	visuals->add_text_button("Close", false, [this]() {
@@ -70,10 +60,6 @@ character_logic::character_logic(window* window) {
 		handle_interaction(interaction);
 		return 0;
 	});
-
-	// window opened
-	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
-	begin_think(interaction);
 }
 character_logic::~character_logic() {
 	if (ai) {
@@ -139,6 +125,19 @@ void character_logic::handle_interaction(const character_interaction& interactio
 }
 
 void character_logic::tick(float delta_time) {
+	if (first_tick_) {
+		if (did_cfg_load_) {
+			// window opened
+			character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
+			begin_think(interaction);
+		}
+		else {
+			handle_error(ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json"));
+		}
+
+		first_tick_ = false;
+	}
+
 	if (state_ == logic_state::THINKING) {
 		if (!visuals->is_speaking()) {
 			// constantly think
@@ -209,6 +208,10 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 
 	error_state_ = fatal ? error_state::FATAL : error_state::NON_FATAL;
 	state_ = logic_state::TALKING;
+
+	interaction_index_ = 0;
+	display_current_interaction();
+	interaction_index_++;
 }
 
 void character_logic::cleanup_temp_buttons() {
@@ -303,6 +306,26 @@ int character_logic::get_choice_input(int num_choices) {
 	}
 
 	return choice;
+}
+
+void character_logic::load_config(json j) {
+	std::string character_str = j.value("character", "monika");
+	character_ = ddlc_character::MONIKA;
+	if (character_str == "monika") {
+		character_ = ddlc_character::MONIKA;
+	}
+	else if (character_str == "yuri") {
+		character_ = ddlc_character::YURI;
+	}
+	else if (character_str == "natsuki") {
+		character_ = ddlc_character::NATSUKI;
+	}
+	else if (character_str == "sayori") {
+		character_ = ddlc_character::SAYORI;
+	}
+	else {
+		throw std::runtime_error("Invalid character specified in config.json: '" + character_str + "'");
+	}
 }
 
 void character_logic::reset_all() {

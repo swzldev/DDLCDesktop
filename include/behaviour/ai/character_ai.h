@@ -10,6 +10,8 @@
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/ai_api.h>
 
+#include <nlohmann/json.hpp>
+
 class character_ai {
 public:
 	character_ai(ddlc_character character);
@@ -31,6 +33,8 @@ public:
 	std::string now_str() const;
 
 private:
+	std::string endpoint_;
+	std::string api_key_;
 	ai_api* api_;
 	std::string model_ = "gpt-4o-mini";
 	int message_history_size_;
@@ -46,6 +50,8 @@ private:
 
 	std::future<character_state> pending_response_;
 	std::atomic<bool> is_processing_ = false;
+
+	void load_config(nlohmann::json j);
 
 	inline void add_to_history(const std::string& role, const std::string& content) {
 		conversation_history_.push_back({ role, content });
