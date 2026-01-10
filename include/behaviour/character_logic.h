@@ -16,6 +16,9 @@ class window;
 
 class character_logic {
 public:
+	static constexpr int INPUT_MAX_LENGTH = 200;
+
+public:
 	character_logic(window* window);
 	~character_logic();
 

@@ -203,7 +203,7 @@ void character_logic::await_input() {
 	current_input_.clear();
 
 	// start recording
-	input::begin_input_recording(&current_input_, 50, [this]() {
+	input::begin_input_recording(&current_input_, INPUT_MAX_LENGTH, [this]() {
 		// remove actions button (if applicable)
 		if (actions_button_ != -1) {
 			visuals->remove_text_button(actions_button_);
