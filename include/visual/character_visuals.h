@@ -48,8 +48,9 @@ public:
 	}
 
 	inline int add_text_button(const std::string& text, const std::function<void(int)>& on_click) {
-		text_buttons_.push_back({ text, on_click });
-		return static_cast<int>(text_buttons_.size() - 1);
+		int id = static_cast<int>(text_buttons_.size());
+		text_buttons_.push_back({ text, on_click, id });
+		return id;
 	}
 	inline void remove_text_button(int button_index) {
 		if (button_index >= 0 && button_index < static_cast<int>(text_buttons_.size())) {
