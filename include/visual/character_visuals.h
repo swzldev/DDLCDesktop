@@ -47,7 +47,7 @@ public:
 		is_speaking_ = false;
 	}
 
-	inline int add_text_button(const std::string& text, const std::function<void()>& on_click) {
+	inline int add_text_button(const std::string& text, const std::function<void(int)>& on_click) {
 		text_buttons_.push_back({ text, on_click });
 		return static_cast<int>(text_buttons_.size() - 1);
 	}
@@ -83,7 +83,7 @@ private:
 	// buttons
 	struct text_button {
 		std::string text;
-		std::function<void()> on_click;
+		std::function<void(int)> on_click;
 	};
 	const text_button* current_button_ = nullptr;
 	std::vector<text_button> text_buttons_;
