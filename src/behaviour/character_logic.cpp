@@ -146,6 +146,21 @@ void character_logic::tick(float delta_time) {
 		if (ai->is_response_ready()) {
 			visuals->set_chars_per_second(50.0f);
 			current_state = ai->get_response();
+			
+			// handle errors
+			if (current_state.err != character_state::error::NONE) {
+				switch (current_state.err) {
+				case character_state::error::FAIL_PARSE_RESPONSE_JSON:
+					handle_error(ddlcd_runtime_error(ddlcd_error::FAIL_PARSE_AI_RESPONSE, "Failed to parse AI response as JSON."));
+					return;
+				case character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN:
+					handle_error(ddlcd_runtime_error(ddlcd_error::FAIL_PARSE_AI_RESPONSE, "Failed to parse AI response due to unknown format."));
+					return;
+				default:
+					break;
+				}
+			}
+
 			if (!current_state.interactions.empty()) {
 				state_ = logic_state::TALKING;
 				interaction_index_ = 0;
@@ -200,6 +215,9 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	case ddlcd_error::FAIL_AI_RESPONSE:
 		current_state.interactions = error_stories::fail_ai_response_story();
 		fatal = true;
+		break;
+	case ddlcd_error::FAIL_PARSE_AI_RESPONSE:
+		current_state.interactions = error_stories::fail_parse_ai_response_story();
 		break;
 	case ddlcd_error::OTHER:
 		current_state.interactions.push_back({ "Uh oh! An error has occurred: " + error.message, "h", "1", "1"});
