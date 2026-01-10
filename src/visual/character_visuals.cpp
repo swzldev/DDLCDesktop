@@ -200,6 +200,7 @@ int character_visuals::on_mouse_click() {
 
 		if (current_button_->single_click) {
 			remove_text_button(current_button_->id);
+			current_button_ = nullptr;
 		}
 		return 1; // handled
 	}
