@@ -95,12 +95,22 @@ void character_logic::handle_interaction(const character_interaction& interactio
 			interaction_index_ = 0;
 
 			if (!current_state.actions.empty()) {
-				await_choice();
+				if (custom_mode_) {
+					await_input();
 
-				// (initial) custom button
-				visuals->add_text_button("Custom", true, [this]() {
-					custom_button_click();
-				});
+					// (initial) actions button
+					visuals->add_text_button("Actions", true, [this]() {
+						actions_button_click();
+					});
+				}
+				else {
+					await_choice();
+
+					// (initial) custom button
+					visuals->add_text_button("Custom", true, [this]() {
+						custom_button_click();
+					});
+				}
 			}
 			else {
 				visuals->set_saying("");
@@ -197,6 +207,7 @@ void character_logic::await_choice(bool show_immediate) {
 		visuals->set_saying(message);
 	}
 
+	custom_mode_ = false;
 	state_ = logic_state::AWAITING_CHOICE;
 }
 void character_logic::await_input() {
@@ -218,6 +229,7 @@ void character_logic::await_input() {
 		begin_think(input_interaction);
 	});
 
+	custom_mode_ = true;
 	state_ = logic_state::AWAITING_INPUT;
 }
 

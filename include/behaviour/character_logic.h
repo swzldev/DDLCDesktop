@@ -39,6 +39,7 @@ private:
 	int actions_button_ = -1;
 	int custom_button_ = -1;
 
+	bool custom_mode_ = false;
 	std::string current_input_;
 
 	void close_button_click();
