@@ -154,7 +154,7 @@ void character_logic::tick(float delta_time) {
 	}
 	else if (state_ == logic_state::AWAITING_INPUT) {
 		static std::string user_input;
-		input::begin_input_recording(&user_input, [this]() {
+		input::begin_input_recording(&user_input, 50, [this]() {
 			// on submit
 			character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
 			input_interaction.str_data = user_input;
