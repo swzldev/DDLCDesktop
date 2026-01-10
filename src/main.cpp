@@ -11,6 +11,18 @@
 
 #pragma comment(lib, "Dbghelp.lib")
 
+struct curl_global_raii
+{
+	curl_global_raii() {
+		curl_global_init(CURL_GLOBAL_DEFAULT);
+	}
+
+	~curl_global_raii() {
+		curl_global_cleanup();
+	}
+};
+static curl_global_raii g_curl_init_guard;
+
 LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* exceptionInfo) {
 	log::print("FATAL ERROR: Unhandled exception caught!\n");
 	log::print("Exception Code: 0x{:X}\n", exceptionInfo->ExceptionRecord->ExceptionCode);
