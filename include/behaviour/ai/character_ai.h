@@ -27,6 +27,8 @@ public:
 	std::string get_user_name() const;
 	std::string get_character_name() const;
 
+	std::string now_str() const;
+
 private:
 	openai_api* openai_;
 	std::string model_ = "gpt-4o-mini";

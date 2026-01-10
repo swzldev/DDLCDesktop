@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <fstream>
+#include <chrono>
 #include <unordered_map>
 
 #include <nlohmann/json.hpp>
@@ -61,7 +62,7 @@ character_ai::~character_ai() {
 }
 
 void character_ai::handle_close_interaction() {
-	add_to_history("user", "[Interaction] " + get_user_name() + " closed " + get_character_name() + "'s window.");
+	add_to_history("user", "[" + now_str() + "] " + get_user_name() + " closed " + get_character_name() + "'s window.");
 }
 
 void character_ai::handle_interaction_async(const character_interaction& interaction) {
@@ -144,6 +145,12 @@ std::string character_ai::get_character_name() const {
 	}
 }
 
+std::string character_ai::now_str() const {
+	auto now = std::chrono::system_clock::now();
+	std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+	return std::ctime(&now_c);
+}
+
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
 	std::string prompt = build_prompt(interaction);
 	std::string response = openai_->get_response(prompt);
@@ -184,13 +191,13 @@ std::string character_ai::interaction_to_message(const character_interaction& in
 	std::string character_name = get_character_name();
 	switch (interaction.get_kind()) {
 	case character_interaction::kind::CLICK:
-		return "[Interaction] " + user_name + " clicked " + character_name + ".";
+		return "[" + now_str() + "] " + user_name + " clicked " + character_name + ".";
 	case character_interaction::kind::CHOICE_MADE:
-		return "[Interaction] " + user_name + ": \"" + interaction.str_data + "\" (Choice " + std::to_string(interaction.int_data) + ")";
+		return "[" + now_str() + "] " + user_name + ": \"" + interaction.str_data + "\" (Choice " + std::to_string(interaction.int_data) + ")";
 	case character_interaction::kind::WINDOW_OPEN:
-		return "[Interaction] " + user_name + " opened " + character_name + "'s window.";
+		return "[" + now_str() + "] " + user_name + " opened " + character_name + "'s window.";
 	default:
-		return "[Interaction] " + user_name + " interacted with " + character_name + ", but an internal error occurred and we don't know what the interaction was.";
+		return "[" + now_str() + "] " + user_name + " interacted with " + character_name + ", but an internal error occurred and we don't know what the interaction was.";
 	}
 }
 std::string character_ai::extract_content_from_response(const std::string& response) {
