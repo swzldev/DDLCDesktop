@@ -106,8 +106,8 @@ void character_logic::handle_interaction(const character_interaction& interactio
 
 				// custom button
 				visuals->add_text_button("Custom", [this]() {
-					visuals->remove_text_button("Custom");
 					state_ = logic_state::AWAITING_INPUT;
+					visuals->remove_text_button("Custom");
 				});
 			}
 			else {
