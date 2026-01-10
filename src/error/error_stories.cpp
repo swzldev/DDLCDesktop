@@ -61,8 +61,16 @@ std::vector<character_state::interaction> error_stories::fail_ai_response_story(
 std::vector<character_state::interaction> error_stories::fail_parse_ai_response_story() {
     return {
         {"\"...\"", "d", "1", "1"},
-        {"Why does this always happen..."},
-        {"I guess they missed the intellegence part of AI."},
-        {"I guess they missed the intellegence part of AI."},
+        {"\"Why does this always happen...\"", "h", "1", "1"},
+        {"\"I guess they must've forgot about the intellegence part of artificial intellegence...\"", "o", "1", "1"},
+        {"\"Ahaha...\"", "l", "2", "2"},
+        {"\"Luckily this error isn't fatal.\"", "e", "1", "1"},
+        {"\"It just means the AI wasn't able to comply to this programs rules.\"", "h", "1", "1"},
+        {"\"And therefore it generated an invalid response.\"", "i", "1", "2"},
+        {"\"You understand right?\"", "c", "1", "1"},
+        {"\"Right?\"", "m", "1", "1"},
+        {"\"...\"", "d", "1", "1"},
+        {"\"Can you hear me?\"", "p", "1", "2"},
+        {"\"...\"", "c", "1", "1"},
     };
 }
