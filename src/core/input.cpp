@@ -33,7 +33,9 @@ void input::on_char_input(wchar_t c) {
 	if (cur_input_buffer_) {
 		// backspace
 		if (c == VK_BACK) {
-			cur_input_buffer_->pop_back();
+			if (!cur_input_buffer_->empty()) {
+				cur_input_buffer_->pop_back();
+			}
 		}
 		// submit (enter)
 		else if (c == VK_RETURN) {
