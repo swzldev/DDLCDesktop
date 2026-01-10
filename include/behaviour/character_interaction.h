@@ -10,6 +10,7 @@ public:
 	};
 
 public:
+	character_interaction() : kind_((kind)-1) {}
 	character_interaction(kind k) : kind_(k) {}
 	~character_interaction() = default;
 
