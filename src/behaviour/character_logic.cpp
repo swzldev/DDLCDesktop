@@ -261,7 +261,7 @@ void character_logic::begin_think(const character_interaction& interaction) {
 void character_logic::display_think() {
 	// slow effect while thinking
 	visuals->set_chars_per_second(2.0f);
-	visuals->set_saying("...");
+	visuals->set_saying("... ");
 }
 
 void character_logic::display_current_interaction() {
