@@ -232,12 +232,7 @@ void character_ai::worker_loop() {
 			continue;
 		}
 
-		character_state result{};
-		try {
-			result = handle_interaction_internal(interaction);
-		}
-		catch (...) {
-		}
+		character_state result = handle_interaction_internal(interaction);
 
 		if (cancel_requested_.load(std::memory_order_relaxed)) {
 			continue;
@@ -350,17 +345,13 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 		state.actions = j.value("actions", std::vector<std::string>{});
 
 	}
+	catch (nlohmann::json::exception& e) {
+		log::print("JSON parsing error in AI response: {}\n", e.what());
+
+		state.err = character_state::error::FAIL_PARSE_RESPONSE_JSON;
+	}
 	catch (...) {
-		// fallback
-		character_state::interaction i;
-		i.saying = "";
-		i.expression = "a";
-		i.pose_left = "1";
-		i.pose_right = "1";
-		i.new_x = -1;
-		i.new_scale = -1;
-		state.interactions.push_back(i);
-		state.actions = {};
+		state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
 	}
 
 	return state;
