@@ -23,6 +23,7 @@ public:
 
 	void save_state(const char* path);
 	void load_state(const char* path);
+	void reset_state();
 
 	std::string get_user_name() const;
 	std::string get_character_name() const;

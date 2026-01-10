@@ -146,6 +146,11 @@ void character_ai::load_state(const char* path) {
 	file.close();
 }
 
+void character_ai::reset_state() {
+	conversation_history_.clear();
+	add_to_history("system", get_system_prompt());
+}
+
 std::string character_ai::get_user_name() const {
 	if (user_name_.empty()) {
 		return "The user";
