@@ -206,14 +206,15 @@ void character_ai::worker_loop() {
 		{
 			std::unique_lock<std::mutex> lock(mutex_);
 			cv_.wait(lock, [this]() {
-				return stop_worker_.load(std::memory_order_relaxed);
-			});
+				return stop_worker_.load(std::memory_order_relaxed)
+					|| has_task_.load(std::memory_order_relaxed);
+				});
 			if (stop_worker_) {
 				return;
 			}
 
 			interaction = pending_interaction_;
-			has_task_ = false;
+			has_task_.store(false, std::memory_order_relaxed);
 		}
 
 		if (cancel_requested_.load(std::memory_order_relaxed)) {
@@ -231,7 +232,12 @@ void character_ai::worker_loop() {
 			continue;
 		}
 
-		character_state result = handle_interaction_internal(interaction);
+		character_state result{};
+		try {
+			result = handle_interaction_internal(interaction);
+		}
+		catch (...) {
+		}
 
 		if (cancel_requested_.load(std::memory_order_relaxed)) {
 			continue;
