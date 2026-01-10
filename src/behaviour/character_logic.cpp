@@ -15,6 +15,7 @@
 #include <ddlc/characters.h>
 #include <visual/character_visuals.h>
 #include <error/ddlcd_runtime_error.h>
+#include <error/error_stories.h>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -31,23 +32,23 @@ character_logic::character_logic(window* window) {
 	cfg >> j;
 
 	std::string character_str = j.value("character", "monika");
-	ddlc_character character = ddlc_character::MONIKA;
+	character_ = ddlc_character::MONIKA;
 	if (character_str == "monika") {
-		character = ddlc_character::MONIKA;
+		character_ = ddlc_character::MONIKA;
 	}
 	else if (character_str == "yuri") {
-		character = ddlc_character::YURI;
+		character_ = ddlc_character::YURI;
 	}
 	else if (character_str == "natsuki") {
-		character = ddlc_character::NATSUKI;
+		character_ = ddlc_character::NATSUKI;
 	}
 	else if (character_str == "sayori") {
-		character = ddlc_character::SAYORI;
+		character_ = ddlc_character::SAYORI;
 	}
 	else {
 		throw std::runtime_error("Invalid character specified in config.json: '" + character_str + "'");
 	}
-	visuals = new character_visuals(window->get_renderer(), character);
+	visuals = new character_visuals(window->get_renderer(), character_);
 
 	// set buttons
 	visuals->add_text_button("Close", false, [this]() {
@@ -58,7 +59,7 @@ character_logic::character_logic(window* window) {
 	});
 
 	// create ai
-	ai = new character_ai(character);
+	ai = new character_ai(character_);
 
 	if (fs::exists("character_state.json")) {
 		ai->load_state("character_state.json");
@@ -103,8 +104,11 @@ void character_logic::handle_interaction(const character_interaction& interactio
 			// end of conversation
 			interaction_index_ = 0;
 
-			if (error_state_) {
+			if (error_state_ == error_state::NON_FATAL) {
 				reset_button_click();
+			}
+			else if (error_state_ == error_state::FATAL) {
+				window_->close();
 			}
 			else {
 				if (!current_state.actions.empty()) {
@@ -180,20 +184,30 @@ void character_logic::tick(float delta_time) {
 }
 
 void character_logic::handle_error(const ddlcd_runtime_error& error) {
+	// cleanup
 	cleanup_temp_buttons();
+	current_state.interactions.clear();
 
+	visuals->set_character(ddlc_character::MONIKA);
 	visuals->set_chars_per_second(50.0f);
+	
+	bool fatal = false;
 
 	switch (error.kind) {
+	case ddlcd_error::FAIL_OPEN_CONFIG:
+		current_state.interactions = error_stories::fail_load_config_story();
+		fatal = true;
+		break;
 	case ddlcd_error::OTHER:
-		current_state.interactions.clear();
-		current_state.interactions.push_back({ "An error has occurred: " + error.message });
+		current_state.interactions.push_back({ "Uh oh! An error has occurred: " + error.message, "h", "1", "1"});
 		break;
 	}
 
-	current_state.interactions.push_back({ "The application will now reset." });
+	if (!fatal) {
+		current_state.interactions.push_back({ "The application will now reset." });
+	}
 
-	error_state_ = true;
+	error_state_ = fatal ? error_state::FATAL : error_state::NON_FATAL;
 	state_ = logic_state::TALKING;
 }
 
@@ -299,6 +313,11 @@ void character_logic::reset_all() {
 	cleanup_temp_buttons();
 
 	ai->reset_state();
+	current_state.interactions.clear();
+	interaction_index_ = 0;
+	error_state_ = error_state::NONE;
+
+	visuals->set_character(character_);
 
 	// start new interaction
 	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
