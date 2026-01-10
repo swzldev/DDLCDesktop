@@ -25,7 +25,7 @@ character_logic::character_logic(window* window) {
 
 	std::ifstream cfg("config.json");
 	if (!cfg.is_open()) {
-		throw std::runtime_error("Failed to open config.json (you will need to recreate it yourself or reinstall)");
+		throw ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json");
 	}
 
 	json j;
