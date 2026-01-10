@@ -2,7 +2,7 @@
 
 #include <string>
 #include <stdexcept>
-#include <regex>
+#include <vector>
 
 #include <curl/curl.h>
 
@@ -50,20 +50,68 @@ std::string ai_api::get_response(const std::string& prompt) {
 }
 
 std::string ai_api::parse_response(const std::string& response) {
+	static const std::vector<std::pair<std::string, std::string>> unicode_replacements = {
+		// quotes
+		{"\\u2018", "'"},   // left single quote
+		{"\\u2019", "'"},   // right single quote
+		{"\\u201C", "\""},  // left double quote
+		{"\\u201D", "\""},  // right double quote
+		{"\\u00AB", "\""},  // left angle quote
+		{"\\u00BB", "\""},  // right angle quote
+
+		// dashes & hyphens
+		{"\\u2014", "--"},  // em dash
+		{"\\u2013", "-"},   // en dash
+		{"\\u2011", "-"},   // non-breaking hyphen
+		{"\\u2212", "-"},   // minus sign
+
+		// ellipsis
+		{"\\u2026", "..."}, // ellipsis
+
+		// spaces & invisibles
+		{"\\u00A0", " "},   // non-breaking space
+		{"\\u202F", " "},   // narrow no-break space
+		{"\\u200B", ""},    // zero-width space
+		{"\\u200C", ""},    // zero-width non-joiner
+		{"\\u200D", ""},    // zero-width joiner
+
+		// bullets & dots
+		{"\\u2022", "*"},   // bullet
+		{"\\u00B7", "*"},   // middle dot
+
+		// primes
+		{"\\u2032", "'"},   // single prime
+		{"\\u2033", "\""},  // double prime
+
+		// symbols
+		{"\\u2122", "(TM)"},// trademark
+		{"\\u00A9", "(C)"}, // copyright
+		{"\\u00AE", "(R)"}, // registered
+
+		// math
+		{"\\u00D7", "x"},   // multiplication
+		{"\\u00F7", "/"}    // division
+	};
+
 	std::string result = response;
 
-	// left/right single quotes -> apostrophe
-	result = std::regex_replace(result, std::regex("\\\\u2018"), "'");
-	result = std::regex_replace(result, std::regex("\\\\u2019"), "'");
-	// left/right double quotes -> straight quotes
-	result = std::regex_replace(result, std::regex("\\\\u201C"), "\"");
-	result = std::regex_replace(result, std::regex("\\\\u201D"), "\"");
-	// em dash -> double dash
-	result = std::regex_replace(result, std::regex("\\\\u2014"), "--");
-	// en dash -> single dash
-	result = std::regex_replace(result, std::regex("\\\\u2013"), "-");
-	// ellipsis -> three dots
-	result = std::regex_replace(result, std::regex("\\\\u2026"), "...");
+	auto replace_all = [](std::string& s, const std::string& from, const std::string& to) {
+		if (from.empty()) return;
+
+		size_t pos = 0;
+		while ((pos = s.find(from, pos)) != std::string::npos)
+		{
+			s.replace(pos, from.length(), to);
+			pos += to.length();
+		}
+	};
+
+	for (const auto& [from, to] : unicode_replacements)
+	{
+		// some models return either the escaped or unescaped version
+		replace_all(result, from, to);
+		replace_all(result, "\\" + from, to);
+	}
 
 	return result;
 }
