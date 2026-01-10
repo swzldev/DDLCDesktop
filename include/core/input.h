@@ -11,7 +11,7 @@ public:
 
 	static void tick();
 
-	static void begin_input_recording(std::string* buffer, std::function<void()> on_submit = nullptr);
+	static void begin_input_recording(std::string* buffer, int max_length = 50, std::function<void()> on_submit = nullptr);
 	static void end_input_recording();
 
 private:
@@ -24,4 +24,5 @@ private:
 
 	static std::function<void()> on_submit_;
 	static std::string* cur_input_buffer_;
+	static int max_input_length_;
 };
