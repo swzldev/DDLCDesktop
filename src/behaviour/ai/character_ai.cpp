@@ -67,9 +67,15 @@ void character_ai::handle_interaction_async(const character_interaction& interac
 	is_processing_ = true;
 
 	pending_response_ = std::async(std::launch::async, [this, interaction]() {
-		character_state state = handle_interaction_internal(interaction);
-		is_processing_ = false;
-		return state;
+		try {
+			character_state state = handle_interaction_internal(interaction);
+			is_processing_ = false;
+			return state;
+		}
+		catch (...) {
+			is_processing_ = false;
+			throw;
+		}
 	});
 }
 bool character_ai::is_response_ready() const {
@@ -252,7 +258,7 @@ std::string character_ai::extract_content_from_response(const std::string& respo
 			}
 		}
 	}
-	catch (...) {
+	catch (nlohmann::json::exception) {
 		return "";
 	}
 }
