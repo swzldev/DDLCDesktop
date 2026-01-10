@@ -1,6 +1,7 @@
 #pragma once
 
-// basic wrapper around GetAsyncKeyState
+#include <string>
+#include <functional>
 
 class input {
 public:
@@ -10,7 +11,17 @@ public:
 
 	static void tick();
 
+	static void begin_input_recording(std::string* buffer, std::function<void()> on_submit = nullptr);
+	static void end_input_recording();
+
 private:
+	friend class window;
+
+	static void on_char_input(wchar_t c);
+
 	static bool key_states_[256];
 	static bool prev_key_states_[256];
+
+	static std::function<void()> on_submit_;
+	static std::string* cur_input_buffer_;
 };
