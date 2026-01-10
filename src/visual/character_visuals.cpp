@@ -197,6 +197,10 @@ void character_visuals::draw_all_buttons() {
 int character_visuals::on_mouse_click() {
 	if (current_button_) {
 		current_button_->on_click(current_button_->id);
+
+		if (current_button_->single_click) {
+			remove_text_button(current_button_->id);
+		}
 		return 1; // handled
 	}
 	return 0; // not handled
