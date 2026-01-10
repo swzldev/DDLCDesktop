@@ -197,6 +197,10 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 		current_state.interactions = error_stories::fail_load_config_story();
 		fatal = true;
 		break;
+	case ddlcd_error::FAIL_AI_RESPONSE:
+		current_state.interactions = error_stories::fail_ai_response_story();
+		fatal = true;
+		break;
 	case ddlcd_error::OTHER:
 		current_state.interactions.push_back({ "Uh oh! An error has occurred: " + error.message, "h", "1", "1"});
 		break;
