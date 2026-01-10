@@ -5,6 +5,7 @@ public:
 	enum class kind {
 		CLICK,
 		CHOICE_MADE,
+		CUSTOM_MESSAGE,
 		WINDOW_OPEN,
 	};
 
