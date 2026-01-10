@@ -2,8 +2,10 @@
 
 #include <string>
 #include <vector>
-#include <future>
+#include <thread>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 #include <ddlc/characters.h>
 #include <behaviour/character_state.h>
@@ -26,6 +28,7 @@ public:
 	void save_state(const char* path);
 	void load_state(const char* path);
 	void reset_state();
+	void cancel_and_reset();
 
 	std::string get_user_name() const;
 	std::string get_character_name() const;
@@ -48,8 +51,18 @@ private:
 	};
 	std::vector<message> conversation_history_;
 
-	std::future<character_state> pending_response_;
-	std::atomic<bool> is_processing_ = false;
+	std::thread worker_;
+	std::atomic<bool> stop_worker_{ false };
+	std::atomic<bool> has_task_{ false };
+	std::atomic<bool> is_processing_{ false };
+	std::atomic<bool> has_result_{ false };
+	std::atomic<bool> cancel_requested_{ false };
+	character_interaction pending_interaction_;
+	character_state pending_result_;
+	mutable std::mutex mutex_;
+	std::condition_variable cv_;
+
+	void request_cancel();
 
 	void load_config(nlohmann::json j);
 
@@ -60,6 +73,8 @@ private:
 			conversation_history_.erase(conversation_history_.begin() + 1);
 		}
 	}
+
+	void worker_loop();
 
 	character_state handle_interaction_internal(const character_interaction& interaction);
 	std::string build_prompt(const character_interaction& interaction);

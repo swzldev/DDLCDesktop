@@ -7,6 +7,10 @@
 #include <chrono>
 #include <unordered_map>
 #include <format>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 #include <nlohmann/json.hpp>
 
@@ -34,21 +38,19 @@ character_ai::character_ai(ddlc_character character) {
 	
 	// initialize with system prompt
 	add_to_history("system", get_system_prompt());
+
+	// start worker thread
+	stop_worker_.store(false, std::memory_order_relaxed);
+	worker_ = std::thread(&character_ai::worker_loop, this);
 }
 character_ai::~character_ai() {
-	if (pending_response_.valid()) {
-		auto status = pending_response_.wait_for(std::chrono::seconds(2));
-
-		if (status == std::future_status::timeout) {
-			log::print("Warning: Abandoning pending AI response on shutdown\n");
-		}
-		else {
-			try {
-				pending_response_.get();
-			}
-			catch (...) {
-			}
-		}
+	{
+		std::lock_guard<std::mutex> lock(mutex_);
+		stop_worker_.store(true, std::memory_order_relaxed);
+	}
+	cv_.notify_all();
+	if (worker_.joinable()) {
+		worker_.join();
 	}
 
 	delete api_;
@@ -60,36 +62,32 @@ void character_ai::handle_close_interaction() {
 }
 
 void character_ai::handle_interaction_async(const character_interaction& interaction) {
-	if (is_processing_) {
-		return; // already processing
+	if (has_task_.load(std::memory_order_relaxed) || is_processing_.load(std::memory_order_relaxed)) {
+		return;
 	}
 
-	is_processing_ = true;
-
-	pending_response_ = std::async(std::launch::async, [this, interaction]() {
-		try {
-			character_state state = handle_interaction_internal(interaction);
-			is_processing_ = false;
-			return state;
-		}
-		catch (...) {
-			is_processing_ = false;
-			throw;
-		}
-	});
+	{
+		std::lock_guard<std::mutex> lock(mutex_);
+		pending_interaction_ = interaction;
+		has_task_.store(true, std::memory_order_relaxed);
+		has_result_.store(false, std::memory_order_relaxed);
+		cancel_requested_.store(false, std::memory_order_relaxed);
+		is_processing_.store(true, std::memory_order_relaxed);
+	}
+	cv_.notify_one();
 }
 bool character_ai::is_response_ready() const {
-	if (!pending_response_.valid()) {
-		return false;
-	}
-
-	return pending_response_.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+	return has_result_.load(std::memory_order_relaxed);
 }
 character_state character_ai::get_response() {
-	if (pending_response_.valid()) {
-		return pending_response_.get();
+	std::lock_guard<std::mutex> lock(mutex_);
+	if (!has_result_) {
+		return character_state{};
 	}
-	return character_state{};
+
+	has_result_.store(false, std::memory_order_relaxed);
+	is_processing_.store(false, std::memory_order_relaxed);
+	return pending_result_;
 }
 
 void character_ai::save_state(const char* path) {
@@ -128,6 +126,16 @@ void character_ai::reset_state() {
 	conversation_history_.clear();
 	add_to_history("system", get_system_prompt());
 }
+void character_ai::cancel_and_reset() {
+	request_cancel();
+	{
+		std::lock_guard<std::mutex> lock(mutex_);
+		has_task_.store(false, std::memory_order_relaxed);
+		has_result_.store(false, std::memory_order_relaxed);
+		is_processing_.store(false, std::memory_order_relaxed);
+	}
+	reset_state();
+}
 
 std::string character_ai::get_user_name() const {
 	if (user_name_.empty()) {
@@ -153,6 +161,10 @@ std::string character_ai::get_character_name() const {
 std::string character_ai::now_str() const {
 	auto now = std::chrono::system_clock::now();
 	return std::format("{:%Y-%m-%d %H:%M:%S}", std::chrono::floor<std::chrono::seconds>(now));
+}
+
+void character_ai::request_cancel() {
+	cancel_requested_.store(true, std::memory_order_relaxed);
 }
 
 void character_ai::load_config(nlohmann::json j) {
@@ -184,6 +196,54 @@ void character_ai::load_config(nlohmann::json j) {
 	// other config
 	user_name_ = j.value("user_name", "");
 	system_prompt_ = j.value("behaviour_preset", "");
+}
+
+void character_ai::worker_loop() {
+	while (true) {
+		character_interaction interaction;
+
+		// wait for work or stop
+		{
+			std::unique_lock<std::mutex> lock(mutex_);
+			cv_.wait(lock, [this]() {
+				return stop_worker_.load(std::memory_order_relaxed);
+			});
+			if (stop_worker_) {
+				return;
+			}
+
+			interaction = pending_interaction_;
+			has_task_ = false;
+		}
+
+		if (cancel_requested_.load(std::memory_order_relaxed)) {
+			continue;
+		}
+
+		if (!api_) {
+			// no API configured; treat as empty response
+			character_state empty_state{};
+			{
+				std::lock_guard<std::mutex> lock(mutex_);
+				pending_result_ = empty_state;
+				has_result_.store(true, std::memory_order_relaxed);
+			}
+			continue;
+		}
+
+		character_state result = handle_interaction_internal(interaction);
+
+		if (cancel_requested_.load(std::memory_order_relaxed)) {
+			continue;
+		}
+
+		// store result
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			pending_result_ = result;
+			has_result_.store(true, std::memory_order_relaxed);
+		}
+	}
 }
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
@@ -241,7 +301,7 @@ std::string character_ai::extract_content_from_response(const std::string& respo
 	try {
 		auto j = json::parse(response);
 
-		if (j.contains("error")) {
+		if (j.contains("error") && !j["error"].is_null()) {
 			throw ddlcd_runtime_error(ddlcd_error::FAIL_AI_RESPONSE, "AI API returned an error: " + j["error"].dump());
 		}
 
