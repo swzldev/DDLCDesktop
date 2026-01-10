@@ -1,4 +1,4 @@
-#include <behaviour/ai/openai_api.h>
+#include <behaviour/ai/ai_api.h>
 
 #include <string>
 #include <stdexcept>
@@ -6,10 +6,12 @@
 
 #include <curl/curl.h>
 
-openai_api::openai_api(const std::string& api_key) {
+ai_api::ai_api(const std::string& endpoint, const std::string& api_key) {
+	endpoint_ = endpoint;
     api_key_ = api_key;
 	curl_ = curl_easy_init();
-	curl_easy_setopt(curl_, CURLOPT_URL, "https://api.openai.com/v1/responses");
+
+	curl_easy_setopt(curl_, CURLOPT_URL, endpoint_.c_str());
 	curl_easy_setopt(curl_, CURLOPT_POST, 1L);
 
 	curl_easy_setopt(curl_, CURLOPT_TIMEOUT, 30L);
@@ -17,14 +19,16 @@ openai_api::openai_api(const std::string& api_key) {
 
 	curl_easy_setopt(curl_, CURLOPT_NOSIGNAL, 1L);
 }
-openai_api::~openai_api() {
+ai_api::~ai_api() {
 	curl_easy_cleanup(curl_);
 }
 
-std::string openai_api::get_response(const std::string& prompt) {
+std::string ai_api::get_response(const std::string& prompt) {
 	curl_slist* headers = nullptr;
 	headers = curl_slist_append(headers, "Content-Type: application/json");
 	headers = curl_slist_append(headers, ("Authorization: Bearer " + api_key_).c_str());
+
+	headers = curl_slist_append(headers, "X-Title: DDLC Desktop");
 
 	curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, prompt.c_str());
 
@@ -45,7 +49,7 @@ std::string openai_api::get_response(const std::string& prompt) {
 	return parse_response(response);
 }
 
-std::string openai_api::parse_response(const std::string& response) {
+std::string ai_api::parse_response(const std::string& response) {
 	std::string result = response;
 
 	// left/right single quotes -> apostrophe
@@ -64,7 +68,7 @@ std::string openai_api::parse_response(const std::string& response) {
 	return result;
 }
 
-size_t openai_api::write_callback(void* contents, size_t size, size_t nmemb, std::string* out) {
+size_t ai_api::write_callback(void* contents, size_t size, size_t nmemb, std::string* out) {
 	out->append((char*)contents, size * nmemb);
 	return size * nmemb;
 }

@@ -132,7 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\behaviour\ai\character_ai.cpp" />
-    <ClCompile Include="src\behaviour\ai\openai_api.cpp" />
+    <ClCompile Include="src\behaviour\ai\ai_api.cpp" />
     <ClCompile Include="src\behaviour\ai\system_prompts.cpp" />
     <ClCompile Include="src\behaviour\character_logic.cpp" />
     <ClCompile Include="src\config\config.cpp" />
@@ -148,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\behaviour\ai\character_ai.h" />
-    <ClInclude Include="include\behaviour\ai\openai_api.h" />
+    <ClInclude Include="include\behaviour\ai\ai_api.h" />
     <ClInclude Include="include\behaviour\ai\system_prompts.h" />
     <ClInclude Include="include\behaviour\character_interaction.h" />
     <ClInclude Include="include\behaviour\character_logic.h" />

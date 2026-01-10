@@ -4,14 +4,15 @@
 
 #include <curl/curl.h>
 
-class openai_api {
+class ai_api {
 public:
-	openai_api(const std::string& api_key);
-	~openai_api();
+	ai_api(const std::string& endpoint, const std::string& api_key);
+	~ai_api();
 
 	std::string get_response(const std::string& prompt);
 
 private:
+	std::string endpoint_;
 	std::string api_key_;
 	CURL* curl_ = nullptr;
 

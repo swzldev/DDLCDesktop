@@ -36,7 +36,7 @@
     <ClCompile Include="src\behaviour\character_logic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\behaviour\ai\openai_api.cpp">
+    <ClCompile Include="src\behaviour\ai\ai_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\behaviour\ai\character_ai.cpp">
@@ -92,7 +92,7 @@
     <ClInclude Include="include\behaviour\ai\character_ai.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\behaviour\ai\openai_api.h">
+    <ClInclude Include="include\behaviour\ai\ai_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\behaviour\character_interaction.h">
