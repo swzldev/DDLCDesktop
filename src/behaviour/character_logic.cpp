@@ -153,17 +153,19 @@ void character_logic::tick(float delta_time) {
 		}
 	}
 	else if (state_ == logic_state::AWAITING_INPUT) {
-		// waiting for user to type input
 		static std::string user_input;
 		input::begin_input_recording(&user_input, [this]() {
 			// on submit
-			character_interaction input_interaction(character_interaction::kind::CHOICE_MADE);
+			character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
 			input_interaction.str_data = user_input;
-			input_interaction.int_data = -1; // custom input
 			user_input.clear();
 			input::end_input_recording();
 			begin_think(input_interaction);
 		});
+
+		// show current input
+		std::string full = "You: " + user_input + "_";
+		visuals->set_saying_immediate(full);
 	}
 
 	visuals->tick(delta_time);
