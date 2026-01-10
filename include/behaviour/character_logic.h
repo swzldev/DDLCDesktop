@@ -33,9 +33,14 @@ private:
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
+	std::string current_input_;
+
 	void close_button_click();
 	void custom_button_click();
 	void actions_button_click();
+
+	void await_choice(bool show_immediate = false);
+	void await_input();
 
 	int get_choice_input(int num_choices);
 

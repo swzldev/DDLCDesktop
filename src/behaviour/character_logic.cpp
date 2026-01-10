@@ -95,19 +95,7 @@ void character_logic::handle_interaction(const character_interaction& interactio
 			interaction_index_ = 0;
 
 			if (!current_state.actions.empty()) {
-				state_ = logic_state::AWAITING_CHOICE;
-
-				int num_actions = current_state.actions.size();
-				std::string message = "Choose an action:\n";
-				for (int i = 0; i < num_actions; i++) {
-					message += std::to_string(i + 1) + ") " + current_state.actions[i] + "    ";
-				}
-				visuals->set_saying(message);
-
-				// custom button
-				visuals->add_text_button("Custom", true, [this]() {
-					custom_button_click();
-				});
+				await_choice();
 			}
 			else {
 				visuals->set_saying("");
@@ -152,18 +140,8 @@ void character_logic::tick(float delta_time) {
 		}
 	}
 	else if (state_ == logic_state::AWAITING_INPUT) {
-		static std::string user_input;
-		input::begin_input_recording(&user_input, 50, [this]() {
-			// on submit
-			character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
-			input_interaction.str_data = user_input;
-			user_input.clear();
-			input::end_input_recording();
-			begin_think(input_interaction);
-		});
-
 		// show current input
-		std::string full = "You: " + user_input + "_";
+		std::string full = "You: " + current_input_ + "_";
 		visuals->set_saying_immediate(full);
 	}
 
@@ -177,7 +155,7 @@ void character_logic::close_button_click() {
 	window_->close();
 }
 void character_logic::custom_button_click() {
-	state_ = logic_state::AWAITING_INPUT;
+	await_input();
 
 	// create actions button
 	visuals->add_text_button("Actions", true, [this]() {
@@ -185,12 +163,43 @@ void character_logic::custom_button_click() {
 	});
 }
 void character_logic::actions_button_click() {
-	state_ = logic_state::AWAITING_CHOICE;
+	await_choice(true);
 
 	// create custom button
 	visuals->add_text_button("Custom", true, [this]() {
 		custom_button_click();
 	});
+}
+
+void character_logic::await_choice(bool show_immediate) {
+	int num_actions = current_state.actions.size();
+	std::string message = "Choose an action:\n";
+	for (int i = 0; i < num_actions; i++) {
+		message += std::to_string(i + 1) + ") " + current_state.actions[i] + "    ";
+	}
+	visuals->set_saying(message);
+
+	// custom button
+	visuals->add_text_button("Custom", true, [this]() {
+		custom_button_click();
+	});
+
+	state_ = logic_state::AWAITING_CHOICE;
+}
+void character_logic::await_input() {
+	current_input_.clear();
+
+	// start recording
+	input::begin_input_recording(&current_input_, 50, [this]() {
+		// on submit
+		character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
+		input_interaction.str_data = current_input_;
+		current_input_.clear();
+		input::end_input_recording();
+		begin_think(input_interaction);
+	});
+
+	state_ = logic_state::AWAITING_INPUT;
 }
 
 int character_logic::get_choice_input(int num_choices) {
