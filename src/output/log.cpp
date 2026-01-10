@@ -9,14 +9,11 @@
 namespace fs = std::filesystem;
 
 void log::open_file(const char* filename) {
-	file_.open(filename, std::ios::out | std::ios::app);
-
-	if (!file_.is_open()) {
-		throw std::runtime_error("Failed to open log file");
+	if (file_.is_open()) {
+		file_.close();
 	}
 
 	const std::uintmax_t max_size_bytes = 5 * 1024 * 1024; // 5mb
-
 	try {
 		if (fs::exists(filename)) {
 			const auto size = fs::file_size(filename);
