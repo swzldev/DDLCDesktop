@@ -3,6 +3,7 @@
 #include <visual/character_visuals.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/character_ai.h>
+#include <ddlc/characters.h>
 #include <error/ddlcd_runtime_error.h>
 
 enum class logic_state {
@@ -11,6 +12,12 @@ enum class logic_state {
 	TALKING,
 	AWAITING_CHOICE,
 	AWAITING_INPUT,
+};
+
+enum class error_state {
+	NONE,
+	NON_FATAL,
+	FATAL,
 };
 
 class window;
@@ -35,8 +42,9 @@ public:
 
 private:
 	window* window_ = nullptr;
+	ddlc_character character_ = ddlc_character::MONIKA;
 
-	bool error_state_ = false;
+	error_state error_state_ = error_state::NONE;
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
