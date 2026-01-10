@@ -3,6 +3,7 @@
 #include <visual/character_visuals.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/character_ai.h>
+#include <error/ddlcd_runtime_error.h>
 
 enum class logic_state {
 	IDLE,
@@ -26,6 +27,8 @@ public:
 
 	void tick(float delta_time);
 
+	void handle_error(const ddlcd_runtime_error& error);
+
 	character_visuals* visuals;
 	character_ai* ai;
 	character_state current_state;
@@ -33,11 +36,13 @@ public:
 private:
 	window* window_ = nullptr;
 
+	bool error_state_ = false;
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
 	int actions_button_ = -1;
 	int custom_button_ = -1;
+	void cleanup_temp_buttons();
 
 	bool custom_mode_ = false;
 	std::string current_input_;
@@ -51,6 +56,8 @@ private:
 	void await_input();
 
 	int get_choice_input(int num_choices);
+
+	void reset_all();
 
 	void begin_think(const character_interaction& interaction);
 

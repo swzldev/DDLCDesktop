@@ -10,6 +10,11 @@
 #include <core/window.h>
 #include <core/input.h>
 #include <behaviour/character_interaction.h>
+#include <behaviour/ai/character_ai.h>
+#include <behaviour/character_state.h>
+#include <ddlc/characters.h>
+#include <visual/character_visuals.h>
+#include <error/ddlcd_runtime_error.h>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -98,27 +103,32 @@ void character_logic::handle_interaction(const character_interaction& interactio
 			// end of conversation
 			interaction_index_ = 0;
 
-			if (!current_state.actions.empty()) {
-				if (custom_mode_) {
-					await_input();
-
-					// (initial) actions button
-					actions_button_ = visuals->add_text_button("Actions", true, [this]() {
-						actions_button_click();
-					});
-				}
-				else {
-					await_choice();
-
-					// (initial) custom button
-					custom_button_ = visuals->add_text_button("Custom", true, [this]() {
-						custom_button_click();
-					});
-				}
+			if (error_state_) {
+				reset_button_click();
 			}
 			else {
-				visuals->set_saying("");
-				state_ = logic_state::IDLE;
+				if (!current_state.actions.empty()) {
+					if (custom_mode_) {
+						await_input();
+
+						// (initial) actions button
+						actions_button_ = visuals->add_text_button("Actions", true, [this]() {
+							actions_button_click();
+						});
+					}
+					else {
+						await_choice();
+
+						// (initial) custom button
+						custom_button_ = visuals->add_text_button("Custom", true, [this]() {
+							custom_button_click();
+						});
+					}
+				}
+				else {
+					visuals->set_saying("");
+					state_ = logic_state::IDLE;
+				}
 			}
 		}
 	}
@@ -150,11 +160,7 @@ void character_logic::tick(float delta_time) {
 		int choice = get_choice_input(num_actions);
 
 		if (choice != -1) {
-			// remove custom button (if applicable)
-			if (custom_button_ != -1) {
-				visuals->remove_text_button(custom_button_);
-				custom_button_ = -1;
-			}
+			cleanup_temp_buttons();
 
 			// user made a choice
 			character_interaction choice_interaction(character_interaction::kind::CHOICE_MADE);
@@ -173,6 +179,36 @@ void character_logic::tick(float delta_time) {
 	visuals->tick(delta_time);
 }
 
+void character_logic::handle_error(const ddlcd_runtime_error& error) {
+	cleanup_temp_buttons();
+
+	visuals->set_chars_per_second(50.0f);
+
+	switch (error.kind) {
+	case ddlcd_error::OTHER:
+		current_state.interactions.clear();
+		current_state.interactions.push_back({ "An error has occurred: " + error.message });
+		break;
+	}
+
+	current_state.interactions.push_back({ "The application will now reset." });
+
+	error_state_ = true;
+	state_ = logic_state::TALKING;
+}
+
+void character_logic::cleanup_temp_buttons() {
+	// remove temp buttons
+	if (actions_button_ != -1) {
+		visuals->remove_text_button(actions_button_);
+		actions_button_ = -1;
+	}
+	if (custom_button_ != -1) {
+		visuals->remove_text_button(custom_button_);
+		custom_button_ = -1;
+	}
+}
+
 void character_logic::close_button_click() {
 	ai->handle_close_interaction();
 	ai->save_state("character_state.json");
@@ -180,15 +216,7 @@ void character_logic::close_button_click() {
 	window_->close();
 }
 void character_logic::reset_button_click() {
-	// cleanup
-	if (fs::exists("character_state.json")) {
-		fs::remove("character_state.json");
-	}
-
-	ai->reset_state();
-
-	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
-	begin_think(interaction);
+	reset_all();
 }
 void character_logic::custom_button_click() {
 	await_input();
@@ -230,11 +258,7 @@ void character_logic::await_input() {
 
 	// start recording
 	input::begin_input_recording(&current_input_, INPUT_MAX_LENGTH, [this]() {
-		// remove actions button (if applicable)
-		if (actions_button_ != -1) {
-			visuals->remove_text_button(actions_button_);
-			actions_button_ = -1;
-		}
+		cleanup_temp_buttons();
 
 		// on submit
 		character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
@@ -265,6 +289,20 @@ int character_logic::get_choice_input(int num_choices) {
 	}
 
 	return choice;
+}
+
+void character_logic::reset_all() {
+	// cleanup
+	if (fs::exists("character_state.json")) {
+		fs::remove("character_state.json");
+	}
+	cleanup_temp_buttons();
+
+	ai->reset_state();
+
+	// start new interaction
+	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
+	begin_think(interaction);
 }
 
 void character_logic::begin_think(const character_interaction& interaction) {
