@@ -59,3 +59,4 @@ bool input::prev_key_states_[256] = { false };
 
 std::function<void()> input::on_submit_ = nullptr;
 std::string* input::cur_input_buffer_ = nullptr;
+int input::max_input_length_ = 50;
