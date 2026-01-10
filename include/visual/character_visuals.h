@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include <map>
+#include <vector>
 
 #include <core/renderer.h>
 #include <visual/sprite.h>
@@ -47,11 +47,14 @@ public:
 		is_speaking_ = false;
 	}
 
-	inline void add_text_button(const std::string& text, const std::function<void()>& on_click) {
-		text_buttons_[text] = { text, on_click };
+	inline int add_text_button(const std::string& text, const std::function<void()>& on_click) {
+		text_buttons_.push_back({ text, on_click });
+		return static_cast<int>(text_buttons_.size() - 1);
 	}
-	inline void remove_text_button(const std::string& text) {
-		text_buttons_.erase(text);
+	inline void remove_text_button(int button_index) {
+		if (button_index >= 0 && button_index < static_cast<int>(text_buttons_.size())) {
+			text_buttons_.erase(text_buttons_.begin() + button_index);
+		}
 	}
 
 private:
@@ -83,7 +86,7 @@ private:
 		std::function<void()> on_click;
 	};
 	const text_button* current_button_ = nullptr;
-	std::map<std::string, text_button> text_buttons_;
+	std::vector<text_button> text_buttons_;
 
 	void draw_all_buttons();
 
