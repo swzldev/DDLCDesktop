@@ -9,6 +9,7 @@ enum class logic_state {
 	THINKING,
 	TALKING,
 	AWAITING_CHOICE,
+	AWAITING_INPUT,
 };
 
 class window;
