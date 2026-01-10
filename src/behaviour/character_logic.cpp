@@ -91,7 +91,7 @@ void character_logic::handle_interaction(const character_interaction& interactio
 			interaction_index_ = 0;
 
 			if (error_state_ == error_state::NON_FATAL) {
-				reset_button_click();
+				reset_all();
 			}
 			else if (error_state_ == error_state::FATAL) {
 				window_->close();
@@ -339,7 +339,7 @@ void character_logic::reset_all() {
 	}
 	cleanup_temp_buttons();
 
-	ai->reset_state();
+	ai->cancel_and_reset();
 	current_state.interactions.clear();
 	interaction_index_ = 0;
 	error_state_ = error_state::NONE;
