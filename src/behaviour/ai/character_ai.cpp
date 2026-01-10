@@ -258,6 +258,11 @@ character_state character_ai::handle_interaction_internal(const character_intera
 	if (!content.empty()) {
 		add_to_history("assistant", content);
 	}
+	else {
+		character_state state{};
+		state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
+		return state;
+	}
 
 	return parse_response(content);
 }
@@ -322,6 +327,7 @@ std::string character_ai::extract_content_from_response(const std::string& respo
 	catch (nlohmann::json::exception) {
 		return "";
 	}
+	return "";
 }
 character_state character_ai::parse_response(const std::string& raw_response) {
 	character_state state{};
@@ -343,7 +349,6 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 
 		// parse actions
 		state.actions = j.value("actions", std::vector<std::string>{});
-
 	}
 	catch (nlohmann::json::exception& e) {
 		log::print("JSON parsing error in AI response: {}\n", e.what());
