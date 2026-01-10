@@ -235,6 +235,10 @@ std::string character_ai::extract_content_from_response(const std::string& respo
 	try {
 		auto j = json::parse(response);
 
+		if (j.contains("error")) {
+			throw ddlcd_runtime_error(ddlcd_error::FAIL_AI_RESPONSE, "AI API returned an error: " + j["error"].dump());
+		}
+
 		// format: output[type == message] -> content[type == output_text] -> text
 		json output_arr = j["output"];
 		for (const auto& item : output_arr) {
