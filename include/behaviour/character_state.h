@@ -15,7 +15,8 @@ struct character_state {
 
 	enum class error {
 		NONE,
-		FAIL_PARSE_RESPONSE,
+		FAIL_PARSE_RESPONSE_JSON,
+		FAIL_PARSE_RESPONSE_UNKNOWN,
 	};
 
 	error err = error::NONE;
