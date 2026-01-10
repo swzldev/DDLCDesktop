@@ -21,9 +21,10 @@ void input::tick() {
 	}
 }
 
-void input::begin_input_recording(std::string* buffer, std::function<void()> on_submit) {
+void input::begin_input_recording(std::string* buffer, int max_length, std::function<void()> on_submit) {
 	cur_input_buffer_ = buffer;
 	on_submit_ = on_submit;
+	max_input_length_ = max_length;
 }
 void input::end_input_recording() {
 	cur_input_buffer_ = nullptr;
@@ -46,7 +47,9 @@ void input::on_char_input(wchar_t c) {
 
 		// printable (ASCII) characters
 		else if (c >= 32 && c <= 126) {
-			cur_input_buffer_->push_back(static_cast<char>(c));
+			if (cur_input_buffer_->length() < static_cast<size_t>(max_input_length_)) {
+				cur_input_buffer_->push_back(static_cast<char>(c));
+			}
 		}
 	}
 }
