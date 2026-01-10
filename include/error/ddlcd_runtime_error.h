@@ -4,6 +4,7 @@
 #include <string>
 
 enum class ddlcd_error {
+	FAIL_OPEN_CONFIG,
 	OTHER,
 };
 
