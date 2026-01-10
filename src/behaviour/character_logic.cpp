@@ -99,7 +99,7 @@ void character_logic::handle_interaction(const character_interaction& interactio
 					await_input();
 
 					// (initial) actions button
-					visuals->add_text_button("Actions", true, [this]() {
+					actions_button_ = visuals->add_text_button("Actions", true, [this]() {
 						actions_button_click();
 					});
 				}
@@ -107,7 +107,7 @@ void character_logic::handle_interaction(const character_interaction& interactio
 					await_choice();
 
 					// (initial) custom button
-					visuals->add_text_button("Custom", true, [this]() {
+					custom_button_ = visuals->add_text_button("Custom", true, [this]() {
 						custom_button_click();
 					});
 				}
