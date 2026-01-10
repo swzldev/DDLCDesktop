@@ -103,6 +103,12 @@ void character_logic::handle_interaction(const character_interaction& interactio
 					message += std::to_string(i + 1) + ") " + current_state.actions[i] + "    ";
 				}
 				visuals->set_saying(message);
+
+				// custom button
+				visuals->add_text_button("Custom", [this]() {
+					visuals->remove_text_button("Custom");
+					state_ = logic_state::AWAITING_INPUT;
+				});
 			}
 			else {
 				visuals->set_saying("");
@@ -145,6 +151,19 @@ void character_logic::tick(float delta_time) {
 
 			begin_think(choice_interaction);
 		}
+	}
+	else if (state_ == logic_state::AWAITING_INPUT) {
+		// waiting for user to type input
+		static std::string user_input;
+		input::begin_input_recording(&user_input, [this]() {
+			// on submit
+			character_interaction input_interaction(character_interaction::kind::CHOICE_MADE);
+			input_interaction.str_data = user_input;
+			input_interaction.int_data = -1; // custom input
+			user_input.clear();
+			input::end_input_recording();
+			begin_think(input_interaction);
+		});
 	}
 
 	visuals->tick(delta_time);
