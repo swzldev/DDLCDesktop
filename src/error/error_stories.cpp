@@ -58,3 +58,11 @@ std::vector<character_state::interaction> error_stories::fail_ai_response_story(
         {"\"...\"", "c", "1", "1"},
     };
 }
+std::vector<character_state::interaction> error_stories::fail_parse_ai_response_story() {
+    return {
+        {"\"...\"", "d", "1", "1"},
+        {"Why does this always happen..."},
+        {"I guess they missed the intellegence part of AI."},
+        {"I guess they missed the intellegence part of AI."},
+    };
+}

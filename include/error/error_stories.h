@@ -8,4 +8,5 @@
 namespace error_stories {
 	std::vector<character_state::interaction> fail_load_config_story();
 	std::vector<character_state::interaction> fail_ai_response_story();
+	std::vector<character_state::interaction> fail_parse_ai_response_story();
 }
