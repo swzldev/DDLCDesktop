@@ -105,9 +105,9 @@ void character_logic::handle_interaction(const character_interaction& interactio
 				visuals->set_saying(message);
 
 				// custom button
-				visuals->add_text_button("Custom", [this]() {
-					state_ = logic_state::AWAITING_INPUT;
-					visuals->remove_text_button("Custom");
+				int btn = visuals->add_text_button("Custom", [this, btn]() {
+					custom_button_click();
+					visuals->remove_text_button(btn);
 				});
 			}
 			else {
@@ -176,6 +176,24 @@ void character_logic::close_button_click() {
 	ai->save_state("character_state.json");
 
 	window_->close();
+}
+void character_logic::custom_button_click() {
+	state_ = logic_state::AWAITING_INPUT;
+
+	// create actions button
+	int btn = visuals->add_text_button("Actions", [this, btn]() {
+		actions_button_click();
+		visuals->remove_text_button(btn);
+	});
+}
+void character_logic::actions_button_click() {
+	state_ = logic_state::AWAITING_CHOICE;
+
+	// create actions button
+	int btn = visuals->add_text_button("Custom", [this, btn]() {
+		custom_button_click();
+		visuals->remove_text_button(btn);
+	});
 }
 
 int character_logic::get_choice_input(int num_choices) {

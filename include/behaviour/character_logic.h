@@ -34,6 +34,8 @@ private:
 	unsigned int interaction_index_ = 0;
 
 	void close_button_click();
+	void custom_button_click();
+	void actions_button_click();
 
 	int get_choice_input(int num_choices);
 
