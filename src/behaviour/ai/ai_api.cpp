@@ -40,11 +40,13 @@ std::string ai_api::get_response(const std::string& prompt) {
 
 	CURLcode res = curl_easy_perform(curl_);
 
+	// free BEFORE checking result
+	curl_slist_free_all(headers);
+	headers = nullptr;
+
 	if (res != CURLE_OK) {
 		throw std::runtime_error(std::string("Curl error: ") + curl_easy_strerror(res));
 	}
-
-	curl_slist_free_all(headers);
 	
 	return parse_response(response);
 }
