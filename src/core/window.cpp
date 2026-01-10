@@ -6,6 +6,8 @@
 #include <stdexcept>
 
 #include <core/widget.h>
+#include <core/renderer.h>
+#include <core/input.h>
 
 window::window(widget* widget) {
 	widget_ = widget;
@@ -210,10 +212,6 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		}
 		return 0;
 	}
-	case WM_NCHITTEST:
-	{
-		return HTCLIENT;
-	}
 	case WM_LBUTTONDOWN:
 	{
 		if (win) {
@@ -228,6 +226,11 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 			win->renderer_->resize(x, y);
 		}
+		return 0;
+	}
+	case WM_CHAR:
+	{
+		input::on_char_input(static_cast<wchar_t>(wParam));
 		return 0;
 	}
 	case WM_DESTROY:
