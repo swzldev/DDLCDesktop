@@ -86,6 +86,13 @@ void character_visuals::set_saying(const std::string& saying) {
 	saying_target_ = saying;
 	is_speaking_ = true;
 }
+void character_visuals::set_saying_immediate(const std::string& saying) {
+	saying_target_ = saying;
+	saying_ = saying;
+	saying_index_ = saying_target_.length();
+	saying_timer_ = 0.0f;
+	is_speaking_ = false;
+}
 void character_visuals::set_pose(const std::string& left, const std::string& right) {
 	pose_left_ = left;
 	pose_right_ = right;

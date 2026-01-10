@@ -23,6 +23,7 @@ public:
 	void set_character(ddlc_character character);
 
 	void set_saying(const std::string& saying);
+	void set_saying_immediate(const std::string& saying);
 	void set_pose(const std::string& left, const std::string& right);
 	void set_expression(const std::string& expression);
 
