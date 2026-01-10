@@ -135,7 +135,7 @@ void character_visuals::draw_all_buttons() {
 	float total_width = 0.0f; // normalized & with padding
 	float height = 0.0f;
 
-	for (const auto& [name, button] : text_buttons_) {
+	for (const auto& button : text_buttons_) {
 		// convert to wstring
 		std::wstring wtext(button.text.begin(), button.text.end());
 
