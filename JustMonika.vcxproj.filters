@@ -116,5 +116,8 @@
     <ClInclude Include="include\core\sys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\error\ddlcd_runtime_error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
