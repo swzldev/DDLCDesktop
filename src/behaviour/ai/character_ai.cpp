@@ -14,6 +14,7 @@
 #include <behaviour/ai/ai_api.h>
 #include <behaviour/ai/system_prompts.h>
 #include <output/log.h>
+#include <error/ddlcd_runtime_error.h>
 
 using json = nlohmann::json;
 
@@ -22,7 +23,7 @@ character_ai::character_ai(ddlc_character character) {
 
 	std::ifstream config("config.json");
 	if (!config.is_open()) {
-		throw std::runtime_error("Failed to open config.json (you will need to recreate it yourself or reinstall)");
+		throw ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json");
 	}
 
 	json j;
