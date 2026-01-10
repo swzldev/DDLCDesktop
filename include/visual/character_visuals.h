@@ -84,6 +84,7 @@ private:
 	struct text_button {
 		std::string text;
 		std::function<void(int)> on_click;
+		int id = -1;
 	};
 	const text_button* current_button_ = nullptr;
 	std::vector<text_button> text_buttons_;
