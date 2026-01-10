@@ -13,6 +13,12 @@ struct character_state {
 		int new_scale = -1;
 	};
 
+	enum class error {
+		NONE,
+		FAIL_PARSE_RESPONSE,
+	};
+
+	error err = error::NONE;
 	std::vector<interaction> interactions;
 	std::vector<std::string> actions;
 };
