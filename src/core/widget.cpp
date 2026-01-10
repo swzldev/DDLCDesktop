@@ -87,7 +87,7 @@ widget::widget() {
 
 	// config.json
 	if (!fs::exists("config.json") || !fs::is_regular_file("config.json")) {
-		throw std::runtime_error("Configuration file 'config.json' not found (you may have a corrupted installation)");
+		throw ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json");
 	}
 
 	window_ = new window(this);
