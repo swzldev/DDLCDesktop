@@ -5,6 +5,7 @@
 
 enum class ddlcd_error {
 	FAIL_OPEN_CONFIG,
+	FAIL_AI_RESPONSE,
 	OTHER,
 };
 
