@@ -24,7 +24,7 @@ character_ai::character_ai(ddlc_character character) {
 	if (!config.is_open()) {
 		throw std::runtime_error("Failed to open config.json (you will need to recreate it yourself or reinstall)");
 	}
-	
+
 	json j;
 	config >> j;
 
@@ -41,13 +41,17 @@ character_ai::character_ai(ddlc_character character) {
 		throw std::runtime_error("Unsupported API specified in config.json: '" + api + "'");
 	}
 
-
 	std::string api_key = j.value("api_key", "");
 	if (api_key.empty()) {
 		throw std::runtime_error("API key not found in config.json (did you read the installation instructions on the github?)");
 	}
 
-	model_ = j.value("model", "gpt-4o-mini");
+	if (endpoint == "openai") {
+		model_ = j.value("model", "gpt-4o-mini");
+	}
+	else if (endpoint == "openrouter") {
+		model_ = j.value("model", "openrouter/openai/gpt-4o-mini");
+	}
 	message_history_size_ = j.value("message_history_size", 6);
 
 	// other config
