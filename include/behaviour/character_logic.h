@@ -43,6 +43,7 @@ private:
 	std::string current_input_;
 
 	void close_button_click();
+	void reset_button_click();
 	void custom_button_click();
 	void actions_button_click();
 

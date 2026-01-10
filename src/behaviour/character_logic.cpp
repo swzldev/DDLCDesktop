@@ -12,6 +12,7 @@
 #include <behaviour/character_interaction.h>
 
 using json = nlohmann::json;
+namespace fs = std::filesystem;
 
 character_logic::character_logic(window* window) {
 	window_ = window;
@@ -47,11 +48,14 @@ character_logic::character_logic(window* window) {
 	visuals->add_text_button("Close", false, [this]() {
 		close_button_click();
 	});
+	visuals->add_text_button("Reset", false, [this]() {
+		reset_button_click();
+	});
 
 	// create ai
 	ai = new character_ai(character);
 
-	if (std::filesystem::exists("character_state.json")) {
+	if (fs::exists("character_state.json")) {
 		ai->load_state("character_state.json");
 	}
 
@@ -174,6 +178,17 @@ void character_logic::close_button_click() {
 	ai->save_state("character_state.json");
 
 	window_->close();
+}
+void character_logic::reset_button_click() {
+	// cleanup
+	if (fs::exists("character_state.json")) {
+		fs::remove("character_state.json");
+	}
+
+	ai->reset_state();
+
+	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
+	begin_think(interaction);
 }
 void character_logic::custom_button_click() {
 	await_input();
