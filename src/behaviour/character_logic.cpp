@@ -237,6 +237,10 @@ void character_logic::close_button_click() {
 	window_->close();
 }
 void character_logic::reset_button_click() {
+	if (!ai->is_response_ready()) {
+		return; // dont reset while thinking
+	}
+
 	reset_all();
 }
 void character_logic::custom_button_click() {
