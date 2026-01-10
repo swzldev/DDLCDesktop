@@ -9,7 +9,7 @@ enum class ddlcd_error {
 
 class ddlcd_runtime_error : public std::exception {
 public:
-	ddlcd_runtime_error(ddlcd_error kind, const std::string& message)
+	ddlcd_runtime_error(ddlcd_error kind, const std::string& message = "")
 		: kind(kind), message(message) {
 	}
 
