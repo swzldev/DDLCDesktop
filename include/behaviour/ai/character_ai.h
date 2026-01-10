@@ -8,7 +8,7 @@
 #include <ddlc/characters.h>
 #include <behaviour/character_state.h>
 #include <behaviour/character_interaction.h>
-#include <behaviour/ai/openai_api.h>
+#include <behaviour/ai/ai_api.h>
 
 class character_ai {
 public:
@@ -30,7 +30,7 @@ public:
 	std::string now_str() const;
 
 private:
-	openai_api* openai_;
+	ai_api* api_;
 	std::string model_ = "gpt-4o-mini";
 	int message_history_size_;
 	std::string user_name_ = "";

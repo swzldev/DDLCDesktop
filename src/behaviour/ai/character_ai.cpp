@@ -11,7 +11,7 @@
 #include <nlohmann/json.hpp>
 
 #include <behaviour/character_interaction.h>
-#include <behaviour/ai/openai_api.h>
+#include <behaviour/ai/ai_api.h>
 #include <behaviour/ai/system_prompts.h>
 #include <output/log.h>
 
@@ -27,17 +27,34 @@ character_ai::character_ai(ddlc_character character) {
 	
 	json j;
 	config >> j;
-	std::string api_key = j.value("openai_api_key", "");
-	if (api_key.empty()) {
-		throw std::runtime_error("OpenAI API key not found in config.json (did you read the installation instructions on the github?)");
+
+	// API config
+	std::string api = j.value("api", "openai");
+	std::string endpoint;
+	if (api == "openai") {
+		endpoint = "https://api.openai.com/v1/responses";
+	}
+	else if (api == "openrouter") {
+		endpoint = "https://openrouter.ai/api/v1/responses";
+	}
+	else {
+		throw std::runtime_error("Unsupported API specified in config.json: '" + api + "'");
 	}
 
-	model_ = j.value("openai_model", "gpt-4o-mini");
-	message_history_size_ = j.value("openai_message_history_size", 6);
+
+	std::string api_key = j.value("api_key", "");
+	if (api_key.empty()) {
+		throw std::runtime_error("API key not found in config.json (did you read the installation instructions on the github?)");
+	}
+
+	model_ = j.value("model", "gpt-4o-mini");
+	message_history_size_ = j.value("message_history_size", 6);
+
+	// other config
 	user_name_ = j.value("user_name", "");
 	system_prompt_ = j.value("behaviour_preset", "");
 
-	openai_ = new openai_api(api_key);
+	api_ = new ai_api(endpoint, api_key);
 
 	// initialize with system prompt
 	add_to_history("system", get_system_prompt());
@@ -58,8 +75,8 @@ character_ai::~character_ai() {
 		}
 	}
 
-	delete openai_;
-	openai_ = nullptr;
+	delete api_;
+	api_ = nullptr;
 }
 
 void character_ai::handle_close_interaction() {
@@ -153,7 +170,7 @@ std::string character_ai::now_str() const {
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
 	std::string prompt = build_prompt(interaction);
-	std::string response = openai_->get_response(prompt);
+	std::string response = api_->get_response(prompt);
 	log::print("Generated prompt: {}\nAI Response: {}\n\n", prompt, response);
 
 	std::string content = extract_content_from_response(response);
