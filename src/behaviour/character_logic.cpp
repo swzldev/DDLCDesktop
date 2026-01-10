@@ -187,7 +187,7 @@ void character_logic::custom_button_click() {
 void character_logic::actions_button_click() {
 	state_ = logic_state::AWAITING_CHOICE;
 
-	// create actions button
+	// create custom button
 	visuals->add_text_button("Custom", true, [this]() {
 		custom_button_click();
 	});
