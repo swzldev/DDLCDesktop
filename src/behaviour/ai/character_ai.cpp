@@ -168,8 +168,8 @@ void character_ai::load_config(nlohmann::json j) {
 		throw std::runtime_error("Unsupported API specified in config.json: '" + api + "'");
 	}
 
-	std::string api_key = j.value("api_key", "");
-	if (api_key.empty()) {
+	api_key_ = j.value("api_key", "");
+	if (api_key_.empty()) {
 		throw std::runtime_error("API key not found in config.json (did you read the installation instructions on the github?)");
 	}
 
