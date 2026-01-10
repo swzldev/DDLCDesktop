@@ -21,7 +21,7 @@ void input::tick() {
 	}
 }
 
-void input::begin_input_recording(std::string* buffer, std::function<void()> on_submit = nullptr) {
+void input::begin_input_recording(std::string* buffer, std::function<void()> on_submit) {
 	cur_input_buffer_ = buffer;
 	on_submit_ = on_submit;
 }
