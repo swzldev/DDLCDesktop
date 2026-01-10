@@ -9,6 +9,7 @@
 #include <behaviour/character_logic.h>
 #include <behaviour/character_interaction.h>
 #include <visual/sprite.h>
+#include <error/ddlcd_runtime_error.h>
 
 namespace fs = std::filesystem;
 
@@ -29,25 +30,37 @@ void widget::main_loop() {
 	// first tick delta time will be 0, but thats better
 	// than some crazy huge value
 	last_time_ = std::chrono::high_resolution_clock::now();
+
 	while (running_) {
-		auto now = std::chrono::high_resolution_clock::now();
-		float delta_time = std::chrono::duration<float>(now - last_time_).count();
+		try {
+			while (running_) {
+				auto now = std::chrono::high_resolution_clock::now();
+				float delta_time = std::chrono::duration<float>(now - last_time_).count();
 
-		input::tick();
+				input::tick();
 
-		window_->poll_events();
-		if (window_->should_close()) {
-			stop();
+				window_->poll_events();
+				if (window_->should_close()) {
+					stop();
+				}
+
+				renderer_->begin_draw();
+
+				logic_->tick(delta_time);
+				logic_->visuals->draw();
+
+				renderer_->end_draw();
+
+				last_time_ = now;
+			}
 		}
+		catch (const ddlcd_runtime_error& e) {
+			if (!logic_) {
+				throw;
+			}
 
-		renderer_->begin_draw();
-
-		logic_->tick(delta_time);
-		logic_->visuals->draw();
-
-		renderer_->end_draw();
-
-		last_time_ = now;
+			logic_->handle_error(e);
+		}
 	}
 
 	sprite::cleanup_all_sprites();
