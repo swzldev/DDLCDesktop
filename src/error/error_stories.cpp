@@ -52,6 +52,7 @@ std::vector<character_state::interaction> error_stories::fail_ai_response_story(
         {"\"But if you're stuck you can always join the discord server.\"", "j", "1", "1"},
         {"https://discord.gg/CyerbjvyMb", "c", "1", "1"},
         {"\"- Swazy\"", "q", "1", "1"},
+        {"\"...\"", "c", "1", "1"},
         {"\"Swazy...\"", "o", "1", "1"},
         {"\"Why do I feel a chill hearing that name?\"", "p", "1", "1"},
         {"\"...\"", "c", "1", "1"},
