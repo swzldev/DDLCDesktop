@@ -47,7 +47,12 @@ LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* exceptionInfo) {
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int WINAPI WinMain(
+	_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPSTR lpCmdLine,
+	_In_ int nCmdShow)
+{
 	SetUnhandledExceptionFilter(UnhandledExceptionHandler);
 
 	std::filesystem::path log_path = std::filesystem::current_path() / "log.txt";
