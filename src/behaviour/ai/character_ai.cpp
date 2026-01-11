@@ -312,6 +312,7 @@ bool character_ai::response_is_error(const std::string& response) {
 		auto j = json::parse(response);
 
 		if (j.contains("error") && !j["error"].is_null()) {
+			log::print("Response was an error: {}\n", j["error"].dump());
 			return true;
 		}
 	}
