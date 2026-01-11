@@ -63,7 +63,6 @@
   "api_key": "&lt;your api key&gt;",
   "model": "",
   "message_history_size": 6,
-
   "user_name": "&lt;your name&gt;",
   "behaviour_preset": "default",
   "character": "monika"
