@@ -73,6 +73,19 @@ void character_visuals::draw() {
 	}
 }
 
+void character_visuals::reset(ddlc_character character) {
+	saying_ = "";
+	saying_target_ = "";
+	saying_index_ = 0;
+	saying_timer_ = 0.0f;
+	is_speaking_ = false;
+
+	window_->reset();
+	
+	character_ = character;
+	update_sprites();
+}
+
 void character_visuals::set_character(ddlc_character character) {
 	character_ = character;
 	update_sprites();
@@ -104,19 +117,19 @@ void character_visuals::set_expression(const std::string& expression) {
 }
 
 void character_visuals::set_position(int x, int y) {
-	widget::get_instance().set_position(x, y);
+	window_->set_position(x, y);
 }
 int character_visuals::get_x() {
-	return widget::get_instance().get_position_x();
+	return window_->pos_x();
 }
 int character_visuals::get_y() {
-	return widget::get_instance().get_position_y();
+	return window_->pos_y();
 }
 void character_visuals::set_scale(int scale) {
-	widget::get_instance().resize(scale);
+	window_->resize(scale);
 }
 int character_visuals::get_scale() {
-	return widget::get_instance().size();
+	return window_->size();
 }
 
 void character_visuals::draw_all_buttons() {
