@@ -68,8 +68,8 @@ void character_visuals::draw() {
 		// draw text
 		std::wstring wtext(saying_.begin(), saying_.end());
 		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
-		renderer_->set_stroke_color(D2D1::ColorF(D2D1::ColorF::Black));
-		renderer_->draw_text(wtext, 0.5f, 0.9f, 0.95f, 0.35f, 3, 6.5f);
+		renderer_->set_stroke_color(D2D1::ColorF(0, 0, 0, 0.3f));
+		renderer_->draw_text(wtext, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
 	}
 }
 
@@ -134,7 +134,7 @@ int character_visuals::get_scale() {
 
 void character_visuals::draw_all_buttons() {
 	const float button_pad = 0.01f;
-	const float buttons_y = 0.865f;
+	const float buttons_y = 0.86f;
 
 	struct button_predraw_data {
 		const text_button* btn;
@@ -152,11 +152,11 @@ void character_visuals::draw_all_buttons() {
 		// convert to wstring
 		std::wstring wtext(button.text.begin(), button.text.end());
 
-		// measure (size 2.5)
-		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, 2.5f);
+		// measure (size 2.2)
+		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, 2.2f);
 
 		float width_normalized = text_size.width / window_->size() + button_pad * 2;
-		float height_normalized = text_size.height / window_->size() + button_pad * 2;
+		float height_normalized = text_size.height / window_->size();
 		// ^^ convert to normalized width (0-1)
 
 		height = std::max(height, height_normalized);
@@ -165,7 +165,7 @@ void character_visuals::draw_all_buttons() {
 		predraw_data.push_back({ &button, wtext, width_normalized, height_normalized });
 	}
 
-	D2D_COLOR_F btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.4f);
+	D2D_COLOR_F btn_col = D2D1::ColorF(0, 0, 0, 0.7f);
 
 	float bx = 0.5f - (total_width / 2.0f);
 	for (const auto& data : predraw_data) {
@@ -173,20 +173,23 @@ void character_visuals::draw_all_buttons() {
 		float mx = window_->mouse_x_normalized();
 		float my = window_->mouse_y_normalized();
 
-		float left = bx - button_pad;
-		float right = bx + data.width - button_pad * 2;
-		float top = buttons_y - (data.height / 2);
-		float bottom = buttons_y + (data.height / 2) - button_pad * 2;
+		float button_center_x = bx + (data.width / 2.0f);
+
+		float left = button_center_x - (data.width / 2.0f) + button_pad;
+		float right = button_center_x + (data.width / 2.0f) - button_pad;
+		float top = buttons_y - (data.height / 2.0f);
+		float bottom = buttons_y + (data.height / 2.0f);
+
 
 		if (mx >= left && mx <= right && my >= top && my <= bottom) {
 			current_button_ = data.btn;
-			btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
+			btn_col = D2D1::ColorF(1, 1, 1, 0.65f);
 		}
 		else {
 			if (current_button_ == data.btn) {
 				current_button_ = nullptr;
 			}
-			btn_col = D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.4f);
+			btn_col = D2D1::ColorF(0, 0, 0, 0.65f);
 		}
 
 		renderer_->set_text_color(btn_col);
@@ -196,9 +199,9 @@ void character_visuals::draw_all_buttons() {
 			data.text,
 			bx + (data.width / 2),
 			buttons_y,
-			data.width,
+			data.width - button_pad * 2,
 			data.height,
-			2.5f
+			2.2f
 			/* no stroke */
 		);
 

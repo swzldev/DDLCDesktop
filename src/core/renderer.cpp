@@ -99,7 +99,7 @@ renderer::renderer(window* wnd, HWND hwnd, int width, int height) {
     }
 
 	// set text alignment
-    dwrite_text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    dwrite_text_format_->SetTextAlignment(text_alignment_);
     dwrite_text_format_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
     // create composition device
