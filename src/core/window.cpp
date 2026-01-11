@@ -8,6 +8,7 @@
 #include <core/widget.h>
 #include <core/renderer.h>
 #include <core/input.h>
+#include <core/sys.h>
 
 window::window(widget* widget) {
 	widget_ = widget;
@@ -28,10 +29,10 @@ window::window(widget* widget) {
 	wc.hCursor = LoadCursor(NULL, IDC_HAND);
 	RegisterClassExW(&wc);
 
-	pos_x_ = 1400;
-	pos_y_ = 630;
 	width_ = DEF_WINDOW_WIDTH;
 	height_ = DEF_WINDOW_HEIGHT;
+	pos_x_ = sys::display_width() - width_ - 100;
+	pos_y_ = sys::display_height() - height_ - 100;
 
 	// create window
 	hwnd_ = CreateWindowExW(

@@ -10,8 +10,8 @@ class widget;
 
 class window {
 public:
-	static constexpr int DEF_WINDOW_HEIGHT = 450;
-	static constexpr int DEF_WINDOW_WIDTH = 450;
+	static constexpr int DEF_WINDOW_HEIGHT = 600;
+	static constexpr int DEF_WINDOW_WIDTH = 600;
 
 public:
 	window(widget* widget);
