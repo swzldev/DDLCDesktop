@@ -38,7 +38,9 @@
 <h2>Installation</h2>
 <p>Installation is fairly simple however there are a few nuances before you can be up and running.</p>
 
-<p>First install the application binaries from the <a href="https://github.com/swzldev/DDLCDesktop/releases">releases</a> page. It should be called something like: <code>DDLCDesktop-*.*.*.zip</code></p>
+<p>Since the installation can be quite confusing, for non-tech savvy users, there is a <a href="https://www.youtube.com/watch?v=a_A4Sm2gPh0">YouTube guide</a> that explains everything in detail.</p>
+
+<p>If you're fine with a written guide you can simply follow the instructions here. First install the application binaries from the <a href="https://github.com/swzldev/DDLCDesktop/releases">releases</a> page. It should be called something like: <code>DDLCDesktop-*.*.*.zip</code></p>
 <p>Once downloaded, extract the contents somewhere (make sure it's not somewhere with limited permissions such as Program Files or System32).</p>
 
 <p>Once extracted simply follow the instructions below:</p>
