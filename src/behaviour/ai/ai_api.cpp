@@ -14,8 +14,11 @@ ai_api::ai_api(const std::string& endpoint, const std::string& api_key) {
 	curl_easy_setopt(curl_, CURLOPT_URL, endpoint_.c_str());
 	curl_easy_setopt(curl_, CURLOPT_POST, 1L);
 
-	curl_easy_setopt(curl_, CURLOPT_TIMEOUT, 30L);
+	curl_easy_setopt(curl_, CURLOPT_TIMEOUT, 180L);
 	curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT, 10L);
+
+	curl_easy_setopt(curl_, CURLOPT_LOW_SPEED_TIME, 30L);
+	curl_easy_setopt(curl_, CURLOPT_LOW_SPEED_LIMIT, 1L);
 
 	curl_easy_setopt(curl_, CURLOPT_NOSIGNAL, 1L);
 
