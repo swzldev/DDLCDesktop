@@ -79,6 +79,7 @@ private:
 	character_state handle_interaction_internal(const character_interaction& interaction);
 	std::string build_prompt(const character_interaction& interaction);
 	std::string interaction_to_message(const character_interaction& interaction);
+	bool response_is_error(const std::string& response);
 	std::string extract_content_from_response(const std::string& response);
 	character_state parse_response(const std::string& raw_response);
 	std::string get_pose_code(const std::string& pose);

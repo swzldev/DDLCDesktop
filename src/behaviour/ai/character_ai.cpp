@@ -252,17 +252,21 @@ character_state character_ai::handle_interaction_internal(const character_intera
 	std::string response = api_->get_response(prompt);
 	log::print("Generated prompt: {}\nAI Response: {}\n\n", prompt, response);
 
+	character_state fail_parse_state{};
+	fail_parse_state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
+
+
+	if (response_is_error(response)) {
+		return fail_parse_state;
+	}
+
 	std::string content = extract_content_from_response(response);
 
 	// add to conversation history
 	if (!content.empty()) {
 		add_to_history("assistant", content);
 	}
-	else {
-		character_state state{};
-		state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
-		return state;
-	}
+	else return fail_parse_state;
 
 	return parse_response(content);
 }
@@ -303,12 +307,25 @@ std::string character_ai::interaction_to_message(const character_interaction& in
 		return "[" + now_str() + "] " + user_name + " interacted with " + character_name + ", but an internal error occurred and we don't know what the interaction was.";
 	}
 }
+bool character_ai::response_is_error(const std::string& response) {
+	try {
+		auto j = json::parse(response);
+
+		if (j.contains("error") && !j["error"].is_null()) {
+			return true;
+		}
+	}
+	catch (...) {
+		return true;
+	}
+	return false;
+}
 std::string character_ai::extract_content_from_response(const std::string& response) {
 	try {
 		auto j = json::parse(response);
 
 		if (j.contains("error") && !j["error"].is_null()) {
-			throw ddlcd_runtime_error(ddlcd_error::FAIL_AI_RESPONSE, "AI API returned an error: " + j["error"].dump());
+			return "";
 		}
 
 		// format: output[type == message] -> content[type == output_text] -> text
@@ -324,8 +341,7 @@ std::string character_ai::extract_content_from_response(const std::string& respo
 			}
 		}
 	}
-	catch (nlohmann::json::exception) {
-		return "";
+	catch (...) {
 	}
 	return "";
 }
