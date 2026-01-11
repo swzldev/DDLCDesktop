@@ -14,9 +14,14 @@ ai_api::ai_api(const std::string& endpoint, const std::string& api_key) {
 	curl_easy_setopt(curl_, CURLOPT_URL, endpoint_.c_str());
 	curl_easy_setopt(curl_, CURLOPT_POST, 1L);
 
+	curl_easy_setopt(curl_, CURLOPT_TIMEOUT, 30L);
 	curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT, 10L);
 
 	curl_easy_setopt(curl_, CURLOPT_NOSIGNAL, 1L);
+
+	curl_easy_setopt(curl_, CURLOPT_XFERINFOFUNCTION, &ai_api::progress_callback);
+	curl_easy_setopt(curl_, CURLOPT_XFERINFODATA, this);
+	curl_easy_setopt(curl_, CURLOPT_NOPROGRESS, 0L);
 }
 ai_api::~ai_api() {
 	curl_easy_cleanup(curl_);
@@ -48,6 +53,9 @@ std::string ai_api::get_response(const std::string& prompt) {
 	}
 	
 	return parse_response(response);
+}
+
+void ai_api::cancel() {
 }
 
 std::string ai_api::parse_response(const std::string& response) {
@@ -120,4 +128,14 @@ std::string ai_api::parse_response(const std::string& response) {
 size_t ai_api::write_callback(void* contents, size_t size, size_t nmemb, std::string* out) {
 	out->append((char*)contents, size * nmemb);
 	return size * nmemb;
+}
+
+int ai_api::progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
+	auto* self = static_cast<ai_api*>(clientp);
+
+	if (self->cancel_requested_.load(std::memory_order_relaxed)) {
+		return 1; // abort
+	}
+
+	return 0; // continue
 }
