@@ -73,7 +73,7 @@ std::vector<character_state::interaction> error_stories::fail_parse_ai_response_
         {"\"You understand right?\"", "c", "1", "1"},
         {"\"You know... If you get stuck and you can't fix it yourself.\"", "e", "1", "1"},
         {"\"You can always join >4N#'`\n^&(;F's Discord server.\"", "j", "1", "1"},
-        {"\"https://discord.gg/CyerbjvyMb\"", "c", "1", "1"},
+        {"https://discord.gg/CyerbjvyMb", "c", "1", "1"},
         {"\"...\"", "d", "1", "1"},
         {"\"What am I even saying...?\"", "m", "1", "1"},
         {"\"...\"", "d", "1", "1"},
