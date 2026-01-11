@@ -225,7 +225,7 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	}
 
 	if (!fatal) {
-		current_state.interactions.push_back({ "The application will now reset." });
+		current_state.interactions.push_back({ "The application will now reset.", "a", "1", "1" });
 	}
 
 	error_state_ = fatal ? error_state::FATAL : error_state::NON_FATAL;
