@@ -32,7 +32,7 @@ window::window(widget* widget) {
 	width_ = DEF_WINDOW_WIDTH;
 	height_ = DEF_WINDOW_HEIGHT;
 	pos_x_ = sys::display_width() - width_ - 100;
-	pos_y_ = sys::display_height() - height_ - 100;
+	pos_y_ = sys::display_height() - height_;
 
 	// create window
 	hwnd_ = CreateWindowExW(
