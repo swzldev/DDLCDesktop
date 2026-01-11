@@ -373,7 +373,7 @@ void character_logic::reset_all() {
 	interaction_index_ = 0;
 	error_state_ = error_state::NONE;
 
-	visuals->set_character(character_);
+	visuals->reset(character_);
 
 	// start new interaction
 	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
