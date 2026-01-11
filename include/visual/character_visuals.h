@@ -17,8 +17,9 @@ public:
 	character_visuals(renderer* renderer, ddlc_character character = ddlc_character::MONIKA);
 
 	void tick(float delta_time);
-
 	void draw();
+
+	void reset(ddlc_character character);
 
 	void set_character(ddlc_character character);
 
