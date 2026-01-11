@@ -67,6 +67,7 @@ void character_visuals::draw() {
 
 		// draw text
 		std::wstring wtext(saying_.begin(), saying_.end());
+		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
 		renderer_->set_stroke_color(D2D1::ColorF(0, 0, 0, 0.3f));
 		renderer_->draw_text(wtext, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
@@ -175,8 +176,8 @@ void character_visuals::draw_all_buttons() {
 
 		float button_center_x = bx + (data.width / 2.0f);
 
-		float left = button_center_x - (data.width / 2.0f) + button_pad;
-		float right = button_center_x + (data.width / 2.0f) - button_pad;
+		float left = button_center_x - (data.width / 2.0f);
+		float right = button_center_x + (data.width / 2.0f) - button_pad * 2;
 		float top = buttons_y - (data.height / 2.0f);
 		float bottom = buttons_y + (data.height / 2.0f);
 
@@ -192,6 +193,7 @@ void character_visuals::draw_all_buttons() {
 			btn_col = D2D1::ColorF(0, 0, 0, 0.65f);
 		}
 
+		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 		renderer_->set_text_color(btn_col);
 
 		// label only button
@@ -199,7 +201,7 @@ void character_visuals::draw_all_buttons() {
 			data.text,
 			bx + (data.width / 2),
 			buttons_y,
-			data.width - button_pad * 2,
+			data.width,
 			data.height,
 			2.2f
 			/* no stroke */
