@@ -44,11 +44,14 @@ character_ai::character_ai(ddlc_character character) {
 	worker_ = std::thread(&character_ai::worker_loop, this);
 }
 character_ai::~character_ai() {
+	request_cancel();
+
 	{
 		std::lock_guard<std::mutex> lock(mutex_);
 		stop_worker_.store(true, std::memory_order_relaxed);
 	}
 	cv_.notify_all();
+
 	if (worker_.joinable()) {
 		worker_.join();
 	}
@@ -72,7 +75,6 @@ void character_ai::handle_interaction_async(const character_interaction& interac
 		has_task_.store(true, std::memory_order_relaxed);
 		has_result_.store(false, std::memory_order_relaxed);
 		cancel_requested_.store(false, std::memory_order_relaxed);
-		is_processing_.store(true, std::memory_order_relaxed);
 	}
 	cv_.notify_one();
 }
@@ -165,6 +167,10 @@ std::string character_ai::now_str() const {
 
 void character_ai::request_cancel() {
 	cancel_requested_.store(true, std::memory_order_relaxed);
+
+	if (api_) {
+		api_->cancel();
+	}
 }
 
 void character_ai::load_config(nlohmann::json j) {
@@ -210,14 +216,17 @@ void character_ai::worker_loop() {
 					|| has_task_.load(std::memory_order_relaxed);
 				});
 			if (stop_worker_) {
+				is_processing_.store(false, std::memory_order_relaxed);
 				return;
 			}
 
 			interaction = pending_interaction_;
 			has_task_.store(false, std::memory_order_relaxed);
+			is_processing_.store(true, std::memory_order_relaxed);
 		}
 
 		if (cancel_requested_.load(std::memory_order_relaxed)) {
+			is_processing_.store(false, std::memory_order_relaxed);
 			continue;
 		}
 
@@ -228,11 +237,24 @@ void character_ai::worker_loop() {
 				std::lock_guard<std::mutex> lock(mutex_);
 				pending_result_ = empty_state;
 				has_result_.store(true, std::memory_order_relaxed);
+				is_processing_.store(false, std::memory_order_relaxed);
 			}
 			continue;
 		}
 
-		character_state result = handle_interaction_internal(interaction);
+		character_state result{};
+		try {
+			result = handle_interaction_internal(interaction);
+		}
+		catch (...) {
+			{
+				std::lock_guard<std::mutex> lock(mutex_);
+				pending_result_ = result;
+				has_result_.store(true, std::memory_order_relaxed);
+				is_processing_.store(false, std::memory_order_relaxed);
+			}
+			continue;
+		}
 
 		if (cancel_requested_.load(std::memory_order_relaxed)) {
 			continue;
@@ -243,6 +265,7 @@ void character_ai::worker_loop() {
 			std::lock_guard<std::mutex> lock(mutex_);
 			pending_result_ = result;
 			has_result_.store(true, std::memory_order_relaxed);
+			is_processing_.store(false, std::memory_order_relaxed);
 		}
 	}
 }

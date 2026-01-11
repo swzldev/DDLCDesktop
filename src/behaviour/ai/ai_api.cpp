@@ -28,6 +28,8 @@ ai_api::~ai_api() {
 }
 
 std::string ai_api::get_response(const std::string& prompt) {
+	cancel_requested_.store(false, std::memory_order_relaxed);
+
 	curl_slist* headers = nullptr;
 	headers = curl_slist_append(headers, "Content-Type: application/json");
 	headers = curl_slist_append(headers, ("Authorization: Bearer " + api_key_).c_str());
@@ -49,6 +51,9 @@ std::string ai_api::get_response(const std::string& prompt) {
 	headers = nullptr;
 
 	if (res != CURLE_OK) {
+		if (res == CURLE_ABORTED_BY_CALLBACK) {
+			throw std::runtime_error("Request cancelled by user");
+		}
 		throw std::runtime_error(std::string("Curl error: ") + curl_easy_strerror(res));
 	}
 	
@@ -56,6 +61,7 @@ std::string ai_api::get_response(const std::string& prompt) {
 }
 
 void ai_api::cancel() {
+	cancel_requested_.store(true, std::memory_order_relaxed);
 }
 
 std::string ai_api::parse_response(const std::string& response) {
