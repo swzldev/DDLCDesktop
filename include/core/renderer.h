@@ -36,6 +36,7 @@ public:
 
 	void set_text_color(D2D_COLOR_F color);
 	void set_stroke_color(D2D_COLOR_F color);
+	void set_text_alignment(DWRITE_TEXT_ALIGNMENT alignment);
 
 	void draw_sprite(sprite* spr, float x = 0.0f, float y = 0.0f);
 	void draw_text(const std::wstring& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f);
@@ -68,6 +69,8 @@ private:
 	ComPtr<IDWriteTextFormat> dwrite_text_format_;
 
 	ComPtr<ID3D11Texture2D> cached_frame_;
+
+	DWRITE_TEXT_ALIGNMENT text_alignment_ = DWRITE_TEXT_ALIGNMENT_CENTER;
 
 	D2D_COLOR_F text_color_ = D2D1::ColorF(D2D1::ColorF::White);
 	D2D_COLOR_F stroke_color_ = D2D1::ColorF(D2D1::ColorF::Black);

@@ -239,6 +239,16 @@ void renderer::set_text_color(D2D_COLOR_F color) {
 void renderer::set_stroke_color(D2D_COLOR_F color) {
 	stroke_color_ = color;
 }
+void renderer::set_text_alignment(DWRITE_TEXT_ALIGNMENT alignment) {
+	if (text_alignment_ == alignment) {
+        return;
+    }
+
+	text_alignment_ = alignment;
+    if (dwrite_text_format_) {
+        dwrite_text_format_->SetTextAlignment(alignment);
+	}
+}
 
 void renderer::draw_sprite(sprite* spr, float x, float y) {
     if (!spr) {
