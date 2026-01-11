@@ -262,7 +262,7 @@ void character_logic::close_button_click() {
 	window_->close();
 }
 void character_logic::reset_button_click() {
-	if (!ai->is_response_ready()) {
+	if (state_ == logic_state::THINKING) {
 		return; // dont reset while thinking
 	}
 
