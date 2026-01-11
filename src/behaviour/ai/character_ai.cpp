@@ -273,7 +273,10 @@ void character_ai::worker_loop() {
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
 	std::string prompt = build_prompt(interaction);
 	std::string response = api_->get_response(prompt);
+
+#if defined(DEBUG) || defined(_DEBUG)
 	log::print("Generated prompt: {}\nAI Response: {}\n\n", prompt, response);
+#endif
 
 	character_state fail_parse_state{};
 	fail_parse_state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
