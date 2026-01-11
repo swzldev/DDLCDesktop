@@ -31,7 +31,7 @@ LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* exceptionInfo) {
 	// create minidump
 	HANDLE hFile = CreateFileA("crash_dump.dmp", GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile != INVALID_HANDLE_VALUE) {
-		MINIDUMP_EXCEPTION_INFORMATION dumpInfo;
+		MINIDUMP_EXCEPTION_INFORMATION dumpInfo{};
 		dumpInfo.ThreadId = GetCurrentThreadId();
 		dumpInfo.ExceptionPointers = exceptionInfo;
 		dumpInfo.ClientPointers = FALSE;
