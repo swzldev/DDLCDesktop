@@ -75,6 +75,24 @@ void window::hide() const {
 	ShowWindow(hwnd_, SW_HIDE);
 }
 
+void window::reset() {
+	width_ = DEF_WINDOW_WIDTH;
+	height_ = DEF_WINDOW_HEIGHT;
+	pos_x_ = sys::display_width() - width_ - 100;
+	pos_y_ = sys::display_height() - height_;
+	SetWindowPos(
+		hwnd_,
+		HWND_TOPMOST,
+		pos_x_, pos_y_,
+		width_, height_,
+		SWP_NOACTIVATE
+	);
+
+	renderer_->post_draw_queue.push_back([this]() {
+		update_surface();
+	});
+}
+
 void window::set_position(int x, int y) {
 	pos_x_ = x;
 	pos_y_ = y;

@@ -20,6 +20,7 @@ public:
 	void show(bool focus = false) const;
 	void hide() const;
 
+	void reset();
 	void set_position(int x, int y);
 	void resize(int size); // note: size is both width and height
 
