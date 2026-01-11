@@ -20,7 +20,7 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 			bhv = monika_obsessive;
 		}
 		else if (mode == "shy") {
-			bhv = monika_shy_playful;
+			bhv = monika_shy;
 		}
 		else if (mode == "postgame" || mode == "default" || mode.empty()) {
 			bhv = monika_postgame;
@@ -35,6 +35,15 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 		if (mode == "postgame" || mode == "default" || mode.empty()) {
 			bhv = yuri_postgame;
 		}
+		else if (mode == "romantic") {
+			bhv = yuri_romantic;
+		}
+		else if (mode == "obsessive") {
+			bhv = yuri_obsessive;
+		}
+		else if (mode == "shy") {
+			bhv = yuri_shy;
+		}
 		else {
 			throw std::runtime_error("(Yuri) Unknown prompt preset: " + mode);
 		}
@@ -45,6 +54,15 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 		if (mode == "postgame" || mode == "default" || mode.empty()) {
 			bhv = natsuki_postgame;
 		}
+		else if (mode == "romantic") {
+			bhv = natsuki_romantic;
+		}
+		else if (mode == "hurt") {
+			bhv = natsuki_hurt;
+		}
+		else if (mode == "playful") {
+			bhv = natsuki_playful;
+		}
 		else {
 			throw std::runtime_error("(Natsuki) Unknown prompt preset: " + mode);
 		}
@@ -54,6 +72,18 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 	case ddlc_character::SAYORI: {
 		if (mode == "postgame" || mode == "default" || mode.empty()) {
 			bhv = sayori_postgame;
+		}
+		else if (mode == "depressed") {
+			bhv = sayori_depressed;
+		}
+		else if (mode == "romantic") {
+			bhv = sayori_romantic;
+		}
+		else if (mode == "happy") {
+			bhv = sayori_happy;
+		}
+		else if (mode == "obsessive") {
+			bhv = sayori_obsessive;
 		}
 		else {
 			throw std::runtime_error("(Sayori) Unknown prompt preset: " + mode);
