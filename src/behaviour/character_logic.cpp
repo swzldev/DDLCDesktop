@@ -202,6 +202,13 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	cleanup_temp_buttons();
 	current_state.interactions.clear();
 
+	const int size = 1000;
+	int x = (sys::display_width() / 2) - (size / 2);
+	int y = (sys::display_height()) - size;
+
+	visuals->set_position(x, y);
+	visuals->set_scale(size);
+
 	visuals->set_character(ddlc_character::MONIKA);
 	visuals->set_chars_per_second(50.0f);
 	
