@@ -146,6 +146,7 @@ void character_logic::tick(float delta_time) {
 		if (ai->is_response_ready()) {
 			visuals->set_chars_per_second(50.0f);
 			current_state = ai->get_response();
+			visuals->set_style(current_state.style);
 			
 			// handle errors
 			if (current_state.err != character_state::error::NONE) {
