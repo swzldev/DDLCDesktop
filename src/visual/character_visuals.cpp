@@ -107,6 +107,15 @@ void character_visuals::set_saying_immediate(const std::string& saying) {
 	saying_timer_ = 0.0f;
 	is_speaking_ = false;
 }
+void character_visuals::set_style(const std::string& style) {
+	if (style == "casual") {
+		casual_clothing_ = true;
+	}
+	else {
+		casual_clothing_ = false;
+	}
+	update_sprites();
+}
 void character_visuals::set_pose(const std::string& left, const std::string& right) {
 	pose_left_ = left;
 	pose_right_ = right;
@@ -250,9 +259,16 @@ void character_visuals::update_sprites() {
 		return fs::absolute(fs::weakly_canonical(p).make_preferred());
 	};
 
+	std::string pose_left_full = pose_left_;;
+	std::string pose_right_full = pose_right_;
+	if (casual_clothing_) {
+		pose_left_full += "b";
+		pose_right_full += "b";
+	}
+
 	fs::path head_path = normalize_path(chr_images_path / (expression_ + ".png"));
-	fs::path bl_path = normalize_path(chr_images_path / (pose_left_ + "l.png"));
-	fs::path br_path = normalize_path(chr_images_path / (pose_right_ + "r.png"));
+	fs::path bl_path = normalize_path(chr_images_path / (pose_left_full + "l.png"));
+	fs::path br_path = normalize_path(chr_images_path / (pose_right_full + "r.png"));
 
 	if (!fs::exists(head_path)) {
 		throw std::runtime_error("Head sprite file not found: " + head_path.string());

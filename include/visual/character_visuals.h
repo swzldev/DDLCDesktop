@@ -25,6 +25,7 @@ public:
 
 	void set_saying(const std::string& saying);
 	void set_saying_immediate(const std::string& saying);
+	void set_style(const std::string& style);
 	void set_pose(const std::string& left, const std::string& right);
 	void set_expression(const std::string& expression);
 
