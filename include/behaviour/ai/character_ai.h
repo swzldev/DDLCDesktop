@@ -82,7 +82,8 @@ private:
 	bool response_is_error(const std::string& response);
 	std::string extract_content_from_response(const std::string& response);
 	character_state parse_response(const std::string& raw_response);
-	std::string get_pose_code(const std::string& pose);
+	std::string get_pose_code_left(const std::string& pose);
+	std::string get_pose_code_right(const std::string& pose);
 	std::string get_expression_code(const std::string& expression);
 
 	std::string get_system_prompt() const;

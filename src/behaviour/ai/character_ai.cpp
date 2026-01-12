@@ -282,7 +282,6 @@ character_state character_ai::handle_interaction_internal(const character_intera
 	character_state fail_parse_state{};
 	fail_parse_state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
 
-
 	if (response_is_error(response)) {
 		return fail_parse_state;
 	}
@@ -381,10 +380,12 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 
 		// parse interactions
 		for (auto& inter : j["interactions"]) {
+			bool casual = inter.value("style", "normal") == "casual";
+
 			character_state::interaction i;
 			i.saying = inter.value("saying", "");
 			i.expression = get_expression_code(inter.value("expression", ""));
-			i.pose_left = get_pose_code(inter.value("pose_left", ""));
+			i.pose_left = get_pose_code_left(inter.value("pose_left", ""));
 			i.pose_right = get_pose_code(inter.value("pose_right", ""));
 			i.new_x = inter.value("new_x", -1); // default no change
 			i.new_scale = inter.value("new_scale", -1); // default no change
@@ -406,7 +407,7 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 	return state;
 }
 
-std::string character_ai::get_pose_code(const std::string& pose) {
+std::string character_ai::get_pose_code_left(const std::string& pose) {
 	static const std::unordered_map<std::string, std::string> monika_poses = {
 		{"arm_at_side", "1"},
 		{"casual_finger_point", "2"},
@@ -426,6 +427,49 @@ std::string character_ai::get_pose_code(const std::string& pose) {
 	static const std::unordered_map<std::string, std::string> sayori_poses = {
 		{"arm_at_side", "1"},
 		{"arm_in_air", "2"}
+	};
+
+	const auto& pose_map = (character_ == ddlc_character::MONIKA)
+		? monika_poses
+		: (character_ == ddlc_character::YURI)
+		? yuri_poses
+		: (character_ == ddlc_character::NATSUKI)
+		? natsuki_poses
+		: (character_ == ddlc_character::SAYORI)
+		? sayori_poses
+		: throw std::runtime_error("Unknown character when getting pose code");
+
+	auto it = pose_map.find(pose);
+	if (it != pose_map.end()) {
+		return it->second;
+	}
+
+	return "1"; // default fallback
+}
+std::string character_ai::get_pose_code_right(const std::string& pose) {
+	static const std::unordered_map<std::string, std::string> monika_poses = {
+		{"neutral", "1"},
+		{"one_hand_hip", "2"},
+		{"one_hand_finger_point", "1"},
+		{"hip_point", "2"}
+	};
+
+	static const std::unordered_map<std::string, std::string> yuri_poses = {
+		{"neutral", "1"},
+		{"one_arm_at_chest", "2"},
+		{"chest_hand_fidget", "2"}
+	};
+
+	static const std::unordered_map<std::string, std::string> natsuki_poses = {
+		{"neutral", "1"},
+		{"left_hand_hip", "1"},
+		{"right_hand_hip", "2"},
+		{"hands_on_hips", "2"}
+	};
+
+	static const std::unordered_map<std::string, std::string> sayori_poses = {
+		{"neutral", "1"},
+		{"left_arm_raised", "2"}
 	};
 
 	const auto& pose_map = (character_ == ddlc_character::MONIKA)
