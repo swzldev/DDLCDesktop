@@ -146,7 +146,10 @@ void character_logic::tick(float delta_time) {
 		if (ai->is_response_ready()) {
 			visuals->set_chars_per_second(50.0f);
 			current_state = ai->get_response();
-			visuals->set_style(current_state.style);
+			if (character_ == ddlc_character::MONIKA) {
+				visuals->set_style("normal"); // monika doesnt have casual style
+			}
+			else visuals->set_style(current_state.style);
 			
 			// handle errors
 			if (current_state.err != character_state::error::NONE) {
@@ -404,27 +407,42 @@ void character_logic::display_current_interaction() {
 		const int screen_width = sys::display_width();
 		const int screen_height = sys::display_height();
 
-		int new_x = inter.new_x == -1 ? visuals->get_x() : inter.new_x;
+		int min_height = screen_height * 0.4f;
+		int max_height = screen_height * 0.95f;
+
+		int cur_x = static_cast<float>(visuals->get_x()) / screen_width * 100.0f;
+		int new_x = inter.new_x == -1 ? cur_x : inter.new_x;
+
+		if (new_x < 0) new_x = 0;
+		else if (new_x > 100) new_x = 100;
 
 		// pre-apply scale
 		if (inter.new_scale != -1) {
-			visuals->set_scale(inter.new_scale);
+			int new_scale = inter.new_scale;
+			if (new_scale > 10) new_scale = 10;
+			else if (new_scale < 1) new_scale = 1;
+
+			// scale from 1-10 to min_height-max_height
+			float scale_factor = (new_scale - 1) / 9.0f; // normalize to 0.0-1.0
+			new_scale = min_height + static_cast<int>(scale_factor * (max_height - min_height));
+
+			visuals->set_scale(new_scale);
 		}
 
 		int scale = visuals->get_scale();
 
 		// clamp position to screen bounds (or move if scale means position is out of bounds)
 		// note x and y = top left (not centre)
-		if (new_x < 0) {
-			new_x = 0;
-		}
-		else if (new_x + scale > screen_width) {
+		int new_x_px = static_cast<int>((new_x / 100.0f) * screen_width);
+
+		if (new_x_px < 0) new_x_px = 0;
+		else if (new_x_px + scale > screen_width) {
 			new_x = screen_width - scale;
 		}
 
 		// stick to the bottom of the screen
 		int new_y = screen_height - scale;
 
-		visuals->set_position(new_x, new_y);
+		visuals->set_position(new_x_px, new_y);
 	}
 }
