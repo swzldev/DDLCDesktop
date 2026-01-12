@@ -188,6 +188,7 @@ void character_ai::load_config(nlohmann::json j) {
 
 	api_key_ = j.value("api_key", "");
 	if (api_key_.empty()) {
+		log::print("API key not found in config.json, throwing...\nconfig.json contents:\n{}\n", j.dump(4));
 		throw std::runtime_error("API key not found in config.json (did you read the installation instructions on the github?)");
 	}
 

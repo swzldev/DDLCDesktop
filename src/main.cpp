@@ -59,6 +59,7 @@ int WINAPI WinMain(
 
 	try {
 		log::open_file(log_path.string().c_str());
+		log::print("Working directory: {}\n", std::filesystem::current_path().string());
 		widget::get_instance().main_loop();
 	}
 	catch (const std::exception& e) {

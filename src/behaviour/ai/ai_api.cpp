@@ -6,6 +6,8 @@
 
 #include <curl/curl.h>
 
+#include <output/log.h>
+
 ai_api::ai_api(const std::string& endpoint, const std::string& api_key) {
 	endpoint_ = endpoint;
     api_key_ = api_key;
@@ -38,6 +40,7 @@ std::string ai_api::get_response(const std::string& prompt) {
 	headers = curl_slist_append(headers, ("Authorization: Bearer " + api_key_).c_str());
 
 	headers = curl_slist_append(headers, "X-Title: DDLC Desktop");
+	headers = curl_slist_append(headers, "HTTP-Referrer: https://github.com/swzldev/DDLCDesktop");
 
 	curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, prompt.c_str());
 
@@ -57,6 +60,7 @@ std::string ai_api::get_response(const std::string& prompt) {
 		if (res == CURLE_ABORTED_BY_CALLBACK) {
 			throw std::runtime_error("Request cancelled by user");
 		}
+		log::print("Curl error: {}\n", curl_easy_strerror(res));
 		throw std::runtime_error(std::string("Curl error: ") + curl_easy_strerror(res));
 	}
 	
