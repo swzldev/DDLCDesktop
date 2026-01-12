@@ -409,24 +409,30 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 
 std::string character_ai::get_pose_code_left(const std::string& pose) {
 	static const std::unordered_map<std::string, std::string> monika_poses = {
-		{"arm_at_side", "1"},
-		{"casual_finger_point", "2"},
-		{"hand_on_hip", "2"}
+		{"neutral", "1"},
+		{"one_hand_hip", "1"},
+		{"one_hand_finger_point", "2"},
+		{"hip_point", "2"}
 	};
 
 	static const std::unordered_map<std::string, std::string> yuri_poses = {
-		{"arm_behind_back", "1"},
-		{"arm_fidget_at_chest", "2"}
+		{"neutral", "1"},
+		{"one_arm_at_chest", "1"},
+		{"chest_hand_fidget", "2"}
 	};
 
 	static const std::unordered_map<std::string, std::string> natsuki_poses = {
-		{"arm_at_side", "1"},
-		{"hand_on_hip", "2"}
+		{"neutral", "1"},
+		{"left_hand_hip", "2"},
+		{"right_hand_hip", "1"},
+		{"hands_on_hips", "2"}
 	};
 
 	static const std::unordered_map<std::string, std::string> sayori_poses = {
-		{"arm_at_side", "1"},
-		{"arm_in_air", "2"}
+		{"neutral", "1"},
+		{"left_arm_raised", "2"},
+		{"right_arm_raised", "1"},
+		{"arms_raised", "2"},
 	};
 
 	const auto& pose_map = (character_ == ddlc_character::MONIKA)
@@ -469,7 +475,9 @@ std::string character_ai::get_pose_code_right(const std::string& pose) {
 
 	static const std::unordered_map<std::string, std::string> sayori_poses = {
 		{"neutral", "1"},
-		{"left_arm_raised", "2"}
+		{"left_arm_raised", "1"},
+		{"right_arm_raised", "2"},
+		{"arms_raised", "2"},
 	};
 
 	const auto& pose_map = (character_ == ddlc_character::MONIKA)
