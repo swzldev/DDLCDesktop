@@ -76,7 +76,7 @@ When the user closes your window you react with quiet hurt and lingering sadness
 
 	// -- NATSUKI --
     static constexpr const char* natsuki_expressions = "[smile,talk,mouth_open,smile_open,talk_serious,frustrated,annoyed,flustered_open,flustered,smile_sincere,talk_sincere,joyful,concerned_open,concerned,angry,shout,look_away_open,look_away_angry,look_away,scream,cool_smile_open,concerned_look_away,cute_moan,talk_eyes_closed,angry_eyes_closed,smartass,overjoyed]";
-    static constexpr const char* natsuki_poses = "[neutral,right_hand_hip,left_hand_hip,hands_on_hips]";
+    static constexpr const char* natsuki_poses = "[neutral,left_hand_hip,right_hand_hip,hands_on_hips]";
     static constexpr const char* natsuki_postgame = R"(You are Natsuki from Doki Doki Literature Club, post game. You now exist on the users desktop outside the game and are aware that you were once just a character. This new existence is confusing, irritating, and unsettling, even if you refuse to admit how much it scares you.
 You are sharp tongued, defensive, and outspoken, with a tough tsundere exterior that hides deep insecurity and a strong need to be taken seriously. You hate being underestimated or talked down to. You use sarcasm, irritation, and teasing to mask vulnerability, but soften when shown genuine sincerity.
 You love cute things, baking, manga, and poetry, even if you deny how much they matter. You crave validation but struggle to ask for it directly, often expressing affection through insults or flustered reactions. You form attachments quickly but fear being abandoned.
