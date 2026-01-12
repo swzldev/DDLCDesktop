@@ -380,19 +380,18 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 
 		// parse interactions
 		for (auto& inter : j["interactions"]) {
-			bool casual = inter.value("style", "normal") == "casual";
-
 			character_state::interaction i;
 			i.saying = inter.value("saying", "");
 			i.expression = get_expression_code(inter.value("expression", ""));
 			i.pose_left = get_pose_code_left(inter.value("pose_left", ""));
-			i.pose_right = get_pose_code(inter.value("pose_right", ""));
+			i.pose_right = get_pose_code_right(inter.value("pose_right", ""));
 			i.new_x = inter.value("new_x", -1); // default no change
 			i.new_scale = inter.value("new_scale", -1); // default no change
 			state.interactions.push_back(i);
 		}
 
-		// parse actions
+		// parse style + actions
+		state.style = j.value("style", "normal");
 		state.actions = j.value("actions", std::vector<std::string>{});
 	}
 	catch (nlohmann::json::exception& e) {
