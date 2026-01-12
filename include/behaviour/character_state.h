@@ -21,5 +21,6 @@ struct character_state {
 
 	error err = error::NONE;
 	std::vector<interaction> interactions;
+	std::string style;
 	std::vector<std::string> actions;
 };
