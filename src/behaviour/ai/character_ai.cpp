@@ -201,6 +201,7 @@ void character_ai::load_config(nlohmann::json j) {
 	message_history_size_ = j.value("message_history_size", 6);
 
 	// other config
+	ai_language_ = j.value("language", "English");
 	user_name_ = j.value("user_name", "");
 	system_prompt_ = j.value("behaviour_preset", "");
 }
@@ -638,5 +639,5 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 }
 
 std::string character_ai::get_system_prompt() const {
-	return system_prompts::get_prompt(character_, system_prompt_);
+	return system_prompts::get_prompt(character_, system_prompt_) + "\n" + "All responses should be in the following language: \"" + ai_language_ + "\".";
 }

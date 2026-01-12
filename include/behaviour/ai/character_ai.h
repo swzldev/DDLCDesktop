@@ -41,6 +41,7 @@ private:
 	ai_api* api_;
 	std::string model_ = "gpt-4o-mini";
 	int message_history_size_;
+	std::string ai_language_ = "English";
 	std::string user_name_ = "";
 	std::string system_prompt_ = "";
 	ddlc_character character_;
