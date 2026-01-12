@@ -392,6 +392,10 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 
 		// parse style + actions
 		state.style = j.value("style", "normal");
+		if (state.style != "normal" && state.style != "casual") {
+			state.style = "normal"; // fallback
+		}
+
 		state.actions = j.value("actions", std::vector<std::string>{});
 	}
 	catch (nlohmann::json::exception& e) {
