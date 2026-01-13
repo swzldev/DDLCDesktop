@@ -144,6 +144,7 @@
     <ClCompile Include="src\core\window.cpp" />
     <ClCompile Include="src\output\log.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\visual\button.cpp" />
     <ClCompile Include="src\visual\character_visuals.cpp" />
     <ClCompile Include="src\visual\sprite.cpp" />
   </ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="include\error\ddlcd_runtime_error.h" />
     <ClInclude Include="include\error\error_stories.h" />
     <ClInclude Include="include\output\log.h" />
+    <ClInclude Include="include\visual\button.h" />
     <ClInclude Include="include\visual\character_visuals.h" />
     <ClInclude Include="include\visual\sprite.h" />
     <ClInclude Include="lib\nlohmann-json\include\nlohmann\json.hpp" />
