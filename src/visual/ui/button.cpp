@@ -1,6 +1,10 @@
 #include <visual/ui/button.h>
 
 void button::click() {
+	if (disabled_) {
+		return;
+	}
+
 	if (type_ == button_type::CLICK) {
 		if (on_click_) {
 			on_click_();
