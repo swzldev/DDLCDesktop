@@ -62,6 +62,9 @@ public:
 			buttons_.end()
 		);
 	}
+	inline void clear_buttons() {
+		buttons_.clear();
+	}
 
 private:
 	window* window_ = nullptr;
