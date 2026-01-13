@@ -60,7 +60,7 @@
     <ClCompile Include="src\error\error_stories.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\visual\button.cpp">
+    <ClCompile Include="src\visual\ui\button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,7 +128,7 @@
     <ClInclude Include="include\error\error_stories.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\visual\button.h">
+    <ClInclude Include="include\visual\ui\button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
