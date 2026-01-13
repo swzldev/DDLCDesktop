@@ -50,6 +50,10 @@ public:
 		return img_.get();
 	}
 
+	inline void disable() { disabled_ = true; }
+	inline void enable() { disabled_ = false; }
+	inline bool is_disabled() const { return disabled_; }
+
 	inline int id() const {
 		return id_;
 	}
@@ -73,4 +77,5 @@ private:
 
 	int id_;
 	bool toggled_ = false;
+	bool disabled_ = false;
 };
