@@ -4,7 +4,7 @@
 #include <string>
 #include <stdexcept>
 
-#include <core/widget.h>
+#include <core/window.h>
 
 #undef max
 
