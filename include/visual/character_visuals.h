@@ -88,7 +88,7 @@ private:
 
 	// buttons
 	std::vector<button> buttons_;
-	const button* current_button_ = nullptr;
+	button* current_button_ = nullptr;
 
 	void draw_all_buttons();
 

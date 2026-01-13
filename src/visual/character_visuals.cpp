@@ -146,7 +146,7 @@ void character_visuals::draw_all_buttons() {
 	const float buttons_y = 0.86f;
 
 	struct button_draw_data {
-		const button* btn;
+		button* btn;
 		std::string text;
 		float width;
 		float height;
@@ -157,7 +157,7 @@ void character_visuals::draw_all_buttons() {
 	float total_width = 0.0f; // normalized & with padding
 	float height = 0.0f;
 
-	for (const auto& button : buttons_) {
+	for (auto& button : buttons_) {
 		// measure (size 2.2)
 		D2D1_SIZE_F text_size = renderer_->measure_text(button.text(), 2.2f);
 
@@ -219,14 +219,7 @@ void character_visuals::draw_all_buttons() {
 
 int character_visuals::on_mouse_click() {
 	if (current_button_) {
-		button button = *current_button_;
-		if (button.type() == button_type::CLICK_ONCE) {
-			remove_button(button.id());
-			current_button_ = nullptr;
-		}
-
-		button.click();
-		
+		current_button_->click();
 		return 1; // handled
 	}
 	return 0; // not handled
