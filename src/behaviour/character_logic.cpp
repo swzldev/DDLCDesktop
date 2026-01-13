@@ -15,8 +15,8 @@
 #include <behaviour/ai/character_ai.h>
 #include <behaviour/character_state.h>
 #include <ddlc/characters.h>
-#include <visual/button.h>
 #include <visual/character_visuals.h>
+#include <visual/ui/button.h>
 #include <error/ddlcd_runtime_error.h>
 #include <error/error_stories.h>
 
@@ -46,16 +46,16 @@ character_logic::character_logic(window* window) {
 	// ALLOCATE (not add) buttons
 	input_mode_tbutton_ = std::make_unique<button>(
 		"Custom", [this]() {
-			custom_button_click();
+			await_input();
 		},
 		button_style::LABEL, button_type::TOGGLE,
 		"Actions", [this]() {
-			actions_button_click();
+			await_choice(true);
 		}
 	);
 
-	// default buttons
-	add_default_buttons();
+	// main menu
+	show_main_menu();
 
 	// create ai
 	ai = new character_ai(character_);
@@ -91,9 +91,8 @@ void character_logic::handle_interaction(const character_interaction& interactio
 	}
 	else if (state_ == logic_state::TALKING) {
 		// in conversations, mouse down means advance interaction
-		if (interaction_index_ < current_state.interactions.size()) {
+		if (++interaction_index_ < current_state.interactions.size()) {
 			display_current_interaction();
-			interaction_index_++;
 		}
 		else {
 			// end of conversation
@@ -139,6 +138,11 @@ void character_logic::tick(float delta_time) {
 		first_tick_ = false;
 	}
 
+	if (current_menu_ != menu_state::MAIN) {
+		visuals->tick(delta_time);
+		return;
+	}
+
 	if (state_ == logic_state::THINKING) {
 		if (!visuals->is_speaking()) {
 			// constantly think
@@ -170,7 +174,6 @@ void character_logic::tick(float delta_time) {
 				state_ = logic_state::TALKING;
 				interaction_index_ = 0;
 				display_current_interaction();
-				interaction_index_++;
 			}
 			else {
 				state_ = logic_state::IDLE;
@@ -245,34 +248,45 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	interaction_index_++;
 }
 
-void character_logic::add_default_buttons() {
-	// set buttons
-	visuals->add_button({ "Close", [this]() {
-		close_button_click();
-	} });
-	visuals->add_button({ "Reset", [this]() {
-		reset_button_click();
-	} });
-}
+void character_logic::show_main_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::MAIN;
 
-void character_logic::close_button_click() {
-	ai->handle_close_interaction();
-	ai->save_state("character_state.json");
-
-	window_->close();
-}
-void character_logic::reset_button_click() {
-	if (state_ == logic_state::THINKING) {
-		return; // dont reset while thinking
+	if (state_ == logic_state::TALKING) {
+		display_current_interaction();
 	}
 
-	reset_all();
+	// set buttons
+	visuals->add_button({ "Close", [this]() {
+		ai->handle_close_interaction();
+		ai->save_state("character_state.json");
+
+		window_->close();
+	} });
+	visuals->add_button({ "Reset", [this]() {
+		if (state_ == logic_state::THINKING) {
+			return; // dont reset while thinking
+		}
+		reset_all();
+	} });
+	visuals->add_button({ "Settings", [this]() {
+		show_settings_menu();
+	} });
 }
-void character_logic::custom_button_click() {
-	await_input();
-}
-void character_logic::actions_button_click() {
-	await_choice(false);
+void character_logic::show_settings_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::SETTINGS;
+
+	visuals->set_chars_per_second(50.0f);
+	visuals->set_saying("Choose an option...");
+
+	// set buttons
+	visuals->add_button({ "Character", [this]() {
+		
+	} });
+	visuals->add_button({ "Back", [this]() {
+		show_main_menu();
+	} });
 }
 
 void character_logic::await_choice(bool show_immediate) {
@@ -359,7 +373,7 @@ void character_logic::reset_all() {
 	error_state_ = error_state::NONE;
 
 	visuals->reset(character_);
-	add_default_buttons();
+	show_main_menu();
 
 	// start new interaction
 	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
@@ -421,7 +435,7 @@ void character_logic::display_current_interaction() {
 
 		if (new_x_px < 0) new_x_px = 0;
 		else if (new_x_px + scale > screen_width) {
-			new_x = screen_width - scale;
+			new_x_px = screen_width - scale;
 		}
 
 		// stick to the bottom of the screen

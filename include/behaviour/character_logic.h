@@ -24,6 +24,11 @@ enum class error_state {
 	FATAL,
 };
 
+enum class menu_state {
+	MAIN,
+	SETTINGS,
+};
+
 class window;
 
 class character_logic {
@@ -58,12 +63,10 @@ private:
 	bool custom_mode_ = false;
 	std::string current_input_;
 
-	void add_default_buttons();
-
-	void close_button_click();
-	void reset_button_click();
-	void custom_button_click();
-	void actions_button_click();
+	// menus
+	menu_state current_menu_ = menu_state::MAIN;
+	void show_main_menu();
+	void show_settings_menu();
 
 	void await_choice(bool show_immediate = false);
 	void await_input();
