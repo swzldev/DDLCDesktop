@@ -39,11 +39,11 @@ public:
 	void set_text_alignment(DWRITE_TEXT_ALIGNMENT alignment);
 
 	void draw_sprite(sprite* spr, float x = 0.0f, float y = 0.0f);
-	void draw_text(const std::wstring& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f);
+	void draw_text(const std::string& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f);
 
 	std::vector<uint8_t> get_alpha_map();
 
-	D2D1_SIZE_F measure_text(const std::wstring& text, float size = 4.0f);
+	D2D1_SIZE_F measure_text(const std::string& text, float size = 4.0f);
 
 	std::vector<std::function<void()>> post_draw_queue;
 
