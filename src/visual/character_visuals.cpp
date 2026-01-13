@@ -66,11 +66,10 @@ void character_visuals::draw() {
 		draw_all_buttons();
 
 		// draw text
-		std::wstring wtext(saying_.begin(), saying_.end());
 		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
 		renderer_->set_stroke_color(D2D1::ColorF(0, 0, 0, 0.3f));
-		renderer_->draw_text(wtext, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
+		renderer_->draw_text(saying_, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
 	}
 }
 
@@ -148,7 +147,7 @@ void character_visuals::draw_all_buttons() {
 
 	struct button_predraw_data {
 		const text_button* btn;
-		std::wstring text;
+		std::string text;
 		float width;
 		float height;
 		// ^^ including padding
@@ -159,11 +158,8 @@ void character_visuals::draw_all_buttons() {
 	float height = 0.0f;
 
 	for (const auto& button : text_buttons_) {
-		// convert to wstring
-		std::wstring wtext(button.text.begin(), button.text.end());
-
 		// measure (size 2.2)
-		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, 2.2f);
+		D2D1_SIZE_F text_size = renderer_->measure_text(button.text, 2.2f);
 
 		float width_normalized = text_size.width / window_->size() + button_pad * 2;
 		float height_normalized = text_size.height / window_->size();
@@ -172,7 +168,7 @@ void character_visuals::draw_all_buttons() {
 		height = std::max(height, height_normalized);
 		total_width += width_normalized;
 
-		predraw_data.push_back({ &button, wtext, width_normalized, height_normalized });
+		predraw_data.push_back({ &button, button.text, width_normalized, height_normalized });
 	}
 
 	D2D_COLOR_F btn_col = D2D1::ColorF(0, 0, 0, 0.7f);
