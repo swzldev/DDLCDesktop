@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include <core/window.h>
+#include <visual/ui/button.h>
 
 #undef max
 

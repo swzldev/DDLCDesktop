@@ -3,11 +3,10 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include <vector>
 
 #include <core/renderer.h>
 #include <visual/sprite.h>
-#include <visual/button.h>
+#include <visual/ui/button.h>
 #include <ddlc/characters.h>
 
 class character_visuals {
