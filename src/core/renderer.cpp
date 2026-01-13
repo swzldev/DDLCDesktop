@@ -343,7 +343,7 @@ void renderer::draw_text(const std::string& text, float x, float y, float width,
 
             d2d_ctx_->DrawTextW(
                 wtext.c_str(),
-                static_cast<UINT32>(text.length()),
+                static_cast<UINT32>(wtext.length()),
                 dwrite_text_format_.Get(),
                 &outline_rect,
                 d2d_brush_.Get()
@@ -355,7 +355,7 @@ void renderer::draw_text(const std::string& text, float x, float y, float width,
     d2d_brush_->SetColor(text_color_);
     d2d_ctx_->DrawTextW(
         wtext.c_str(),
-        static_cast<UINT32>(text.length()),
+        static_cast<UINT32>(wtext.length()),
         dwrite_text_format_.Get(),
         &layout_rect,
         d2d_brush_.Get()
@@ -406,7 +406,7 @@ D2D1_SIZE_F renderer::measure_text(const std::string& text, float size) {
     Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
     HRESULT hr = dwrite_factory_->CreateTextLayout(
         wtext.c_str(),
-        static_cast<UINT32>(text.length()),
+        static_cast<UINT32>(wtext.length()),
         dwrite_text_format_.Get(),
         FLT_MAX,
         FLT_MAX,
