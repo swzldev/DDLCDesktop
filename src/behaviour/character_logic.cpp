@@ -83,6 +83,10 @@ character_logic::~character_logic() {
 }
 
 void character_logic::handle_interaction(const character_interaction& interaction) {
+	if (interaction.get_kind() != character_interaction::kind::CLICK || current_menu_ != menu_state::MAIN) {
+		return;
+	}
+
 	if (state_ == logic_state::IDLE) {
 		begin_think(interaction);
 	}
