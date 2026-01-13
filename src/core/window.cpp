@@ -199,7 +199,7 @@ void window::create_renderer() {
 }
 
 void window::invoke(const std::vector<std::function<int()>>& event) const {
-	for (auto event_it = event.rbegin(); event_it != event.rend(); event_it++) {
+	for (auto event_it = event.begin(); event_it != event.end(); event_it++) {
 		if ((*event_it)() != 0) {
 			break;
 		}
