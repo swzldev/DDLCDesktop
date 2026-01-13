@@ -34,7 +34,7 @@ ai_api::~ai_api() {
 	curl_easy_cleanup(curl_);
 }
 
-std::wstring ai_api::get_response(const std::string& prompt) {
+std::string ai_api::get_response(const std::string& prompt) {
 	cancel_requested_.store(false, std::memory_order_relaxed);
 
 	curl_slist* headers = nullptr;
@@ -66,17 +66,7 @@ std::wstring ai_api::get_response(const std::string& prompt) {
 		throw std::runtime_error(std::string("Curl error: ") + curl_easy_strerror(res));
 	}
 	
-	if (response.empty()) {
-		return std::wstring();
-	}
-
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, response.c_str(), (int)response.size(), nullptr, 0);
-	if (size_needed <= 0) {
-		throw std::runtime_error("Failed to convert response to wide string");
-	}
-	std::wstring wresponse(size_needed, 0);
-	MultiByteToWideChar(CP_UTF8, 0, response.c_str(), (int)response.size(), &wresponse[0], size_needed);
-	return wresponse;
+	return response;
 }
 
 void ai_api::cancel() {

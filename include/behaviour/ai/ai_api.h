@@ -10,7 +10,7 @@ public:
 	ai_api(const std::string& endpoint, const std::string& api_key);
 	~ai_api();
 
-	std::wstring get_response(const std::string& prompt);
+	std::string get_response(const std::string& prompt);
 	void cancel();
 
 private:
