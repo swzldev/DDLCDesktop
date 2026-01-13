@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <visual/character_visuals.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/character_ai.h>
@@ -52,10 +54,7 @@ private:
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
-	int actions_button_ = -1;
-	int custom_button_ = -1;
-	void cleanup_temp_buttons();
-
+	std::unique_ptr<button> input_mode_tbutton_;
 	bool custom_mode_ = false;
 	std::string current_input_;
 

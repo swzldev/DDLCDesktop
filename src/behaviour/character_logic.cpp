@@ -3,6 +3,8 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <memory>
 
 #include <nlohmann/json.hpp>
 
@@ -13,6 +15,7 @@
 #include <behaviour/ai/character_ai.h>
 #include <behaviour/character_state.h>
 #include <ddlc/characters.h>
+#include <visual/button.h>
 #include <visual/character_visuals.h>
 #include <error/ddlcd_runtime_error.h>
 #include <error/error_stories.h>
@@ -40,13 +43,24 @@ character_logic::character_logic(window* window) {
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
 
+	input_mode_tbutton_ = std::make_unique<button>(
+		"Custom", [this]() {
+			custom_button_click();
+		},
+		button_style::LABEL, button_type::TOGGLE,
+		"Actions", [this]() {
+			actions_button_click();
+		}
+	);
+
 	// set buttons
-	visuals->add_text_button("Close", false, [this]() {
+	visuals->add_button({ "Close", [this]() {
 		close_button_click();
-	});
-	visuals->add_text_button("Reset", false, [this]() {
+	} });
+	visuals->add_button({ "Reset", [this]() {
 		reset_button_click();
-	});
+	} });
+	
 
 	// create ai
 	ai = new character_ai(character_);
@@ -100,20 +114,12 @@ void character_logic::handle_interaction(const character_interaction& interactio
 				if (!current_state.actions.empty()) {
 					if (custom_mode_) {
 						await_input();
-
-						// (initial) actions button
-						actions_button_ = visuals->add_text_button("Actions", true, [this]() {
-							actions_button_click();
-						});
 					}
 					else {
 						await_choice();
-
-						// (initial) custom button
-						custom_button_ = visuals->add_text_button("Custom", true, [this]() {
-							custom_button_click();
-						});
 					}
+
+					visuals->add_button(*input_mode_tbutton_);
 				}
 				else {
 					visuals->set_saying("");
@@ -182,8 +188,6 @@ void character_logic::tick(float delta_time) {
 		int choice = get_choice_input(num_actions);
 
 		if (choice != -1) {
-			cleanup_temp_buttons();
-
 			// user made a choice
 			character_interaction choice_interaction(character_interaction::kind::CHOICE_MADE);
 			choice_interaction.str_data = current_state.actions[choice];
@@ -203,7 +207,6 @@ void character_logic::tick(float delta_time) {
 
 void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	// cleanup
-	cleanup_temp_buttons();
 	current_state.interactions.clear();
 
 	const int size = 1000;
@@ -247,18 +250,6 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	interaction_index_++;
 }
 
-void character_logic::cleanup_temp_buttons() {
-	// remove temp buttons
-	if (actions_button_ != -1) {
-		visuals->remove_text_button(actions_button_);
-		actions_button_ = -1;
-	}
-	if (custom_button_ != -1) {
-		visuals->remove_text_button(custom_button_);
-		custom_button_ = -1;
-	}
-}
-
 void character_logic::close_button_click() {
 	ai->handle_close_interaction();
 	ai->save_state("character_state.json");
@@ -274,21 +265,9 @@ void character_logic::reset_button_click() {
 }
 void character_logic::custom_button_click() {
 	await_input();
-
-	// create actions button
-	actions_button_ = visuals->add_text_button("Actions", true, [this]() {
-		actions_button_ = -1;
-		actions_button_click();
-	});
 }
 void character_logic::actions_button_click() {
 	await_choice(false);
-
-	// create custom button
-	custom_button_ = visuals->add_text_button("Custom", true, [this]() {
-		custom_button_ = -1;
-		custom_button_click();
-	});
 }
 
 void character_logic::await_choice(bool show_immediate) {
@@ -312,8 +291,6 @@ void character_logic::await_input() {
 
 	// start recording
 	input::begin_input_recording(&current_input_, INPUT_MAX_LENGTH, [this]() {
-		cleanup_temp_buttons();
-
 		// on submit
 		character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
 		input_interaction.str_data = current_input_;
@@ -370,7 +347,7 @@ void character_logic::reset_all() {
 	if (fs::exists("character_state.json")) {
 		fs::remove("character_state.json");
 	}
-	cleanup_temp_buttons();
+	visuals->remove_button(input_mode_tbutton_->id());
 
 	ai->cancel_and_reset();
 	current_state.interactions.clear();
@@ -385,6 +362,8 @@ void character_logic::reset_all() {
 }
 
 void character_logic::begin_think(const character_interaction& interaction) {
+	visuals->remove_button(input_mode_tbutton_->id());
+
 	display_think();
 	ai->handle_interaction_async(interaction);
 	state_ = logic_state::THINKING;
