@@ -1,4 +1,4 @@
-#include <visual/button.h>
+#include <visual/ui/button.h>
 
 void button::click() {
 	if (type_ == button_type::CLICK) {
