@@ -6,16 +6,6 @@ void button::click() {
 			on_click_();
 		}
 	}
-	else if (type_ == button_type::CLICK_ONCE) {
-		if (on_click_) {
-			on_click_();
-		}
-		// disable further clicks by clearing callbacks
-		// but - these should really be removed from the ui
-		// by the owner
-		on_click_ = nullptr;
-		on_click_alt_ = nullptr;
-	}
 	else if (type_ == button_type::TOGGLE) {
 		if (toggled_) {
 			if (on_click_alt_) {
