@@ -67,7 +67,7 @@ private:
 	std::string text_;
 	std::string text_alt_;
 
-	std::unique_ptr<sprite> img_;
+	std::shared_ptr<sprite> img_;
 
 	std::function<void()> on_click_;
 	std::function<void()> on_click_alt_;
