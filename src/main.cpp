@@ -23,7 +23,7 @@ struct curl_global_raii
 };
 static curl_global_raii g_curl_init_guard;
 
-LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* exceptionInfo) {
+static LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* exceptionInfo) {
 	log::print("FATAL ERROR: Unhandled exception caught!\n");
 	log::print("Exception Code: 0x{:X}\n", exceptionInfo->ExceptionRecord->ExceptionCode);
 	log::print("Exception Address: 0x{:X}\n", (uintptr_t)exceptionInfo->ExceptionRecord->ExceptionAddress);
