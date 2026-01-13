@@ -14,7 +14,6 @@ enum class button_style {
 
 enum class button_type {
 	CLICK,
-	CLICK_ONCE,
 	TOGGLE,
 };
 
