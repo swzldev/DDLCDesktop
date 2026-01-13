@@ -10,6 +10,16 @@
 
 namespace fs = std::filesystem;
 
+static std::wstring utf8_to_wstring(const std::string& str) {
+	if (str.empty()) {
+		return std::wstring();
+	}
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
+	std::wstring wstr(size_needed, 0);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
+	return wstr;
+}
+
 character_visuals::character_visuals(renderer* renderer, ddlc_character character) {
 	renderer_ = renderer;
 	window_ = renderer_->get_window();
@@ -69,7 +79,7 @@ void character_visuals::draw() {
 		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
 		renderer_->set_stroke_color(D2D1::ColorF(0, 0, 0, 0.3f));
-		renderer_->draw_text(saying_, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
+		renderer_->draw_text(utf8_to_wstring(saying_), 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
 	}
 }
 
@@ -147,7 +157,7 @@ void character_visuals::draw_all_buttons() {
 
 	struct button_draw_data {
 		button* btn;
-		std::string text;
+		std::wstring text;
 		float width;
 		float height;
 		// ^^ including padding
@@ -158,8 +168,10 @@ void character_visuals::draw_all_buttons() {
 	float height = 0.0f;
 
 	for (auto& button : buttons_) {
+		std::wstring wtext = utf8_to_wstring(button.text());
+
 		// measure (size 2.2)
-		D2D1_SIZE_F text_size = renderer_->measure_text(button.text(), 2.2f);
+		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, 2.2f);
 
 		float width_normalized = text_size.width / window_->size() + button_pad * 2;
 		float height_normalized = text_size.height / window_->size();
@@ -168,7 +180,7 @@ void character_visuals::draw_all_buttons() {
 		height = std::max(height, height_normalized);
 		total_width += width_normalized;
 
-		predraw_data.push_back({ &button, button.text(), width_normalized, height_normalized});
+		predraw_data.push_back({ &button, wtext, width_normalized, height_normalized});
 	}
 
 	D2D_COLOR_F btn_col = D2D1::ColorF(0, 0, 0, 0.7f);
