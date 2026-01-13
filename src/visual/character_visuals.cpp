@@ -90,6 +90,9 @@ void character_visuals::reset(ddlc_character character) {
 	saying_timer_ = 0.0f;
 	is_speaking_ = false;
 
+	buttons_.clear();
+	current_button_ = nullptr;
+
 	window_->reset();
 	
 	character_ = character;
