@@ -12,16 +12,6 @@
 
 #include <core/sys.h>
 
-static std::wstring utf8_to_wstring(const std::string& str) {
-    if (str.empty()) {
-        return std::wstring();
-    }
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
-    std::wstring wstr(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
-    return wstr;
-}
-
 renderer::renderer(window* wnd, HWND hwnd, int width, int height) {
 	window_ = wnd;
 
@@ -295,7 +285,7 @@ void renderer::draw_sprite(sprite* spr, float x, float y) {
         nullptr
     );
 }
-void renderer::draw_text(const std::string& text, float x, float y, float width, float height, float size, float outline) {
+void renderer::draw_text(const std::wstring& text, float x, float y, float width, float height, float size, float outline) {
     if (!d2d_brush_) {
         return;
     }
@@ -304,8 +294,6 @@ void renderer::draw_text(const std::string& text, float x, float y, float width,
     if (!create_text_format({ L"Aller", L"Segoe UI", L"Arial" }, size)) {
         return;
 	}
-
-    std::wstring wtext = utf8_to_wstring(text);
 
     float sf = height_;
 
@@ -342,8 +330,8 @@ void renderer::draw_text(const std::string& text, float x, float y, float width,
             );
 
             d2d_ctx_->DrawTextW(
-                wtext.c_str(),
-                static_cast<UINT32>(wtext.length()),
+                text.c_str(),
+                static_cast<UINT32>(text.length()),
                 dwrite_text_format_.Get(),
                 &outline_rect,
                 d2d_brush_.Get()
@@ -354,8 +342,8 @@ void renderer::draw_text(const std::string& text, float x, float y, float width,
     // main text
     d2d_brush_->SetColor(text_color_);
     d2d_ctx_->DrawTextW(
-        wtext.c_str(),
-        static_cast<UINT32>(wtext.length()),
+        text.c_str(),
+        static_cast<UINT32>(text.length()),
         dwrite_text_format_.Get(),
         &layout_rect,
         d2d_brush_.Get()
@@ -394,19 +382,17 @@ std::vector<uint8_t> renderer::get_alpha_map() {
     return alpha_map;
 }
 
-D2D1_SIZE_F renderer::measure_text(const std::string& text, float size) {
+D2D1_SIZE_F renderer::measure_text(const std::wstring& text, float size) {
     // create text format with the desired font size
     if (!create_text_format({ L"Aller", L"Segoe UI", L"Arial" }, size)) {
         return D2D1::SizeF(0, 0);
     }
 
-	std::wstring wtext = utf8_to_wstring(text);
-
     // create text layout (no constraints)
     Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
     HRESULT hr = dwrite_factory_->CreateTextLayout(
-        wtext.c_str(),
-        static_cast<UINT32>(wtext.length()),
+        text.c_str(),
+        static_cast<UINT32>(text.length()),
         dwrite_text_format_.Get(),
         FLT_MAX,
         FLT_MAX,
