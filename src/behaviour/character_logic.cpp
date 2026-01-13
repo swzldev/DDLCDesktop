@@ -43,6 +43,7 @@ character_logic::character_logic(window* window) {
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
 
+	// ALLOCATE (not add) buttons
 	input_mode_tbutton_ = std::make_unique<button>(
 		"Custom", [this]() {
 			custom_button_click();
@@ -53,14 +54,8 @@ character_logic::character_logic(window* window) {
 		}
 	);
 
-	// set buttons
-	visuals->add_button({ "Close", [this]() {
-		close_button_click();
-	} });
-	visuals->add_button({ "Reset", [this]() {
-		reset_button_click();
-	} });
-	
+	// default buttons
+	add_default_buttons();
 
 	// create ai
 	ai = new character_ai(character_);
@@ -250,6 +245,16 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	interaction_index_++;
 }
 
+void character_logic::add_default_buttons() {
+	// set buttons
+	visuals->add_button({ "Close", [this]() {
+		close_button_click();
+	} });
+	visuals->add_button({ "Reset", [this]() {
+		reset_button_click();
+	} });
+}
+
 void character_logic::close_button_click() {
 	ai->handle_close_interaction();
 	ai->save_state("character_state.json");
@@ -347,7 +352,6 @@ void character_logic::reset_all() {
 	if (fs::exists("character_state.json")) {
 		fs::remove("character_state.json");
 	}
-	visuals->remove_button(input_mode_tbutton_->id());
 
 	ai->cancel_and_reset();
 	current_state.interactions.clear();
@@ -355,6 +359,7 @@ void character_logic::reset_all() {
 	error_state_ = error_state::NONE;
 
 	visuals->reset(character_);
+	add_default_buttons();
 
 	// start new interaction
 	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);

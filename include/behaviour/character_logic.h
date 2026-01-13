@@ -58,6 +58,8 @@ private:
 	bool custom_mode_ = false;
 	std::string current_input_;
 
+	void add_default_buttons();
+
 	void close_button_click();
 	void reset_button_click();
 	void custom_button_click();
