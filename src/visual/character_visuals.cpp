@@ -145,21 +145,21 @@ void character_visuals::draw_all_buttons() {
 	const float button_pad = 0.01f;
 	const float buttons_y = 0.86f;
 
-	struct button_predraw_data {
-		const text_button* btn;
+	struct button_draw_data {
+		const button* btn;
 		std::string text;
 		float width;
 		float height;
 		// ^^ including padding
 	};
-	std::vector<button_predraw_data> predraw_data;
+	std::vector<button_draw_data> predraw_data;
 
 	float total_width = 0.0f; // normalized & with padding
 	float height = 0.0f;
 
-	for (const auto& button : text_buttons_) {
+	for (const auto& button : buttons_) {
 		// measure (size 2.2)
-		D2D1_SIZE_F text_size = renderer_->measure_text(button.text, 2.2f);
+		D2D1_SIZE_F text_size = renderer_->measure_text(button.text(), 2.2f);
 
 		float width_normalized = text_size.width / window_->size() + button_pad * 2;
 		float height_normalized = text_size.height / window_->size();
@@ -168,7 +168,7 @@ void character_visuals::draw_all_buttons() {
 		height = std::max(height, height_normalized);
 		total_width += width_normalized;
 
-		predraw_data.push_back({ &button, button.text, width_normalized, height_normalized });
+		predraw_data.push_back({ &button, button.text(), width_normalized, height_normalized});
 	}
 
 	D2D_COLOR_F btn_col = D2D1::ColorF(0, 0, 0, 0.7f);
@@ -219,13 +219,13 @@ void character_visuals::draw_all_buttons() {
 
 int character_visuals::on_mouse_click() {
 	if (current_button_) {
-		text_button button = *current_button_;
-		if (button.single_click) {
-			remove_text_button(button.id);
+		button button = *current_button_;
+		if (button.type() == button_type::CLICK_ONCE) {
+			remove_button(button.id());
 			current_button_ = nullptr;
 		}
 
-		button.on_click();
+		button.click();
 		
 		return 1; // handled
 	}

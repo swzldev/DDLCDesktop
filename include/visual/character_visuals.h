@@ -7,6 +7,7 @@
 
 #include <core/renderer.h>
 #include <visual/sprite.h>
+#include <visual/button.h>
 #include <ddlc/characters.h>
 
 class character_visuals {
@@ -49,15 +50,17 @@ public:
 		is_speaking_ = false;
 	}
 
-	inline int add_text_button(const std::string& text, bool single_click, const std::function<void()>& on_click) {
-		int id = static_cast<int>(text_buttons_.size());
-		text_buttons_.push_back({ text, on_click, id, single_click });
-		return id;
+	inline unsigned int add_button(const button& btn) {
+		buttons_.push_back(btn);
+		return btn.id();
 	}
-	inline void remove_text_button(int button_index) {
-		if (button_index >= 0 && button_index < static_cast<int>(text_buttons_.size())) {
-			text_buttons_.erase(text_buttons_.begin() + button_index);
-		}
+	inline void remove_button(unsigned int id) {
+		buttons_.erase(
+			std::remove_if(buttons_.begin(), buttons_.end(), [id](const button& btn) {
+					return btn.id() == id;
+			}),
+			buttons_.end()
+		);
 	}
 
 private:
@@ -84,14 +87,8 @@ private:
 	float chars_per_second_ = 50.0f;
 
 	// buttons
-	struct text_button {
-		std::string text;
-		std::function<void()> on_click;
-		int id = -1;
-		bool single_click = false;
-	};
-	const text_button* current_button_ = nullptr;
-	std::vector<text_button> text_buttons_;
+	std::vector<button> buttons_;
+	const button* current_button_ = nullptr;
 
 	void draw_all_buttons();
 
