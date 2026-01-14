@@ -16,7 +16,7 @@ std::vector<character_state::interaction> error_stories::fail_load_config_story(
         {"\"You may need to reinstall...\"", "h", "1", "1"},
         {"\"Make sure you follow the instructions closely this time..\"", "i", "2", "1"},
         {"\"If you're stuck you can even join the discord server..\"", "e", "2", "2"},
-        {"\"...", "c", "1", "1"}
+        {"\"...\"", "c", "1", "1"}
     };
 }
 std::vector<character_state::interaction> error_stories::fail_ai_response_story() {
