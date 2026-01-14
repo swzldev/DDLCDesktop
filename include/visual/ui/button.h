@@ -26,12 +26,15 @@ public:
 		button_type type = button_type::CLICK,
 		const std::string& label_alt = "",
 		const std::function<void()>& on_click_alt = nullptr,
-		sprite* img = nullptr
+		bool* is_disabled = nullptr,
+		sprite* img = nullptr,
+		bool is_toggled = false
 	)
 		: style_(style), type_(type),
 		text_(label), text_alt_(label_alt),
 		img_(img),
 		on_click_(on_click), on_click_alt_(on_click_alt),
+		disabled_(is_disabled), toggled_(is_toggled),
 		id_(next_id++) {
 	}
 
@@ -50,9 +53,9 @@ public:
 		return img_.get();
 	}
 
-	inline void disable() { disabled_ = true; }
-	inline void enable() { disabled_ = false; }
-	inline bool is_disabled() const { return disabled_; }
+	inline void disable() { *disabled_ = true; }
+	inline void enable() { *disabled_ = false; }
+	inline bool is_disabled() const { return disabled_ && *disabled_; }
 
 	inline int id() const {
 		return id_;
@@ -76,6 +79,6 @@ private:
 	std::function<void()> on_click_alt_;
 
 	int id_;
+	bool* disabled_ = nullptr;
 	bool toggled_ = false;
-	bool disabled_ = false;
 };

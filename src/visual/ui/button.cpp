@@ -1,7 +1,7 @@
 #include <visual/ui/button.h>
 
 void button::click() {
-	if (disabled_) {
+	if (is_disabled()) {
 		return;
 	}
 
