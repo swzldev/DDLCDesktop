@@ -4,7 +4,6 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <memory>
 
 #include <nlohmann/json.hpp>
 
@@ -42,17 +41,6 @@ character_logic::character_logic(window* window) {
 
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
-
-	// ALLOCATE (not add) buttons
-	input_mode_tbutton_ = std::make_unique<button>(
-		"Custom", [this]() {
-			await_input();
-		},
-		button_style::LABEL, button_type::TOGGLE,
-		"Actions", [this]() {
-			await_choice(true);
-		}
-	);
 
 	// main menu
 	show_main_menu();
@@ -116,8 +104,7 @@ void character_logic::handle_interaction(const character_interaction& interactio
 					else {
 						await_choice();
 					}
-
-					visuals->add_button(*input_mode_tbutton_);
+					input_mode_btn_disabled_ = false;
 				}
 				else {
 					visuals->set_saying("");
@@ -218,6 +205,8 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	visuals->set_position(x, y);
 	visuals->set_scale(size);
 
+	visuals->set_expression("a");
+	visuals->set_pose("1", "1");
 	visuals->set_character(ddlc_character::MONIKA);
 	visuals->set_chars_per_second(50.0f);
 	
@@ -249,12 +238,12 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 
 	interaction_index_ = 0;
 	display_current_interaction();
-	interaction_index_++;
 }
 
 void character_logic::show_main_menu() {
 	visuals->clear_buttons();
 	current_menu_ = menu_state::MAIN;
+	input_mode_btn_disabled_ = true;
 
 	if (state_ == logic_state::TALKING) {
 		display_current_interaction();
@@ -273,6 +262,15 @@ void character_logic::show_main_menu() {
 		}
 		reset_all();
 	} });
+	visuals->add_button({ "Custom", [this]() {
+			await_input();
+		},
+		button_style::LABEL, button_type::TOGGLE,
+		"Actions", [this]() {
+			await_choice(/*true*/);
+		},
+		&input_mode_btn_disabled_
+	});
 	visuals->add_button({ "Settings", [this]() {
 		show_settings_menu();
 	} });
@@ -281,7 +279,7 @@ void character_logic::show_settings_menu() {
 	visuals->clear_buttons();
 	current_menu_ = menu_state::SETTINGS;
 
-	visuals->set_chars_per_second(50.0f);
+	visuals->set_chars_per_second(100.0f);
 	visuals->set_saying("Choose an option...");
 
 	// set buttons
@@ -385,8 +383,7 @@ void character_logic::reset_all() {
 }
 
 void character_logic::begin_think(const character_interaction& interaction) {
-	visuals->remove_button(input_mode_tbutton_->id());
-
+	input_mode_btn_disabled_ = true;
 	display_think();
 	ai->handle_interaction_async(interaction);
 	state_ = logic_state::THINKING;
@@ -409,7 +406,7 @@ void character_logic::display_current_interaction() {
 		const int screen_width = sys::display_width();
 		const int screen_height = sys::display_height();
 
-		int min_height = screen_height * 0.4f;
+		int min_height = screen_height * 0.5f;
 		int max_height = screen_height * 0.95f;
 
 		int cur_x = static_cast<float>(visuals->get_x()) / screen_width * 100.0f;
