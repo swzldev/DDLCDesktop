@@ -81,8 +81,8 @@ private:
 
 	// text
 	sprite* textbox_ = nullptr;
-	std::string saying_;
-	std::string saying_target_;
+	std::wstring saying_;
+	std::wstring saying_target_;
 	size_t saying_index_ = 0;
 	bool is_speaking_ = false;
 	float saying_timer_ = 0.0f;

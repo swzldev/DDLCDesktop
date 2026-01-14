@@ -80,13 +80,13 @@ void character_visuals::draw() {
 		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
 		renderer_->set_stroke_color(D2D1::ColorF(0, 0, 0, 0.3f));
-		renderer_->draw_text(utf8_to_wstring(saying_), 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
+		renderer_->draw_text(saying_, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
 	}
 }
 
 void character_visuals::reset(ddlc_character character) {
-	saying_ = "";
-	saying_target_ = "";
+	saying_ = L"";
+	saying_target_ = L"";
 	saying_index_ = 0;
 	saying_timer_ = 0.0f;
 	is_speaking_ = false;
@@ -106,16 +106,15 @@ void character_visuals::set_character(ddlc_character character) {
 }
 
 void character_visuals::set_saying(const std::string& saying) {
-	saying_target_ = saying;
-	saying_ = ""; // reset
+	saying_target_ = utf8_to_wstring(saying);
+	saying_ = L""; // reset
 	saying_index_ = 0;
 	saying_timer_ = 0.0f;
-	saying_target_ = saying;
 	is_speaking_ = true;
 }
 void character_visuals::set_saying_immediate(const std::string& saying) {
-	saying_target_ = saying;
-	saying_ = saying;
+	saying_target_ = utf8_to_wstring(saying);
+	saying_ = saying_target_;
 	saying_index_ = saying_target_.length();
 	saying_timer_ = 0.0f;
 	is_speaking_ = false;
@@ -211,7 +210,11 @@ void character_visuals::draw_all_buttons() {
 			if (current_button_ == data.btn) {
 				current_button_ = nullptr;
 			}
-			btn_col = D2D1::ColorF(0, 0, 0, 0.65f);
+			btn_col = D2D1::ColorF(0.333f, 0.137f, 0.137f, 1);
+		}
+
+		if (data.btn && data.btn->is_disabled()) {
+			btn_col = D2D1::ColorF(0.333f, 0.137f, 0.137f, 0.35f);
 		}
 
 		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_CENTER);
