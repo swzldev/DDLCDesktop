@@ -2,20 +2,25 @@
 
 #include <string>
 
+#include <ddlc/characters.h>
+
+enum class api {
+	OPENAI,
+	OPENROUTER,
+};
+
 class config {
 public:
 	static config load();
 
-	std::string openai_api_key;
-	std::string openai_model;
-	int openai_message_history_size;
+	api api;
+	std::string api_key;
+	std::string model;
+	int message_history_size;
 
 	std::string user_name;
 	std::string behaviour_preset;
+	ddlc_character character;
 
-	bool enable_resize;
-	bool enable_move;
-
-	int default_position;
-	int default_size;
+	bool success = false;
 };

@@ -12,31 +12,58 @@ config config::load() {
 	config cfg;
 	std::string path = "config.json";
 	if (!fs::exists(path) || !fs::is_regular_file(path)) {
-		throw std::runtime_error("Config file not found: " + path);
+		return cfg;
 	}
 
 	std::ifstream file(path);
 	if (!file.is_open()) {
-		throw std::runtime_error("Failed to open config file: " + path);
+		return cfg;
 	}
 
 	json j;
 	file >> j;
-
-	cfg.openai_api_key = j.value("openai_api_key", "");
-	cfg.openai_model = j.value("openai_model", "gpt-4o-mini");
-	cfg.openai_message_history_size = j.value("openai_message_history_size", 6);
-	
-	cfg.user_name = j.value("user_name", "");
-	cfg.behaviour_preset = j.value("behaviour_preset", "");
-
-	cfg.enable_resize = j.value("enable_resize", true);
-	cfg.enable_move = j.value("enable_move", true);
-
-	cfg.default_position = j.value("default_position", 1200);
-	cfg.default_size = j.value("default_size", 450);
-
 	file.close();
 
+	// API
+	std::string api_str = j.value("api", "");
+	if (api_str == "openai") {
+		cfg.api = api::OPENAI;
+	}
+	else if (api_str == "openrouter") {
+		cfg.api = api::OPENROUTER;
+	}
+	else {
+		return cfg;
+	}
+	// API key
+	cfg.api_key = j.value("api_key", "");
+	// model
+	cfg.model = j.value("model", "");
+	// message history size
+	cfg.message_history_size = j.value("message_history_size", 6);
+	
+	// user name
+	cfg.user_name = j.value("user_name", "");
+	// preset
+	cfg.behaviour_preset = j.value("behaviour_preset", "");
+	// character
+	std::string character_str = j.value("character", "monika");
+	if (character_str == "monika") {
+		cfg.character = ddlc_character::MONIKA;
+	}
+	else if (character_str == "yuri") {
+		cfg.character = ddlc_character::YURI;
+	}
+	else if (character_str == "natsuki") {
+		cfg.character = ddlc_character::NATSUKI;
+	}
+	else if (character_str == "sayori") {
+		cfg.character = ddlc_character::SAYORI;
+	}
+	else {
+		return cfg;
+	}
+
+	cfg.success = true;
 	return cfg;
 }
