@@ -8,19 +8,19 @@
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-config* config::load() {
+bool config::load() {
 	if (loaded_) {
-		return loaded_.get();
+		return true; // already loaded
 	}
 
 	std::string path = "config.json";
 	if (!fs::exists(path) || !fs::is_regular_file(path)) {
-		return nullptr;
+		return false;
 	}
 
 	std::ifstream file(path);
 	if (!file.is_open()) {
-		return nullptr;
+		return false;
 	}
 
 	json j;
@@ -38,7 +38,7 @@ config* config::load() {
 		cfg->api = api::OPENROUTER;
 	}
 	else {
-		return nullptr;
+		return false;
 	}
 	// API key
 	cfg->api_key = j.value("api_key", "");
@@ -66,9 +66,14 @@ config* config::load() {
 		cfg->character = ddlc_character::SAYORI;
 	}
 	else {
-		return nullptr;
+		return false;
 	}
 
 	loaded_ = std::move(cfg);
+	return true;
+}
+const config* config::get() {
 	return loaded_.get();
 }
+
+std::unique_ptr<config> config::loaded_ = nullptr;
