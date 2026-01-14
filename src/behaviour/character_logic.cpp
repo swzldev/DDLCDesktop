@@ -18,6 +18,7 @@
 #include <visual/ui/button.h>
 #include <error/ddlcd_runtime_error.h>
 #include <error/error_stories.h>
+#include <config/config.h>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -25,18 +26,8 @@ namespace fs = std::filesystem;
 character_logic::character_logic(window* window) {
 	window_ = window;
 
-	std::ifstream cfg("config.json");
-	if (cfg.is_open()) {
-		json j;
-		cfg >> j;
-		cfg.close();
-
-		load_config(j);
-		did_cfg_load_ = true;
-	}
-	else {
-		// default
-		character_ = ddlc_character::MONIKA;
+	if (config::load()) {
+		character_ = config::get()->character;
 	}
 
 	// create visuals
@@ -117,7 +108,7 @@ void character_logic::handle_interaction(const character_interaction& interactio
 
 void character_logic::tick(float delta_time) {
 	if (first_tick_) {
-		if (did_cfg_load_) {
+		if (config::load()) {
 			// window opened
 			character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
 			begin_think(interaction);
@@ -343,26 +334,6 @@ int character_logic::get_choice_input(int num_choices) {
 	return choice;
 }
 
-void character_logic::load_config(json j) {
-	std::string character_str = j.value("character", "monika");
-	character_ = ddlc_character::MONIKA;
-	if (character_str == "monika") {
-		character_ = ddlc_character::MONIKA;
-	}
-	else if (character_str == "yuri") {
-		character_ = ddlc_character::YURI;
-	}
-	else if (character_str == "natsuki") {
-		character_ = ddlc_character::NATSUKI;
-	}
-	else if (character_str == "sayori") {
-		character_ = ddlc_character::SAYORI;
-	}
-	else {
-		throw std::runtime_error("Invalid character specified in config.json: '" + character_str + "'");
-	}
-}
-
 void character_logic::reset_all() {
 	// cleanup
 	if (fs::exists("character_state.json")) {
@@ -409,11 +380,17 @@ void character_logic::display_current_interaction() {
 		int min_height = screen_height * 0.5f;
 		int max_height = screen_height * 0.95f;
 
-		int cur_x = static_cast<float>(visuals->get_x()) / screen_width * 100.0f;
-		int new_x = inter.new_x == -1 ? cur_x : inter.new_x;
+		int new_x_px;
+		if (inter.new_x == -1) {
+			new_x_px = visuals->get_x();
+		}
+		else {
+			int new_x = inter.new_x;
+			if (new_x < 0) new_x = 0;
+			else if (new_x > 100) new_x = 100;
 
-		if (new_x < 0) new_x = 0;
-		else if (new_x > 100) new_x = 100;
+			new_x_px = static_cast<int>((new_x / 100.0f) * screen_width);
+		}
 
 		// pre-apply scale
 		if (inter.new_scale != -1) {
@@ -430,10 +407,7 @@ void character_logic::display_current_interaction() {
 
 		int scale = visuals->get_scale();
 
-		// clamp position to screen bounds (or move if scale means position is out of bounds)
-		// note x and y = top left (not centre)
-		int new_x_px = static_cast<int>((new_x / 100.0f) * screen_width);
-
+		// clamp position to screen bounds
 		if (new_x_px < 0) new_x_px = 0;
 		else if (new_x_px + scale > screen_width) {
 			new_x_px = screen_width - scale;
