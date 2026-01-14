@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include <ddlc/characters.h>
 
@@ -11,7 +12,7 @@ enum class api {
 
 class config {
 public:
-	static config load();
+	static config* load();
 
 	api api;
 	std::string api_key;
@@ -22,5 +23,6 @@ public:
 	std::string behaviour_preset;
 	ddlc_character character;
 
-	bool success = false;
+private:
+	static std::unique_ptr<config> loaded_;
 };
