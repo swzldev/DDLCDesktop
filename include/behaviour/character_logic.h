@@ -59,7 +59,7 @@ private:
 	logic_state state_ = logic_state::IDLE;
 	unsigned int interaction_index_ = 0;
 
-	std::unique_ptr<button> input_mode_tbutton_;
+	bool input_mode_btn_disabled_ = true;
 	bool custom_mode_ = false;
 	std::string current_input_;
 
