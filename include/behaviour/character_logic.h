@@ -62,6 +62,7 @@ private:
 	bool custom_mode_ = false;
 	std::string current_input_;
 
+
 	// menus
 	menu_state current_menu_ = menu_state::MAIN;
 	void show_main_menu();
@@ -78,4 +79,6 @@ private:
 
 	void display_think();
 	void display_current_interaction();
+
+	void refresh_display();
 };

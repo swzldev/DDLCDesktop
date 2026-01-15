@@ -98,8 +98,8 @@ void character_logic::handle_interaction(const character_interaction& interactio
 					input_mode_btn_disabled_ = false;
 				}
 				else {
-					visuals->set_saying("");
 					state_ = logic_state::IDLE;
+					refresh_display();
 				}
 			}
 		}
@@ -159,7 +159,7 @@ void character_logic::tick(float delta_time) {
 			}
 			else {
 				state_ = logic_state::IDLE;
-				visuals->set_saying("");
+				refresh_display();
 			}
 		}
 	}
@@ -234,11 +234,6 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 void character_logic::show_main_menu() {
 	visuals->clear_buttons();
 	current_menu_ = menu_state::MAIN;
-	input_mode_btn_disabled_ = true;
-
-	if (state_ == logic_state::TALKING) {
-		display_current_interaction();
-	}
 
 	// set buttons
 	visuals->add_button({ "Close", [this]() {
@@ -265,6 +260,8 @@ void character_logic::show_main_menu() {
 	visuals->add_button({ "Settings", [this]() {
 		show_settings_menu();
 	} });
+
+	refresh_display();
 }
 void character_logic::show_settings_menu() {
 	visuals->clear_buttons();
@@ -417,5 +414,49 @@ void character_logic::display_current_interaction() {
 		int new_y = screen_height - scale;
 
 		visuals->set_position(new_x_px, new_y);
+	}
+}
+
+void character_logic::refresh_display() {
+	switch (state_) {
+	case logic_state::IDLE:
+		visuals->set_chars_per_second(50.0f);
+		visuals->set_saying("");
+		input_mode_btn_disabled_ = true;
+		break;
+
+	case logic_state::THINKING:
+		display_think();
+		input_mode_btn_disabled_ = true;
+		break;
+
+	case logic_state::TALKING:
+		visuals->set_chars_per_second(50.0f);
+		display_current_interaction();
+		input_mode_btn_disabled_ = true;
+		break;
+
+	case logic_state::AWAITING_CHOICE:
+		await_choice(true);
+		input_mode_btn_disabled_ = false;
+		break;
+
+	case logic_state::AWAITING_INPUT:
+		// restore input mode
+		custom_mode_ = true;
+		input_mode_btn_disabled_ = false;
+
+		// restart input recording
+		input::begin_input_recording(&current_input_, INPUT_MAX_LENGTH, [this]() {
+			character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
+			input_interaction.str_data = current_input_;
+			current_input_.clear();
+			input::end_input_recording();
+			begin_think(input_interaction);
+		});
+
+		std::string full = "You: " + current_input_ + "_";
+		visuals->set_saying_immediate(full);
+		break;
 	}
 }
