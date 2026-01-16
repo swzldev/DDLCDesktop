@@ -272,11 +272,44 @@ void renderer::draw_sprite(sprite* spr, float x, float y) {
     float scaled_height = bmp_size.height * scale;
 
     D2D1_RECT_F dest_rect = D2D1::RectF(
-        static_cast<float>(ax),
-        static_cast<float>(ay),
-        static_cast<float>(ax) + scaled_width,
-        static_cast<float>(ay) + scaled_height
+        ax,
+        ay,
+        ax + scaled_width,
+        ay + scaled_height
     );
+
+    d2d_ctx_->DrawBitmap(
+        bitmap,
+        dest_rect,
+        1.0f,
+        D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+        nullptr
+    );
+}
+void renderer::draw_sprite(sprite* spr, float x, float y, float width, float height) {
+    if (!spr) {
+        return;
+    }
+
+    ID2D1Bitmap* bitmap = spr->create_d2d_bitmap(d2d_ctx_.Get());
+    if (!bitmap) {
+        return;
+    }
+    D2D1_SIZE_F bmp_size = bitmap->GetSize();
+
+    // normalized -> pixels
+    float ax = x * width_;
+    float ay = y * height_;
+    float scaled_width = width * width_;
+    float scaled_height = height * height_;
+
+    D2D1_RECT_F dest_rect = D2D1::RectF(
+        ax,
+        ay,
+        ax + scaled_width,
+        ay + scaled_height
+    );
+
     d2d_ctx_->DrawBitmap(
         bitmap,
         dest_rect,
@@ -299,7 +332,6 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 
 	x *= sf;
 	y *= sf;
-
 	width *= sf;
 	height *= sf;
 
@@ -516,6 +548,7 @@ bool renderer::create_text_format(const std::vector<std::wstring>& font_families
             &dwrite_text_format_
         );
         if (SUCCEEDED(hr)) {
+			dwrite_text_format_->SetTextAlignment(text_alignment_);
             return true;
         }
 	}
