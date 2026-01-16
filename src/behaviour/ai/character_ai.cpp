@@ -288,14 +288,15 @@ character_state character_ai::handle_interaction_internal(const character_intera
 	}
 
 	std::string content = extract_content_from_response(response);
+	std::string json = extract_json(content);
 
 	// add to conversation history
-	if (!content.empty()) {
-		add_to_history("assistant", content);
+	if (!json.empty()) {
+		add_to_history("assistant", json);
 	}
 	else return fail_parse_state;
 
-	return parse_response(content);
+	return parse_response(json);
 }
 
 std::string character_ai::build_prompt(const character_interaction& interaction) {
@@ -333,6 +334,14 @@ std::string character_ai::interaction_to_message(const character_interaction& in
 	default:
 		return "[" + now_str() + "] " + user_name + " interacted with " + character_name + ", but an internal error occurred and we don't know what the interaction was.";
 	}
+}
+std::string character_ai::extract_json(const std::string& str) {
+	size_t beg = str.find('{');
+	size_t end = str.rfind('}');
+	if (beg != std::string::npos && end != std::string::npos && end > beg) {
+		return str.substr(beg, end - beg + 1);
+	}
+	return "";
 }
 bool character_ai::response_is_error(const std::string& response) {
 	try {
