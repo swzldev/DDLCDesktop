@@ -227,8 +227,13 @@ void character_logic::show_main_menu() {
 		window_->close();
 	} });
 	visuals->add_button({ "Auto", [this]() {
-		auto_mode_ = !auto_mode_;
-	} });
+			auto_mode_ = true;
+		},
+		button_style::LABEL, button_type::TOGGLE,
+		"", [this]() {
+			auto_mode_ = false;
+		},
+	});
 	visuals->add_button({ "Reset", [this]() {
 		if (state_ == logic_state::THINKING) {
 			return; // dont reset while thinking
@@ -238,7 +243,7 @@ void character_logic::show_main_menu() {
 	visuals->add_button({ "Custom", [this]() {
 			await_input();
 		},
-		button_style::LABEL, button_type::TOGGLE,
+		button_style::LABEL, button_type::SWAP,
 		"Actions", [this]() {
 			await_choice(/*true*/);
 		},
