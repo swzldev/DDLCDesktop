@@ -33,8 +33,8 @@ class window;
 
 class character_logic {
 public:
-	static constexpr int INPUT_MAX_LENGTH = 200;
-	static constexpr int AUTO_MODE_DELAY_SEC = 3;
+	static constexpr int INPUT_MAX_LENGTH = 170;
+	static constexpr float AUTO_MODE_DELAY_SEC = 3.0f;
 
 public:
 	character_logic(window* window);
