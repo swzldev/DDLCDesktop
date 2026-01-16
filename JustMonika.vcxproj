@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ddlc\characters.cpp" />
     <ClCompile Include="src\error\error_stories.cpp" />
     <ClCompile Include="src\behaviour\ai\character_ai.cpp" />
     <ClCompile Include="src\behaviour\ai\ai_api.cpp" />
