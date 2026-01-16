@@ -29,6 +29,12 @@ public:
 	void set_pose(const std::string& left, const std::string& right);
 	void set_expression(const std::string& expression);
 
+	inline bool in_popup() const {
+		return popup_;
+	}
+	void show_popup(const std::string& message, const std::function<void(int)>& callback, const std::vector<std::string>& options = { "Yes", "No" });
+	void show_message(const std::string& message, const std::function<void()>& callback = nullptr);
+
 	void set_position(int x, int y);
 	int get_x();
 	int get_y();
@@ -91,8 +97,19 @@ private:
 	// buttons
 	std::vector<button> buttons_;
 	button* current_button_ = nullptr;
+	int current_option_ = -1;
+
+	// popup
+	sprite* popup_bg_ = nullptr;
+	std::wstring popup_message_;
+	std::vector<std::wstring> popup_options_;
+	bool popup_ = false;
+	int popup_response_ = -1;
+	int num_popup_options_ = 2;
+	std::function<void(int)> popup_callback_ = nullptr;
 
 	void draw_all_buttons();
+	void draw_popup();
 
 	int on_mouse_click();
 

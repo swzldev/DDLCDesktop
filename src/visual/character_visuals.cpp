@@ -37,6 +37,13 @@ character_visuals::character_visuals(renderer* renderer, ddlc_character characte
 		throw std::runtime_error("Failed to load textbox sprite from " + textbox_path);
 	}
 
+	// load frame sprite
+	std::string frame_path = (fs::path(ASSETS_DIR) / "gui/frame.png").make_preferred().string();
+	popup_bg_ = sprite::load_from_file(frame_path);
+	if (!popup_bg_) {
+		throw std::runtime_error("Failed to load popup background sprite from " + frame_path);
+	}
+
 	update_sprites();
 }
 
@@ -66,7 +73,7 @@ void character_visuals::draw() {
 	// draw body parts
 	renderer_->draw_sprite(body_left_);
 	renderer_->draw_sprite(body_right_);
-	renderer_->draw_sprite(head_);
+	renderer_->draw_sprite(head_, 0, 0.001f);
 
 	// draw textbox
 	if (!saying_target_.empty()) {
@@ -81,6 +88,8 @@ void character_visuals::draw() {
 		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
 		renderer_->set_stroke_color(D2D1::ColorF(0, 0, 0, 0.3f));
 		renderer_->draw_text(saying_, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
+
+		draw_popup();
 	}
 }
 
@@ -138,6 +147,24 @@ void character_visuals::set_expression(const std::string& expression) {
 	update_sprites();
 }
 
+void character_visuals::show_popup(const std::string& message, const std::function<void(int)>& callback, const std::vector<std::string>& options) {
+	popup_options_.clear();
+	popup_message_ = utf8_to_wstring(message);
+	for (const std::string& opt : options) {
+		popup_options_.push_back(utf8_to_wstring(opt));
+	}
+	popup_callback_ = callback;
+	popup_ = true;
+}
+
+void character_visuals::show_message(const std::string& message, const std::function<void()>& callback) {
+	show_popup(message, [callback](bool) {
+		if (callback) {
+			callback();
+		}
+	}, { "OK" });
+}
+
 void character_visuals::set_position(int x, int y) {
 	window_->set_position(x, y);
 }
@@ -191,18 +218,24 @@ void character_visuals::draw_all_buttons() {
 	float bx = 0.5f - (total_width / 2.0f);
 	for (const auto& data : predraw_data) {
 		// change color if hovered
-		float mx = window_->mouse_x_normalized();
-		float my = window_->mouse_y_normalized();
+		bool hovered = false;
+		if (!popup_) { // ignore inputs in popup
+			float mx = window_->mouse_x_normalized();
+			float my = window_->mouse_y_normalized();
 
-		float button_center_x = bx + (data.width / 2.0f);
+			float button_center_x = bx + (data.width / 2.0f);
 
-		float left = button_center_x - (data.width / 2.0f);
-		float right = button_center_x + (data.width / 2.0f) - button_pad * 2;
-		float top = buttons_y - (data.height / 2.0f);
-		float bottom = buttons_y + (data.height / 2.0f);
+			float left = button_center_x - (data.width / 2.0f);
+			float right = button_center_x + (data.width / 2.0f) - button_pad * 2;
+			float top = buttons_y - (data.height / 2.0f);
+			float bottom = buttons_y + (data.height / 2.0f);
 
+			if (mx >= left && mx <= right && my >= top && my <= bottom) {
+				hovered = true;
+			}
+		}
 
-		if (mx >= left && mx <= right && my >= top && my <= bottom) {
+		if (hovered) {
 			current_button_ = data.btn;
 			btn_col = D2D1::ColorF(1, 1, 1, 0.65f);
 		}
@@ -235,10 +268,88 @@ void character_visuals::draw_all_buttons() {
 		bx += data.width;
 	}
 }
+void character_visuals::draw_popup() {
+	if (!popup_) return;
+
+	const float popup_width = 0.6f;
+	const float popup_height = 0.25f;
+	const float popup_x = 0.5f - (popup_width / 2.0f);
+	const float popup_y = 0.5f - (popup_height / 2.0f);
+
+	renderer_->draw_sprite(popup_bg_, popup_x, popup_y, popup_width, popup_height);
+
+	// title
+	renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::Black));
+	renderer_->draw_text(popup_message_, 0.5f, 0.51f, popup_width - 0.05f, 0.2f, 3);
+
+	// buttons
+	const float button_padding = 0.03f;
+	const float button_gap = 0.02f;
+	const float buttons_y = popup_y + popup_height * 0.85f;
+
+	float mx = window_->mouse_x_normalized();
+	float my = window_->mouse_y_normalized();
+
+	std::vector<float> widths;
+	std::vector<float> heights;
+	widths.reserve(popup_options_.size());
+	heights.reserve(popup_options_.size());
+
+	float total_width = 0.0f;
+	for (const auto& opt : popup_options_) {
+		auto m = renderer_->measure_text(opt, 3.5f);
+		float w = (m.width / window_->size()) + button_padding * 2.0f;
+		float h = (m.height / window_->size()) + button_padding * 2.0f;
+		widths.push_back(w);
+		heights.push_back(h);
+		total_width += w;
+	}
+	if (!popup_options_.empty()) {
+		total_width += button_gap * static_cast<float>(popup_options_.size() - 1);
+	}
+
+	float bx = 0.5f - (total_width / 2.0f);
+	current_option_ = -1;
+
+	auto stroke_col = D2D1::ColorF(0.733f, 0.333f, 0.6f);
+	auto stroke_col_hover = D2D1::ColorF(1, 0.666f, 0.8f);
+	renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
+	renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+	for (size_t i = 0; i < popup_options_.size(); ++i) {
+		float w = widths[i];
+		float h = heights[i];
+		float center_x = bx + w * 0.5f;
+
+		float left = bx + button_padding;
+		float right = bx + w - button_padding;
+		float top = buttons_y - h * 0.5f;
+		float bottom = buttons_y;
+
+		bool hovered = (mx >= left && mx <= right && my >= top && my <= bottom);
+		if (hovered) {
+			current_option_ = static_cast<int>(i);
+		}
+
+		renderer_->set_stroke_color(hovered ? stroke_col_hover : stroke_col);
+		renderer_->draw_text(popup_options_[i], center_x, buttons_y, w, h, 3.5f, 8.0f);
+
+		bx += w + button_gap;
+	}
+}
 
 int character_visuals::on_mouse_click() {
 	if (current_button_) {
 		current_button_->click();
+		return 1; // handled
+	}
+	if (popup_ && current_option_ != -1) {
+		popup_response_ = (current_option_ == 1);
+		popup_ = false;
+		if (popup_callback_) {
+			popup_callback_(popup_response_);
+		}
 		return 1; // handled
 	}
 	return 0; // not handled
