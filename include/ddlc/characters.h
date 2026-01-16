@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 /*
 * MONIKA:
 * 
@@ -167,3 +169,5 @@ enum class ddlc_character {
 	NATSUKI,
 	SAYORI,
 };
+
+std::string ddlc_character_to_string(ddlc_character character);
