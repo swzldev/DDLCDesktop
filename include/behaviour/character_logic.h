@@ -34,6 +34,7 @@ class window;
 class character_logic {
 public:
 	static constexpr int INPUT_MAX_LENGTH = 200;
+	static constexpr int AUTO_MODE_DELAY_SEC = 3;
 
 public:
 	character_logic(window* window);
@@ -41,6 +42,8 @@ public:
 
 	void handle_interaction(const character_interaction& interaction);
 
+	inline void pause() { paused_ = true; }
+	inline void unpause() { paused_ = false; }
 	void tick(float delta_time);
 
 	void handle_error(const ddlcd_runtime_error& error);
@@ -53,6 +56,7 @@ private:
 	window* window_ = nullptr;
 	ddlc_character character_ = ddlc_character::MONIKA;
 	bool first_tick_ = true;
+	bool paused_ = false;
 
 	error_state error_state_ = error_state::NONE;
 	logic_state state_ = logic_state::IDLE;
@@ -62,11 +66,15 @@ private:
 	bool custom_mode_ = false;
 	std::string current_input_;
 
+	// auto
+	bool auto_mode_ = false;
+	float auto_timer_ = 0.0f;
 
 	// menus
 	menu_state current_menu_ = menu_state::MAIN;
 	void show_main_menu();
 	void show_settings_menu();
+	void show_settings_characters_menu();
 
 	void await_choice(bool show_immediate = false);
 	void await_input();
@@ -79,6 +87,9 @@ private:
 
 	void display_think();
 	void display_current_interaction();
+	void advance_interaction();
+
+	void set_character(ddlc_character new_character);
 
 	void refresh_display();
 };

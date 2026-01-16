@@ -70,43 +70,18 @@ void character_logic::handle_interaction(const character_interaction& interactio
 		begin_think(interaction);
 	}
 	else if (state_ == logic_state::TALKING && visuals->is_speaking()) {
+		auto_mode_ = false;
 		visuals->finish_speaking(); // mouse down while speaking -> quick skip
 	}
 	else if (state_ == logic_state::TALKING) {
 		// in conversations, mouse down means advance interaction
-		if (++interaction_index_ < current_state.interactions.size()) {
-			display_current_interaction();
-		}
-		else {
-			// end of conversation
-			interaction_index_ = 0;
-
-			if (error_state_ == error_state::NON_FATAL) {
-				reset_all();
-			}
-			else if (error_state_ == error_state::FATAL) {
-				window_->close();
-			}
-			else {
-				if (!current_state.actions.empty()) {
-					if (custom_mode_) {
-						await_input();
-					}
-					else {
-						await_choice();
-					}
-					input_mode_btn_disabled_ = false;
-				}
-				else {
-					state_ = logic_state::IDLE;
-					refresh_display();
-				}
-			}
-		}
+		advance_interaction();
 	}
 }
 
 void character_logic::tick(float delta_time) {
+	if (paused_) return;
+
 	if (first_tick_) {
 		if (config::load()) {
 			// window opened
@@ -161,6 +136,15 @@ void character_logic::tick(float delta_time) {
 				state_ = logic_state::IDLE;
 				refresh_display();
 			}
+		}
+	}
+	else if (state_ == logic_state::TALKING) {
+		if (!visuals->is_speaking() && auto_mode_) {
+			auto_timer_ += delta_time;
+		}
+		if (auto_timer_ >= AUTO_MODE_DELAY_SEC) {
+			auto_timer_ = 0.0f;
+			advance_interaction();
 		}
 	}
 	else if (state_ == logic_state::AWAITING_CHOICE) {
@@ -242,6 +226,9 @@ void character_logic::show_main_menu() {
 
 		window_->close();
 	} });
+	visuals->add_button({ "Auto", [this]() {
+		auto_mode_ = !auto_mode_;
+	} });
 	visuals->add_button({ "Reset", [this]() {
 		if (state_ == logic_state::THINKING) {
 			return; // dont reset while thinking
@@ -272,10 +259,51 @@ void character_logic::show_settings_menu() {
 
 	// set buttons
 	visuals->add_button({ "Character", [this]() {
-		
+		show_settings_characters_menu();
 	} });
 	visuals->add_button({ "Back", [this]() {
 		show_main_menu();
+	} });
+}
+
+void character_logic::show_settings_characters_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::SETTINGS;
+
+	std::string current_ch = ddlc_character_to_string(character_);
+	std::string message = "Select a new character...\n";
+	message += "Current: " + current_ch;
+
+	visuals->set_chars_per_second(100.0f);
+	visuals->set_saying(message);
+
+	auto try_set_character = [this](ddlc_character ch) {
+		if (character_ == ch) {
+			visuals->show_message("You cannot change to the same character.");
+		}
+		else visuals->show_popup("Warning: Changing the character will reset all progress. Continue?", [this, ch](int result) {
+			if (result == 0) {
+				// user confirmed
+				set_character(ch);
+			}
+		});
+	};
+
+	// set buttons
+	visuals->add_button({ "Monika", [this, try_set_character]() {
+		try_set_character(ddlc_character::MONIKA);
+	} });
+	visuals->add_button({ "Yuri", [this, try_set_character]() {
+		try_set_character(ddlc_character::YURI);
+	} });
+	visuals->add_button({ "Natsuki", [this, try_set_character]() {
+		try_set_character(ddlc_character::NATSUKI);
+	} });
+	visuals->add_button({ "Sayori", [this, try_set_character]() {
+		try_set_character(ddlc_character::SAYORI);
+	} });
+	visuals->add_button({ "Back", [this, try_set_character]() {
+		show_settings_menu();
 	} });
 }
 
@@ -364,6 +392,7 @@ void character_logic::display_think() {
 }
 
 void character_logic::display_current_interaction() {
+	auto_timer_ = 0.0f;
 	if (interaction_index_ < current_state.interactions.size()) {
 		const auto& inter = current_state.interactions[interaction_index_];
 		visuals->set_saying(inter.saying);
@@ -415,6 +444,47 @@ void character_logic::display_current_interaction() {
 
 		visuals->set_position(new_x_px, new_y);
 	}
+}
+void character_logic::advance_interaction() {
+	if (++interaction_index_ < current_state.interactions.size()) {
+		display_current_interaction();
+	}
+	else {
+		// end of conversation
+		interaction_index_ = 0;
+		if (error_state_ == error_state::NON_FATAL) {
+			reset_all();
+		}
+		else if (error_state_ == error_state::FATAL) {
+			window_->close();
+		}
+		else {
+			if (!current_state.actions.empty()) {
+				if (custom_mode_) {
+					await_input();
+				}
+				else {
+					await_choice();
+				}
+				input_mode_btn_disabled_ = false;
+			}
+			else {
+				state_ = logic_state::IDLE;
+				refresh_display();
+			}
+		}
+	}
+}
+
+void character_logic::set_character(ddlc_character new_character) {
+	if (character_ == new_character) {
+		return;
+	}
+
+	character_ = new_character;
+	config::get()->character = character_;
+	config::save();
+	reset_all();
 }
 
 void character_logic::refresh_display() {
