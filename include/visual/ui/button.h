@@ -15,6 +15,7 @@ enum class button_style {
 enum class button_type {
 	CLICK,
 	TOGGLE,
+	SWAP,
 };
 
 class button {
@@ -46,7 +47,7 @@ public:
 	}
 
 	inline const std::string& text() const {
-		return toggled_ ? text_alt_ : text_;
+		return swapped_ ? text_alt_ : text_;
 	}
 
 	inline sprite* img() const {
@@ -56,6 +57,10 @@ public:
 	inline void disable() { *disabled_ = true; }
 	inline void enable() { *disabled_ = false; }
 	inline bool is_disabled() const { return disabled_ && *disabled_; }
+
+	inline bool is_toggled() const {
+		return toggled_;
+	}
 
 	inline int id() const {
 		return id_;
@@ -81,4 +86,5 @@ private:
 	int id_;
 	bool* disabled_ = nullptr;
 	bool toggled_ = false;
+	bool swapped_ = false;
 };
