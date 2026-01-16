@@ -13,7 +13,8 @@ enum class api {
 class config {
 public:
 	static bool load();
-	static const config* get();
+	static bool save();
+	static config* get();
 
 	api api;
 	std::string api_key;

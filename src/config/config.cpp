@@ -72,7 +72,57 @@ bool config::load() {
 	loaded_ = std::move(cfg);
 	return true;
 }
-const config* config::get() {
+bool config::save() {
+	if (!loaded_) {
+		return false; // nothing to save
+	}
+
+	json j;
+
+	// API
+	switch (loaded_->api) {
+	case api::OPENAI:
+		j["api"] = "openai";
+		break;
+	case api::OPENROUTER:
+		j["api"] = "openrouter";
+		break;
+	}
+	// API key
+	j["api_key"] = loaded_->api_key;
+	// model
+	j["model"] = loaded_->model;
+	// message history size
+	j["message_history_size"] = loaded_->message_history_size;
+	// user name
+	j["user_name"] = loaded_->user_name;
+	// preset
+	j["behaviour_preset"] = loaded_->behaviour_preset;
+	// character
+	switch (loaded_->character) {
+	case ddlc_character::MONIKA:
+		j["character"] = "monika";
+		break;
+	case ddlc_character::YURI:
+		j["character"] = "yuri";
+		break;
+	case ddlc_character::NATSUKI:
+		j["character"] = "natsuki";
+		break;
+	case ddlc_character::SAYORI:
+		j["character"] = "sayori";
+		break;
+	}
+	std::string path = "config.json";
+	std::ofstream file(path);
+	if (!file.is_open()) {
+		return false;
+	}
+	file << j.dump(4);
+	file.close();
+	return true;
+}
+config* config::get() {
 	return loaded_.get();
 }
 
