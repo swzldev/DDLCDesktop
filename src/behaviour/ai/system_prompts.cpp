@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <regex>
 
 #include <ddlc/characters.h>
 
@@ -99,5 +100,9 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 		throw std::runtime_error("Unknown character for system prompt");
 	}
 
-	return bhv + "\n" + rules;
+	std::string rules_s = rules;
+	std::string character_name = ddlc_character_to_string(character);
+	rules_s = std::regex_replace(rules_s, std::regex(R"(\$\{NAME\})"), character_name);
+
+	return bhv + "\n" + rules_s;
 }
