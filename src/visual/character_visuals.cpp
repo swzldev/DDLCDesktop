@@ -249,6 +249,9 @@ void character_visuals::draw_all_buttons() {
 		if (data.btn && data.btn->is_disabled()) {
 			btn_col = D2D1::ColorF(0.333f, 0.137f, 0.137f, 0.35f);
 		}
+		else if (data.btn && data.btn->is_toggled()) {
+			btn_col = D2D1::ColorF(1, 1, 1);
+		}
 
 		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 		renderer_->set_text_color(btn_col);
