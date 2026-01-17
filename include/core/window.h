@@ -67,5 +67,8 @@ private:
 
 	void invoke(const std::vector<std::function<int()>>& event) const;
 
+	static POINT down_;
+	static bool tracking_;
+	static bool dragging_;
 	static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

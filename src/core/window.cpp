@@ -206,6 +206,9 @@ void window::invoke(const std::vector<std::function<int()>>& event) const {
 	}
 }
 
+POINT window::down_ = { 0, 0 };
+bool window::tracking_ = false;
+bool window::dragging_ = false;
 LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	if (uMsg == WM_NCCREATE) {
 		auto cs = reinterpret_cast<CREATESTRUCTW*>(lParam);
@@ -227,15 +230,49 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			win->mouse_x_ = GET_X_LPARAM(lParam);
 			win->mouse_y_ = GET_Y_LPARAM(lParam);
 
+			if (tracking_ && (wParam & MK_LBUTTON) && !dragging_)
+			{
+				int dx = abs(win->mouse_x_ - down_.x);
+				int dy = abs(win->mouse_y_ - down_.y);
+
+				if (dx >= GetSystemMetrics(SM_CXDRAG) ||
+					dy >= GetSystemMetrics(SM_CYDRAG))
+				{
+					dragging_ = true;
+					tracking_ = false;
+
+					ReleaseCapture();
+					SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+					return 0;
+				}
+			}
+
 			win->invoke(win->on_mouse_move);
 		}
 		return 0;
 	}
 	case WM_LBUTTONDOWN:
 	{
-		if (win) {
+		down_ = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		tracking_ = true;
+		dragging_ = false;
+
+		SetCapture(hwnd);
+
+		return 0;
+	}
+	case WM_LBUTTONUP:
+	{
+		bool was_click = tracking_ && !dragging_;
+
+		tracking_ = false;
+		dragging_ = false;
+		ReleaseCapture();
+
+		if (was_click && win) {
 			win->invoke(win->on_mouse_click);
 		}
+
 		return 0;
 	}
 	case WM_SIZE: {
