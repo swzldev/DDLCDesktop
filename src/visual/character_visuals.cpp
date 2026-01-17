@@ -106,6 +106,9 @@ void character_visuals::reset(ddlc_character character) {
 	window_->reset();
 	
 	character_ = character;
+	expression_ = "a";
+	pose_left_ = "1";
+	pose_right_ = "1";
 	update_sprites();
 }
 
@@ -325,7 +328,7 @@ void character_visuals::draw_popup() {
 		float h = heights[i];
 		float center_x = bx + w * 0.5f;
 
-		float left = bx + button_padding;
+		float left = bx + button_padding / 2;
 		float right = bx + w - button_padding;
 		float top = buttons_y - h * 0.5f;
 		float bottom = buttons_y;
