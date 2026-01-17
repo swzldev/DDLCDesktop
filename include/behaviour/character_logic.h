@@ -6,6 +6,7 @@
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/character_ai.h>
 #include <ddlc/characters.h>
+#include <config/config.h>
 #include <error/ddlcd_runtime_error.h>
 
 #include <nlohmann/json.hpp>
@@ -54,6 +55,7 @@ public:
 
 private:
 	window* window_ = nullptr;
+	config* config_ = nullptr;
 	ddlc_character character_ = ddlc_character::MONIKA;
 	bool first_tick_ = true;
 	bool paused_ = false;

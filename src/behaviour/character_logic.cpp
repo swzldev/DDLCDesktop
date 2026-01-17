@@ -27,7 +27,8 @@ character_logic::character_logic(window* window) {
 	window_ = window;
 
 	if (config::load()) {
-		character_ = config::get()->character;
+		config_ = config::get();
+		character_ = config_->character;
 	}
 
 	// create visuals
@@ -405,49 +406,52 @@ void character_logic::display_current_interaction() {
 		visuals->set_expression(inter.expression);
 		visuals->set_pose(inter.pose_left, inter.pose_right);
 
-		const int screen_width = sys::display_width();
-		const int screen_height = sys::display_height();
+		// move self (if allowed)
+		if (config_ && config_->enable_window_controls) {
+			const int screen_width = sys::display_width();
+			const int screen_height = sys::display_height();
 
-		int min_height = screen_height * 0.5f;
-		int max_height = screen_height * 0.95f;
+			int min_height = screen_height * 0.5f;
+			int max_height = screen_height * 0.95f;
 
-		int new_x_px;
-		if (inter.new_x == -1) {
-			new_x_px = visuals->get_x();
+			int new_x_px;
+			if (inter.new_x == -1) {
+				new_x_px = visuals->get_x();
+			}
+			else {
+				int new_x = inter.new_x;
+				if (new_x < 0) new_x = 0;
+				else if (new_x > 100) new_x = 100;
+
+				new_x_px = static_cast<int>((new_x / 100.0f) * screen_width);
+			}
+
+			// pre-apply scale
+			if (inter.new_scale != -1) {
+				int new_scale = inter.new_scale;
+				if (new_scale > 10) new_scale = 10;
+				else if (new_scale < 1) new_scale = 1;
+
+				// scale from 1-10 to min_height-max_height
+				float scale_factor = (new_scale - 1) / 9.0f; // normalize to 0.0-1.0
+				new_scale = min_height + static_cast<int>(scale_factor * (max_height - min_height));
+
+				visuals->set_scale(new_scale);
+			}
+
+			int scale = visuals->get_scale();
+
+			// clamp position to screen bounds
+			if (new_x_px < 0) new_x_px = 0;
+			else if (new_x_px + scale > screen_width) {
+				new_x_px = screen_width - scale;
+			}
+
+			// stick to the bottom of the screen
+			int new_y = screen_height - scale;
+
+			visuals->set_position(new_x_px, new_y);
 		}
-		else {
-			int new_x = inter.new_x;
-			if (new_x < 0) new_x = 0;
-			else if (new_x > 100) new_x = 100;
-
-			new_x_px = static_cast<int>((new_x / 100.0f) * screen_width);
-		}
-
-		// pre-apply scale
-		if (inter.new_scale != -1) {
-			int new_scale = inter.new_scale;
-			if (new_scale > 10) new_scale = 10;
-			else if (new_scale < 1) new_scale = 1;
-
-			// scale from 1-10 to min_height-max_height
-			float scale_factor = (new_scale - 1) / 9.0f; // normalize to 0.0-1.0
-			new_scale = min_height + static_cast<int>(scale_factor * (max_height - min_height));
-
-			visuals->set_scale(new_scale);
-		}
-
-		int scale = visuals->get_scale();
-
-		// clamp position to screen bounds
-		if (new_x_px < 0) new_x_px = 0;
-		else if (new_x_px + scale > screen_width) {
-			new_x_px = screen_width - scale;
-		}
-
-		// stick to the bottom of the screen
-		int new_y = screen_height - scale;
-
-		visuals->set_position(new_x_px, new_y);
 	}
 }
 void character_logic::advance_interaction() {
