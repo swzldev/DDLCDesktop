@@ -47,6 +47,8 @@ bool config::load() {
 	// message history size
 	cfg->message_history_size = j.value("message_history_size", 6);
 	
+	// pronouns
+	cfg->pronouns = j.value("pronouns", "he/him");
 	// user name
 	cfg->user_name = j.value("user_name", "");
 	// preset
@@ -94,6 +96,8 @@ bool config::save() {
 	j["model"] = loaded_->model;
 	// message history size
 	j["message_history_size"] = loaded_->message_history_size;
+	// pronouns
+	j["pronouns"] = loaded_->pronouns;
 	// user name
 	j["user_name"] = loaded_->user_name;
 	// preset

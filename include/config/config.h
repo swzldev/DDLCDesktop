@@ -21,6 +21,7 @@ public:
 	std::string model;
 	int message_history_size;
 
+	std::string pronouns;
 	std::string user_name;
 	std::string behaviour_preset;
 	ddlc_character character;
