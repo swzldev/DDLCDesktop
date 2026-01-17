@@ -4,6 +4,7 @@
 #include <string>
 #include <regex>
 
+#include <config/config.h>
 #include <ddlc/characters.h>
 
 std::string system_prompts::get_prompt(ddlc_character character, const std::string& mode) {
@@ -100,9 +101,16 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 		throw std::runtime_error("Unknown character for system prompt");
 	}
 
+	std::string pronouns = "he/him";
+	if (config::load()) {
+		config* cfg = config::get();
+		pronouns = cfg->pronouns;
+	}
+
 	std::string rules_s = rules;
 	std::string character_name = ddlc_character_to_string(character);
 	rules_s = std::regex_replace(rules_s, std::regex(R"(\$\{NAME\})"), character_name);
+	rules_s = std::regex_replace(rules_s, std::regex(R"(\$\{PRONOUNS\})"), pronouns);
 
 	return bhv + "\n" + rules_s;
 }
