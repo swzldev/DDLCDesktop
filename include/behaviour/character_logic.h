@@ -17,6 +17,7 @@ enum class logic_state {
 	TALKING,
 	AWAITING_CHOICE,
 	AWAITING_INPUT,
+	AWAITING_INPUT_SETTINGS,
 };
 
 enum class error_state {
@@ -66,7 +67,8 @@ private:
 
 	bool input_mode_btn_disabled_ = true;
 	bool custom_mode_ = false;
-	std::string current_input_;
+	std::string current_input_prompt_;
+	std::string* current_input_;
 
 	// auto
 	bool auto_mode_ = false;
@@ -76,10 +78,13 @@ private:
 	menu_state current_menu_ = menu_state::MAIN;
 	void show_main_menu();
 	void show_settings_menu();
-	void show_settings_characters_menu();
+	void show_settings_api_menu();
+	void show_settings_character_menu();
+	void show_settings_user_menu();
 
 	void await_choice(bool show_immediate = false);
 	void await_input();
+	void await_input_custom(const std::string& prompt, std::string* value, const std::function<void()>& callback);
 
 	int get_choice_input(int num_choices);
 

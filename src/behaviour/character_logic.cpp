@@ -97,6 +97,12 @@ void character_logic::tick(float delta_time) {
 	}
 
 	if (current_menu_ != menu_state::MAIN) {
+		if (state_ == logic_state::AWAITING_INPUT_SETTINGS) {
+			// show current input
+			std::string full = current_input_prompt_ + *current_input_ + "_";
+			visuals->set_saying_immediate(full);
+		}
+
 		visuals->tick(delta_time);
 		return;
 	}
@@ -163,7 +169,7 @@ void character_logic::tick(float delta_time) {
 	}
 	else if (state_ == logic_state::AWAITING_INPUT) {
 		// show current input
-		std::string full = "You: " + current_input_ + "_";
+		std::string full = "You: " + *current_input_ + "_";
 		visuals->set_saying_immediate(full);
 	}
 
@@ -264,15 +270,67 @@ void character_logic::show_settings_menu() {
 	visuals->set_saying("Choose an option...");
 
 	// set buttons
+	visuals->add_button({ "API", [this]() {
+		show_settings_api_menu();
+	} });
 	visuals->add_button({ "Character", [this]() {
-		show_settings_characters_menu();
+		show_settings_character_menu();
+	} });
+	visuals->add_button({ "User", [this]() {
+		show_settings_user_menu();
 	} });
 	visuals->add_button({ "Back", [this]() {
 		show_main_menu();
 	} });
 }
+void character_logic::show_settings_api_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::SETTINGS;
 
-void character_logic::show_settings_characters_menu() {
+	visuals->set_chars_per_second(100.0f);
+
+	std::string api = (config_->api == api::OPENAI) ? "OpenAI" : "OpenRouter";
+
+	std::string message = "API: " + api + " | Model: " + config_->model + "\n";
+	message += "API Key: [REDACTED]\n";
+	message += "Choose an option...";
+	visuals->set_saying(message);
+
+	// set buttons
+	visuals->add_button({ "API Mode", [this]() {
+		std::string* new_api = new std::string();
+		await_input_custom("Enter your api: ", new_api, [this, new_api]() {
+			if (*new_api == "OpenAI" || *new_api == "openai") {
+				config_->api = api::OPENAI;
+			}
+			else if (*new_api == "OpenRouter" || *new_api == "openrouter") {
+				config_->api = api::OPENROUTER;
+			}
+			else {
+				visuals->show_message("Invalid API mode. Please enter 'OpenAI' or 'OpenRouter'.");
+			}
+			delete new_api;
+			config::save(); // save config
+			show_settings_api_menu();
+		});
+	} });
+	visuals->add_button({ "Model", [this]() {
+		await_input_custom("Enter model: ", &config_->model, [this]() {
+			config::save(); // save config
+			show_settings_api_menu();
+		});
+	} });
+	visuals->add_button({ "API Key", [this]() {
+		await_input_custom("Enter API key: ", &config_->api_key, [this]() {
+			config::save(); // save config
+			show_settings_api_menu();
+		});
+	} });
+	visuals->add_button({ "Back", [this]() {
+		show_settings_menu();
+	} });
+}
+void character_logic::show_settings_character_menu() {
 	visuals->clear_buttons();
 	current_menu_ = menu_state::SETTINGS;
 
@@ -312,6 +370,34 @@ void character_logic::show_settings_characters_menu() {
 		show_settings_menu();
 	} });
 }
+void character_logic::show_settings_user_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::SETTINGS;
+
+	visuals->set_chars_per_second(100.0f);
+
+	std::string message = "User name: " + config_->user_name + "\n";
+	message += "Pronouns: " + config_->pronouns + "\n";
+	message += "Choose an option...";
+	visuals->set_saying(message);
+
+	// set buttons
+	visuals->add_button({ "Name", [this]() {
+		await_input_custom("Enter your name: ", &config_->user_name, [this]() {
+			config::save(); // save config
+			show_settings_user_menu();
+		});
+	} });
+	visuals->add_button({ "Pronouns", [this]() {
+		await_input_custom("Enter your pronouns: ", &config_->pronouns, [this]() {
+			config::save(); // save config
+			show_settings_user_menu();
+		});
+	} });
+	visuals->add_button({ "Back", [this]() {
+		show_settings_menu();
+	} });
+}
 
 void character_logic::await_choice(bool show_immediate) {
 	int num_actions = current_state.actions.size();
@@ -330,20 +416,38 @@ void character_logic::await_choice(bool show_immediate) {
 	state_ = logic_state::AWAITING_CHOICE;
 }
 void character_logic::await_input() {
-	current_input_.clear();
+	current_input_ = new std::string();
 
 	// start recording
-	input::begin_input_recording(&current_input_, INPUT_MAX_LENGTH, [this]() {
+	input::begin_input_recording(current_input_, INPUT_MAX_LENGTH, [this]() {
 		// on submit
 		character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
-		input_interaction.str_data = current_input_;
-		current_input_.clear();
+		input_interaction.str_data = *current_input_;
+		if (current_input_) {
+			delete current_input_;
+			current_input_ = nullptr;
+		}
 		input::end_input_recording();
 		begin_think(input_interaction);
 	});
 
 	custom_mode_ = true;
 	state_ = logic_state::AWAITING_INPUT;
+}
+void character_logic::await_input_custom(const std::string& prompt, std::string* value, const std::function<void()>& callback) {
+	current_input_prompt_ = prompt;
+	current_input_ = value;
+	
+	// start recording
+	input::begin_input_recording(value, INPUT_MAX_LENGTH, [this, callback]() {
+		// on submit
+		input::end_input_recording();
+		current_input_ = nullptr;
+		state_ = logic_state::IDLE;
+		if (callback) callback();
+	});
+
+	state_ = logic_state::AWAITING_INPUT_SETTINGS;
 }
 
 int character_logic::get_choice_input(int num_choices) {
@@ -526,15 +630,18 @@ void character_logic::refresh_display() {
 		input_mode_btn_disabled_ = false;
 
 		// restart input recording
-		input::begin_input_recording(&current_input_, INPUT_MAX_LENGTH, [this]() {
+		input::begin_input_recording(current_input_, INPUT_MAX_LENGTH, [this]() {
 			character_interaction input_interaction(character_interaction::kind::CUSTOM_MESSAGE);
-			input_interaction.str_data = current_input_;
-			current_input_.clear();
+			input_interaction.str_data = *current_input_;
+			if (current_input_) {
+				delete current_input_;
+				current_input_ = nullptr;
+			}
 			input::end_input_recording();
 			begin_think(input_interaction);
 		});
 
-		std::string full = "You: " + current_input_ + "_";
+		std::string full = "You: " + *current_input_ + "_";
 		visuals->set_saying_immediate(full);
 		break;
 	}
