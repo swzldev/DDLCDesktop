@@ -71,6 +71,9 @@ bool config::load() {
 		return false;
 	}
 
+	// enable (ai) window controls
+	cfg->enable_window_controls = j.value("enable_window_controls", true);
+
 	loaded_ = std::move(cfg);
 	return true;
 }
@@ -117,13 +120,17 @@ bool config::save() {
 		j["character"] = "sayori";
 		break;
 	}
+	j["enable_window_controls"] = loaded_->enable_window_controls;
+
 	std::string path = "config.json";
 	std::ofstream file(path);
 	if (!file.is_open()) {
 		return false;
 	}
+
 	file << j.dump(4);
 	file.close();
+
 	return true;
 }
 config* config::get() {
