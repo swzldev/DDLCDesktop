@@ -137,6 +137,10 @@ bool config::save() {
 	return true;
 }
 config* config::get() {
+	if (!loaded_) {
+		load();
+	}
+
 	return loaded_.get();
 }
 
