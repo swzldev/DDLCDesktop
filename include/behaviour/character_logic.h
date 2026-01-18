@@ -84,7 +84,7 @@ private:
 
 	void await_choice(bool show_immediate = false);
 	void await_input();
-	void await_input_custom(const std::string& prompt, std::string* value, const std::function<void()>& callback);
+	void await_input_custom(const std::string& prompt, std::string* value, const std::function<void(bool)>& callback);
 
 	int get_choice_input(int num_choices);
 

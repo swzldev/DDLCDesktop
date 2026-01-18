@@ -19,6 +19,7 @@
 #include <error/ddlcd_runtime_error.h>
 #include <error/error_stories.h>
 #include <config/config.h>
+#include <utility/string_utils.h>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -292,37 +293,40 @@ void character_logic::show_settings_api_menu() {
 	std::string api = (config_->api == api::OPENAI) ? "OpenAI" : "OpenRouter";
 
 	std::string message = "API: " + api + " | Model: " + config_->model + "\n";
-	message += "API Key: [REDACTED]\n";
+	message += "API Key: [Hidden]\n";
 	message += "Choose an option...";
 	visuals->set_saying(message);
 
 	// set buttons
 	visuals->add_button({ "API Mode", [this]() {
 		std::string* new_api = new std::string();
-		await_input_custom("Enter your api: ", new_api, [this, new_api]() {
-			if (*new_api == "OpenAI" || *new_api == "openai") {
-				config_->api = api::OPENAI;
-			}
-			else if (*new_api == "OpenRouter" || *new_api == "openrouter") {
-				config_->api = api::OPENROUTER;
-			}
-			else {
-				visuals->show_message("Invalid API mode. Please enter 'OpenAI' or 'OpenRouter'.");
+		await_input_custom("Enter your api: ", new_api, [this, new_api](bool success) {
+			if (success) {
+				std::string new_api_lower = string_utils::to_lower(*new_api);
+				if (new_api_lower == "openai") {
+					config_->api = api::OPENAI;
+				}
+				else if (new_api_lower == "openrouter") {
+					config_->api = api::OPENROUTER;
+				}
+				else {
+					visuals->show_message("Invalid API mode. Supported: 'OpenAI', 'OpenRouter'.");
+				}
+				config::save(); // save config
 			}
 			delete new_api;
-			config::save(); // save config
 			show_settings_api_menu();
 		});
 	} });
 	visuals->add_button({ "Model", [this]() {
-		await_input_custom("Enter model: ", &config_->model, [this]() {
-			config::save(); // save config
+		await_input_custom("Enter model: ", &config_->model, [this](bool success) {
+			if (success) config::save(); // save config
 			show_settings_api_menu();
 		});
 	} });
 	visuals->add_button({ "API Key", [this]() {
-		await_input_custom("Enter API key: ", &config_->api_key, [this]() {
-			config::save(); // save config
+		await_input_custom("Enter API key: ", &config_->api_key, [this](bool success) {
+			if (success) config::save(); // save config
 			show_settings_api_menu();
 		});
 	} });
@@ -383,14 +387,14 @@ void character_logic::show_settings_user_menu() {
 
 	// set buttons
 	visuals->add_button({ "Name", [this]() {
-		await_input_custom("Enter your name: ", &config_->user_name, [this]() {
-			config::save(); // save config
+		await_input_custom("Enter your name: ", &config_->user_name, [this](bool success) {
+			if (success) config::save(); // save config
 			show_settings_user_menu();
 		});
 	} });
 	visuals->add_button({ "Pronouns", [this]() {
-		await_input_custom("Enter your pronouns: ", &config_->pronouns, [this]() {
-			config::save(); // save config
+		await_input_custom("Enter your pronouns: ", &config_->pronouns, [this](bool success) {
+			if (success) config::save(); // save config
 			show_settings_user_menu();
 		});
 	} });
@@ -434,17 +438,29 @@ void character_logic::await_input() {
 	custom_mode_ = true;
 	state_ = logic_state::AWAITING_INPUT;
 }
-void character_logic::await_input_custom(const std::string& prompt, std::string* value, const std::function<void()>& callback) {
+void character_logic::await_input_custom(const std::string& prompt, std::string* value, const std::function<void(bool)>& callback) {
 	current_input_prompt_ = prompt;
-	current_input_ = value;
+	current_input_ = new std::string(*value);
+
+	logic_state original_state = state_;
+	auto cleanup = [this, callback, original_state](bool success) {
+		delete current_input_;
+		input::end_input_recording();
+		state_ = original_state;
+		if (callback) callback(success);
+	};
+
+	visuals->clear_buttons();
+	visuals->add_button({ "Cancel", [this, cleanup]() {
+		// on cancel
+		cleanup(false);
+	} });
 	
 	// start recording
-	input::begin_input_recording(value, INPUT_MAX_LENGTH, [this, callback]() {
+	input::begin_input_recording(current_input_, INPUT_MAX_LENGTH, [this, value, cleanup]() {
 		// on submit
-		input::end_input_recording();
-		current_input_ = nullptr;
-		state_ = logic_state::IDLE;
-		if (callback) callback();
+		*value = *current_input_;
+		cleanup(true);
 	});
 
 	state_ = logic_state::AWAITING_INPUT_SETTINGS;
