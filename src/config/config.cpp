@@ -8,19 +8,21 @@
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-bool config::load() {
+void config::load() {
 	if (loaded_) {
-		return true; // already loaded
+		return; // already loaded
 	}
 
 	std::string path = "config.json";
 	if (!fs::exists(path) || !fs::is_regular_file(path)) {
-		return false;
+		load_default();
+		return;
 	}
 
 	std::ifstream file(path);
 	if (!file.is_open()) {
-		return false;
+		load_default();
+		return;
 	}
 
 	json j;
@@ -38,7 +40,8 @@ bool config::load() {
 		cfg->api = api::OPENROUTER;
 	}
 	else {
-		return false;
+		load_default();
+		return;
 	}
 	// API key
 	cfg->api_key = j.value("api_key", "");
@@ -68,14 +71,14 @@ bool config::load() {
 		cfg->character = ddlc_character::SAYORI;
 	}
 	else {
-		return false;
+		load_default();
+		return;
 	}
 
 	// enable (ai) window controls
 	cfg->enable_window_controls = j.value("enable_window_controls", true);
 
 	loaded_ = std::move(cfg);
-	return true;
 }
 bool config::save() {
 	if (!loaded_) {
@@ -135,6 +138,31 @@ bool config::save() {
 }
 config* config::get() {
 	return loaded_.get();
+}
+
+void config::load_default() {
+	loaded_ = std::make_unique<config>();
+	
+	// API
+	loaded_->api = api::OPENROUTER;
+	// API key
+	loaded_->api_key = "";
+	// model
+	loaded_->model = "meta-llama/llama-3.3-70b-instruct:free";
+	// message history size
+	loaded_->message_history_size = 6;
+
+	// pronouns
+	loaded_->pronouns = "he/him";
+	// user name
+	loaded_->user_name = "User";
+	// preset
+	loaded_->behaviour_preset = "default";
+	// character
+	loaded_->character = ddlc_character::MONIKA;
+
+	// enable (ai) window controls
+	loaded_->enable_window_controls = true;
 }
 
 std::unique_ptr<config> config::loaded_ = nullptr;

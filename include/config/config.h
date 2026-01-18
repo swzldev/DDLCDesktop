@@ -12,7 +12,7 @@ enum class api {
 
 class config {
 public:
-	static bool load();
+	static void load();
 	static bool save();
 	static config* get();
 
@@ -33,4 +33,6 @@ public:
 
 private:
 	static std::unique_ptr<config> loaded_;
+
+	static void load_default();
 };
