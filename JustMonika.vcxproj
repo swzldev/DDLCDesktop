@@ -145,6 +145,7 @@
     <ClCompile Include="src\core\window.cpp" />
     <ClCompile Include="src\output\log.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\utility\string_utils.cpp" />
     <ClCompile Include="src\visual\ui\button.cpp" />
     <ClCompile Include="src\visual\character_visuals.cpp" />
     <ClCompile Include="src\visual\sprite.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="include\error\ddlcd_runtime_error.h" />
     <ClInclude Include="include\error\error_stories.h" />
     <ClInclude Include="include\output\log.h" />
+    <ClInclude Include="include\utility\string_utils.h" />
     <ClInclude Include="include\visual\ui\button.h" />
     <ClInclude Include="include\visual\character_visuals.h" />
     <ClInclude Include="include\visual\sprite.h" />
