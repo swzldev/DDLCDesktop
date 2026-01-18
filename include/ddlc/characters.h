@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 /*
 * MONIKA:
@@ -171,3 +172,5 @@ enum class ddlc_character {
 };
 
 std::string ddlc_character_to_string(ddlc_character character);
+std::vector<std::string> get_behaviour_presets(ddlc_character character);
+bool supports_behaviour_preset(ddlc_character character, const std::string& preset);
