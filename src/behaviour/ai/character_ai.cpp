@@ -19,25 +19,18 @@
 #include <behaviour/ai/system_prompts.h>
 #include <output/log.h>
 #include <error/ddlcd_runtime_error.h>
+#include <config/config.h>
 
 using json = nlohmann::json;
 
-character_ai::character_ai(ddlc_character character) {
-	character_ = character;
-
-	std::ifstream config("config.json");
-	if (config.is_open()) {
-		json j;
-		config >> j;
-		config.close();
-
-		load_config(j);
-
-		api_ = new ai_api(endpoint_, api_key_);
-	}
+character_ai::character_ai() {
+	config* cfg = config::get();
+	character_ = cfg->character;
 	
 	// initialize with system prompt
 	add_to_history("system", get_system_prompt());
+
+	api_ = new ai_api();
 
 	// start worker thread
 	stop_worker_.store(false, std::memory_order_relaxed);
@@ -58,6 +51,29 @@ character_ai::~character_ai() {
 
 	delete api_;
 	api_ = nullptr;
+}
+
+void character_ai::set_api_mode(api mode) {
+	switch (mode) {
+	case api::OPENAI:
+		endpoint_ = "https://api.openai.com/v1/responses";
+		break;
+	case api::OPENROUTER:
+		endpoint_ = "https://openrouter.ai/api/v1/responses";
+		break;
+	}
+	api_->set_endpoint(endpoint_);
+}
+void character_ai::set_api_key(const std::string& api_key) {
+	api_key_ = api_key;
+	api_->set_api_key(api_key_);
+}
+void character_ai::set_model(const std::string& model) {
+	model_ = model;
+}
+void character_ai::set_character(ddlc_character character) {
+	character_ = character;
+	reset_state();
 }
 
 void character_ai::handle_close_interaction() {
