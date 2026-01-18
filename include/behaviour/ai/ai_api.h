@@ -7,8 +7,11 @@
 
 class ai_api {
 public:
-	ai_api(const std::string& endpoint, const std::string& api_key);
+	ai_api();
 	~ai_api();
+
+	void set_endpoint(const std::string& endpoint);
+	void set_api_key(const std::string& api_key);
 
 	std::string get_response(const std::string& prompt);
 	void cancel();

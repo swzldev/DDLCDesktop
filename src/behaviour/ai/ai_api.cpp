@@ -10,12 +10,9 @@
 
 #include <output/log.h>
 
-ai_api::ai_api(const std::string& endpoint, const std::string& api_key) {
-	endpoint_ = endpoint;
-    api_key_ = api_key;
+ai_api::ai_api() {
 	curl_ = curl_easy_init();
 
-	curl_easy_setopt(curl_, CURLOPT_URL, endpoint_.c_str());
 	curl_easy_setopt(curl_, CURLOPT_POST, 1L);
 
 	curl_easy_setopt(curl_, CURLOPT_TIMEOUT, 180L);
@@ -34,7 +31,22 @@ ai_api::~ai_api() {
 	curl_easy_cleanup(curl_);
 }
 
+void ai_api::set_endpoint(const std::string& endpoint) {
+	endpoint_ = endpoint;
+	curl_easy_setopt(curl_, CURLOPT_URL, endpoint_.c_str());
+}
+void ai_api::set_api_key(const std::string& api_key) {
+	api_key_ = api_key;
+}
+
 std::string ai_api::get_response(const std::string& prompt) {
+	if (endpoint_.empty()) {
+		throw std::runtime_error("API endpoint not set");
+	}
+	if (api_key_.empty()) {
+		throw std::runtime_error("API key not set");
+	}
+
 	cancel_requested_.store(false, std::memory_order_relaxed);
 
 	curl_slist* headers = nullptr;
