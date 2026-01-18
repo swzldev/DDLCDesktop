@@ -101,11 +101,7 @@ std::string system_prompts::get_prompt(ddlc_character character, const std::stri
 		throw std::runtime_error("Unknown character for system prompt");
 	}
 
-	std::string pronouns = "he/him";
-	if (config::load()) {
-		config* cfg = config::get();
-		pronouns = cfg->pronouns;
-	}
+	std::string pronouns = config::get()->pronouns;
 
 	std::string rules_s = rules;
 	std::string character_name = ddlc_character_to_string(character);
