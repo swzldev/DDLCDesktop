@@ -11,13 +11,19 @@
 #include <behaviour/character_state.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/ai_api.h>
+#include <config/config.h>
 
 #include <nlohmann/json.hpp>
 
 class character_ai {
 public:
-	character_ai(ddlc_character character);
+	character_ai();
 	~character_ai();
+
+	void set_api_mode(api mode);
+	void set_api_key(const std::string& api_key);
+	void set_model(const std::string& model);
+	void set_character(ddlc_character character);
 
 	void handle_close_interaction(); // doesnt use AI, so dont need async
 
