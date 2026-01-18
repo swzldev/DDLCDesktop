@@ -27,10 +27,8 @@ namespace fs = std::filesystem;
 character_logic::character_logic(window* window) {
 	window_ = window;
 
-	if (config::load()) {
-		config_ = config::get();
-		character_ = config_->character;
-	}
+	config_ = config::get();
+	character_ = config_->character;
 
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
@@ -39,7 +37,10 @@ character_logic::character_logic(window* window) {
 	show_main_menu();
 
 	// create ai
-	ai = new character_ai(character_);
+	ai = new character_ai();
+	ai->set_character(character_);
+	ai->set_api_mode(config_->api);
+	ai->set_api_key(config_->api_key);
 
 	if (fs::exists("character_state.json")) {
 		ai->load_state("character_state.json");
@@ -85,14 +86,9 @@ void character_logic::tick(float delta_time) {
 	if (paused_) return;
 
 	if (first_tick_) {
-		if (config::load()) {
-			// window opened
-			character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
-			begin_think(interaction);
-		}
-		else {
-			handle_error(ddlcd_runtime_error(ddlcd_error::FAIL_OPEN_CONFIG, "Failed to open config.json"));
-		}
+		// window opened
+		character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
+		begin_think(interaction);
 
 		first_tick_ = false;
 	}
@@ -312,6 +308,7 @@ void character_logic::show_settings_api_menu() {
 				else {
 					visuals->show_message("Invalid API mode. Supported: 'OpenAI', 'OpenRouter'.");
 				}
+				ai->set_api_mode(config_->api);
 				config::save(); // save config
 			}
 			delete new_api;
@@ -320,12 +317,14 @@ void character_logic::show_settings_api_menu() {
 	} });
 	visuals->add_button({ "Model", [this]() {
 		await_input_custom("Enter model: ", &config_->model, [this](bool success) {
+			ai->set_model(config_->model);
 			if (success) config::save(); // save config
 			show_settings_api_menu();
 		});
 	} });
 	visuals->add_button({ "API Key", [this]() {
 		await_input_custom("Enter API key: ", &config_->api_key, [this](bool success) {
+			ai->set_api_key(config_->api_key);
 			if (success) config::save(); // save config
 			show_settings_api_menu();
 		});
@@ -611,6 +610,7 @@ void character_logic::set_character(ddlc_character new_character) {
 	}
 
 	character_ = new_character;
+	ai->set_character(character_);
 	config::get()->character = character_;
 	config::save();
 	reset_all();
