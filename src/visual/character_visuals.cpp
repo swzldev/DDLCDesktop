@@ -70,27 +70,27 @@ void character_visuals::draw() {
 		return;
 	}
 
-	// draw body parts
+	// - draw character -
 	renderer_->draw_sprite(body_left_);
 	renderer_->draw_sprite(body_right_);
 	renderer_->draw_sprite(head_, 0, 0.001f);
 
-	// draw textbox
+	// - draw textbox -
+	// draw textbox background
+	renderer_->draw_sprite(textbox_, 0, 0.7f);
+
+	// draw text buttons
+	draw_all_buttons();
+
+	// draw text
 	if (!saying_target_.empty()) {
-		// draw textbox background
-		renderer_->draw_sprite(textbox_, 0, 0.7f);
-
-		// draw text buttons
-		draw_all_buttons();
-
-		// draw text
 		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		renderer_->set_text_color(D2D1::ColorF(D2D1::ColorF::White));
 		renderer_->set_stroke_color(D2D1::ColorF(0, 0, 0, 0.3f));
 		renderer_->draw_text(saying_, 0.5f, 0.88f, 0.91f, 0.3f, 2.6f, 5.0f);
-
-		draw_popup();
 	}
+
+	draw_popup();
 }
 
 void character_visuals::reset(ddlc_character character) {
