@@ -296,7 +296,7 @@ void character_logic::show_settings_api_menu() {
 	// set buttons
 	visuals->add_button({ "API Mode", [this]() {
 		std::string* new_api = new std::string();
-		await_input_custom("Enter your api: ", new_api, [this, new_api](bool success) {
+		await_input_custom("Enter your API (OpenRouter/OpenAI): ", new_api, [this, new_api](bool success) {
 			if (success) {
 				std::string new_api_lower = string_utils::to_lower(*new_api);
 				if (new_api_lower == "openai") {
@@ -317,15 +317,19 @@ void character_logic::show_settings_api_menu() {
 	} });
 	visuals->add_button({ "Model", [this]() {
 		await_input_custom("Enter model: ", &config_->model, [this](bool success) {
-			ai->set_model(config_->model);
-			if (success) config::save(); // save config
+			if (success) {
+				ai->set_model(config_->model);
+				config::save(); // save config
+			}
 			show_settings_api_menu();
 		});
 	} });
 	visuals->add_button({ "API Key", [this]() {
 		await_input_custom("Enter API key: ", &config_->api_key, [this](bool success) {
-			ai->set_api_key(config_->api_key);
-			if (success) config::save(); // save config
+			if (success) {
+				ai->set_api_key(config_->api_key);
+				config::save(); // save config
+			}
 			show_settings_api_menu();
 		});
 	} });
