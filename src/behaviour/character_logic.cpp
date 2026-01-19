@@ -671,7 +671,12 @@ void character_logic::set_character(ddlc_character new_character) {
 	}
 
 	character_ = new_character;
-	config::get()->character = character_;
+	config_->character = character_;
+
+	if (!supports_behaviour_preset(character_, config_->behaviour_preset)) {
+		config_->behaviour_preset = "default";
+	}
+
 	config::save();
 	reset_all();
 }
