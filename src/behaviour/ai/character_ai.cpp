@@ -24,8 +24,7 @@
 using json = nlohmann::json;
 
 character_ai::character_ai() {
-	config* cfg = config::get();
-	character_ = cfg->character;
+	config_ = config::get();
 	
 	// initialize with system prompt
 	add_to_history("system", get_system_prompt());
@@ -53,31 +52,8 @@ character_ai::~character_ai() {
 	api_ = nullptr;
 }
 
-void character_ai::set_api_mode(api mode) {
-	switch (mode) {
-	case api::OPENAI:
-		endpoint_ = "https://api.openai.com/v1/responses";
-		break;
-	case api::OPENROUTER:
-		endpoint_ = "https://openrouter.ai/api/v1/responses";
-		break;
-	}
-	api_->set_endpoint(endpoint_);
-}
-void character_ai::set_api_key(const std::string& api_key) {
-	api_key_ = api_key;
-	api_->set_api_key(api_key_);
-}
-void character_ai::set_model(const std::string& model) {
-	model_ = model;
-}
-void character_ai::set_character(ddlc_character character) {
-	character_ = character;
-	reset_state();
-}
-
 void character_ai::handle_close_interaction() {
-	add_to_history("user", "[" + now_str() + "] " + get_user_name() + " closed " + get_character_name() + "'s window.");
+	add_to_history("user", "[" + now_str() + "] " + get_user_name() + " closed " + ddlc_character_to_string(config_->character) + "'s window.");
 }
 
 void character_ai::handle_interaction_async(const character_interaction& interaction) {
@@ -156,24 +132,10 @@ void character_ai::cancel_and_reset() {
 }
 
 std::string character_ai::get_user_name() const {
-	if (user_name_.empty()) {
+	if (config_->user_name.empty()) {
 		return "The user";
 	}
-	return user_name_;
-}
-std::string character_ai::get_character_name() const {
-	switch (character_) {
-	case ddlc_character::MONIKA:
-		return "Monika";
-	case ddlc_character::YURI:
-		return "Yuri";
-	case ddlc_character::NATSUKI:
-		return "Natsuki";
-	case ddlc_character::SAYORI:
-		return "Sayori";
-	default:
-		return "Character"; // fallback
-	}
+	return config_->user_name;
 }
 
 std::string character_ai::now_str() const {
@@ -187,39 +149,6 @@ void character_ai::request_cancel() {
 	if (api_) {
 		api_->cancel();
 	}
-}
-
-void character_ai::load_config(nlohmann::json j) {
-	// API config
-	std::string api = j.value("api", "openai");
-	if (api == "openai") {
-		endpoint_ = "https://api.openai.com/v1/responses";
-	}
-	else if (api == "openrouter") {
-		endpoint_ = "https://openrouter.ai/api/v1/responses";
-	}
-	else {
-		throw std::runtime_error("Unsupported API specified in config.json: '" + api + "'");
-	}
-
-	api_key_ = j.value("api_key", "");
-	if (api_key_.empty()) {
-		log::print("API key not found in config.json, throwing...\nconfig.json contents:\n{}\n", j.dump(4));
-		throw std::runtime_error("API key not found in config.json (did you read the installation instructions on the github?)");
-	}
-
-	if (api == "openai") {
-		model_ = j.value("model", "gpt-4o-mini");
-	}
-	else if (api == "openrouter") {
-		model_ = j.value("model", "openrouter/openai/gpt-4o-mini");
-	}
-	message_history_size_ = j.value("message_history_size", 6);
-
-	// other config
-	ai_language_ = j.value("language", "English");
-	user_name_ = j.value("user_name", "");
-	system_prompt_ = j.value("behaviour_preset", "");
 }
 
 void character_ai::worker_loop() {
@@ -288,6 +217,17 @@ void character_ai::worker_loop() {
 	}
 }
 
+std::string character_ai::get_endpoint() {
+	switch (config_->api) {
+	case api::OPENAI:
+		return "https://api.openai.com/v1/responses";
+	case api::OPENROUTER:
+		return "https://openrouter.ai/api/v1/responses";
+	default:
+		return "https://api.openai.com/v1/responses";
+	}
+}
+
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
 	std::string prompt = build_prompt(interaction);
 	std::string response = api_->get_response(prompt);
@@ -330,14 +270,14 @@ std::string character_ai::build_prompt(const character_interaction& interaction)
 	add_to_history("user", interaction_message);
 
 	json payload;
-	payload["model"] = model_;
+	payload["model"] = config_->model;
 	payload["input"] = messages;
 
 	return payload.dump();
 }
 std::string character_ai::interaction_to_message(const character_interaction& interaction) {
 	std::string user_name = get_user_name();
-	std::string character_name = get_character_name();
+	std::string character_name = ddlc_character_to_string(config_->character);
 	switch (interaction.get_kind()) {
 	case character_interaction::kind::CLICK:
 		return "[" + now_str() + "] " + user_name + " clicked " + character_name + ".";
@@ -464,13 +404,14 @@ std::string character_ai::get_pose_code_left(const std::string& pose) {
 		{"arms_raised", "2"},
 	};
 
-	const auto& pose_map = (character_ == ddlc_character::MONIKA)
+	auto c = config_->character;
+	const auto& pose_map = (c == ddlc_character::MONIKA)
 		? monika_poses
-		: (character_ == ddlc_character::YURI)
+		: (c == ddlc_character::YURI)
 		? yuri_poses
-		: (character_ == ddlc_character::NATSUKI)
+		: (c == ddlc_character::NATSUKI)
 		? natsuki_poses
-		: (character_ == ddlc_character::SAYORI)
+		: (c == ddlc_character::SAYORI)
 		? sayori_poses
 		: throw std::runtime_error("Unknown character when getting pose code");
 
@@ -509,13 +450,14 @@ std::string character_ai::get_pose_code_right(const std::string& pose) {
 		{"arms_raised", "2"},
 	};
 
-	const auto& pose_map = (character_ == ddlc_character::MONIKA)
+	auto c = config_->character;
+	const auto& pose_map = (c == ddlc_character::MONIKA)
 		? monika_poses
-		: (character_ == ddlc_character::YURI)
+		: (c == ddlc_character::YURI)
 		? yuri_poses
-		: (character_ == ddlc_character::NATSUKI)
+		: (c == ddlc_character::NATSUKI)
 		? natsuki_poses
-		: (character_ == ddlc_character::SAYORI)
+		: (c == ddlc_character::SAYORI)
 		? sayori_poses
 		: throw std::runtime_error("Unknown character when getting pose code");
 
@@ -645,13 +587,14 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 		{"smile_sincere_blush", "y"}
 	};
 
-	const auto& expr_map = (character_ == ddlc_character::MONIKA)
+	auto c = config_->character;
+	const auto& expr_map = (c == ddlc_character::MONIKA)
 		? monika_expressions
-		: (character_ == ddlc_character::YURI)
+		: (c == ddlc_character::YURI)
 		? yuri_expressions
-		: (character_ == ddlc_character::NATSUKI)
+		: (c == ddlc_character::NATSUKI)
 		? natsuki_expressions
-		: (character_ == ddlc_character::SAYORI)
+		: (c == ddlc_character::SAYORI)
 		? sayori_expressions
 		: throw std::runtime_error("Unknown character when getting expression code");
 
@@ -664,5 +607,5 @@ std::string character_ai::get_expression_code(const std::string& expression) {
 }
 
 std::string character_ai::get_system_prompt() const {
-	return system_prompts::get_prompt(character_, system_prompt_) + "\n" + "All responses should be in the following language: \"" + ai_language_ + "\".";
+	return system_prompts::get_prompt(config_->character, config_->behaviour_preset) + "\n" + "All dialogue MUST be in the following language: \"" + config_->language + "\".";
 }
