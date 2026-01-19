@@ -349,10 +349,10 @@ void character_logic::show_settings_character_menu() {
 	} });
 	visuals->add_button({ "Preset", [this]() {
 		std::string* new_preset = new std::string();
-		await_input_custom("Enter your API (OpenRouter/OpenAI): ", new_preset, [this, new_preset](bool success) {
+		await_input_custom("Enter new behaviour preset: ", new_preset, [this, new_preset](bool success) {
 			if (success) {
 				if (supports_behaviour_preset(character_, *new_preset)) {
-					visuals->show_popup("Warning: Changing the character will reset all progress. Continue?", [this, new_preset](int result) {
+					visuals->show_popup("Warning: Changing the preset will reset all progress. Continue?", [this, new_preset](int result) {
 						if (result == 0) {
 							config_->behaviour_preset = *new_preset;
 							reset_all();
