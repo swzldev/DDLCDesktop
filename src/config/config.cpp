@@ -54,6 +54,8 @@ void config::load() {
 	cfg->pronouns = j.value("pronouns", "he/him");
 	// user name
 	cfg->user_name = j.value("user_name", "");
+	// language
+	cfg->language = j.value("language", "English");
 	// preset
 	cfg->behaviour_preset = j.value("behaviour_preset", "");
 	// character
@@ -106,6 +108,8 @@ bool config::save() {
 	j["pronouns"] = loaded_->pronouns;
 	// user name
 	j["user_name"] = loaded_->user_name;
+	// language
+	j["language"] = loaded_->language;
 	// preset
 	j["behaviour_preset"] = loaded_->behaviour_preset;
 	// character
@@ -160,6 +164,8 @@ void config::load_default() {
 	loaded_->pronouns = "he/him";
 	// user name
 	loaded_->user_name = "User";
+	// language
+	loaded_->language = "English";
 	// preset
 	loaded_->behaviour_preset = "default";
 	// character

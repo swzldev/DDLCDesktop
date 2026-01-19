@@ -25,6 +25,7 @@ public:
 	// behaviour
 	std::string pronouns;
 	std::string user_name;
+	std::string language;
 	std::string behaviour_preset;
 	ddlc_character character;
 
