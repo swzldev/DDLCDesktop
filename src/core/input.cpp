@@ -30,6 +30,43 @@ void input::end_input_recording() {
 	cur_input_buffer_ = nullptr;
 }
 
+std::string input::get_clipboard_text() {
+	OpenClipboard(nullptr);
+	HANDLE hData = GetClipboardData(CF_TEXT);
+	if (hData == nullptr) {
+		CloseClipboard();
+		return std::string();
+	}
+
+	char* pszText = static_cast<char*>(GlobalLock(hData));
+	if (pszText == nullptr) {
+		CloseClipboard();
+		return std::string();
+	}
+
+	std::string text(pszText);
+	GlobalUnlock(hData);
+	CloseClipboard();
+	return text;
+}
+void input::set_clipboard_text(const std::string& text) {
+	OpenClipboard(nullptr);
+	EmptyClipboard();
+	HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
+	if (hGlob != nullptr) {
+		char* pGlob = static_cast<char*>(GlobalLock(hGlob));
+		if (pGlob != nullptr) {
+			memcpy(pGlob, text.c_str(), text.size() + 1);
+			GlobalUnlock(hGlob);
+			SetClipboardData(CF_TEXT, hGlob);
+		}
+		else {
+			GlobalFree(hGlob);
+		}
+	}
+	CloseClipboard();
+}
+
 void input::on_char_input(wchar_t c) {
 	if (cur_input_buffer_) {
 		// backspace
