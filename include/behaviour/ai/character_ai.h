@@ -20,11 +20,6 @@ public:
 	character_ai();
 	~character_ai();
 
-	void set_api_mode(api mode);
-	void set_api_key(const std::string& api_key);
-	void set_model(const std::string& model);
-	void set_character(ddlc_character character);
-
 	void handle_close_interaction(); // doesnt use AI, so dont need async
 
 	void handle_interaction_async(const character_interaction& interaction);
@@ -37,20 +32,12 @@ public:
 	void cancel_and_reset();
 
 	std::string get_user_name() const;
-	std::string get_character_name() const;
 
 	std::string now_str() const;
 
 private:
-	std::string endpoint_;
-	std::string api_key_;
+	config* config_ = nullptr;
 	ai_api* api_;
-	std::string model_ = "gpt-4o-mini";
-	int message_history_size_;
-	std::string ai_language_ = "English";
-	std::string user_name_ = "";
-	std::string system_prompt_ = "";
-	ddlc_character character_;
 
 	struct message {
 		std::string role;
@@ -71,17 +58,17 @@ private:
 
 	void request_cancel();
 
-	void load_config(nlohmann::json j);
-
 	inline void add_to_history(const std::string& role, const std::string& content) {
 		conversation_history_.push_back({ role, content });
 		// limit history size (dont include system prompt)
-		if (conversation_history_.size() > message_history_size_ + 1) {
+		if (conversation_history_.size() > config_->message_history_size + 1) {
 			conversation_history_.erase(conversation_history_.begin() + 1);
 		}
 	}
 
 	void worker_loop();
+
+	std::string get_endpoint();
 
 	character_state handle_interaction_internal(const character_interaction& interaction);
 	std::string build_prompt(const character_interaction& interaction);
