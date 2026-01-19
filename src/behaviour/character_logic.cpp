@@ -431,7 +431,7 @@ void character_logic::show_settings_character_change_menu() {
 		try_set_character(ddlc_character::SAYORI);
 	} });
 	visuals->add_button({ "Back", [this]() {
-		show_settings_menu();
+		show_settings_character_menu();
 	} });
 }
 void character_logic::show_settings_user_menu() {
