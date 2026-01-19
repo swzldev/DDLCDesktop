@@ -89,6 +89,10 @@ void character_logic::tick(float delta_time) {
 
 		first_tick_ = false;
 	}
+	
+	if (visuals->in_popup()) {
+		return;
+	}
 
 	if (current_menu_ != menu_state::MAIN) {
 		if (state_ == logic_state::AWAITING_INPUT_SETTINGS) {
