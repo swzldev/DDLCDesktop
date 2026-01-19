@@ -342,6 +342,70 @@ void character_logic::show_settings_character_menu() {
 	current_menu_ = menu_state::SETTINGS;
 
 	std::string current_ch = ddlc_character_to_string(character_);
+	std::string message = "Current character: " + current_ch + "\n";
+	std::string message = "Current preset: " + config_->behaviour_preset + "\n";
+	message += "Choose an option...";
+
+	visuals->set_chars_per_second(100.0f);
+	visuals->set_saying(message);
+
+	// set buttons
+	visuals->add_button({ "Switch character", [this]() {
+		show_settings_character_change_menu();
+	} });
+	visuals->add_button({ "Preset", [this]() {
+		std::string* new_preset = new std::string();
+		await_input_custom("Enter your API (OpenRouter/OpenAI): ", new_preset, [this, new_preset](bool success) {
+			if (success) {
+				if (supports_behaviour_preset(character_, *new_preset)) {
+					visuals->show_popup("Warning: Changing the character will reset all progress. Continue?", [this, ch](int result) {
+						if (result == 0) {
+							config_->behaviour_preset = *new_preset;
+							reset_all();
+						}
+					});
+				}
+				else {
+					std::string supported;
+					auto presets = get_behaviour_presets(character_);
+					for (size_t i = 0; i < presets.size(); i++) {
+						supported += "'" + presets[i];
+						if (i < presets.size() - 1) {
+							supported += "', ";
+						}
+						else {
+							supported += "'";
+						}
+					}
+					visuals->show_message("Invalid behaviour preset. Supported: " + supported);
+				}
+				ai->set_api_mode(config_->api);
+				config::save(); // save config
+			}
+			delete new_preset;
+			show_settings_character_menu();
+		});
+	} });
+	visuals->add_button({ "Window control: ON", [this]() {
+			config_->enable_window_controls = false;
+			config::save();
+		},
+		button_style::LABEL, button_type::SWAP,
+		"Window control: OFF", [this]() {
+			config_->enable_window_controls = true;
+			config::save();
+		}, nullptr, nullptr, false,
+		!config_->enable_window_controls
+	});
+	visuals->add_button({ "Back", [this]() {
+		show_settings_menu();
+	} });
+}
+void character_logic::show_settings_character_change_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::SETTINGS;
+
+	std::string current_ch = ddlc_character_to_string(character_);
 	std::string message = "Select a new character...\n";
 	message += "Current: " + current_ch;
 
@@ -373,7 +437,7 @@ void character_logic::show_settings_character_menu() {
 	visuals->add_button({ "Sayori", [this, try_set_character]() {
 		try_set_character(ddlc_character::SAYORI);
 	} });
-	visuals->add_button({ "Back", [this, try_set_character]() {
+	visuals->add_button({ "Back", [this]() {
 		show_settings_menu();
 	} });
 }
