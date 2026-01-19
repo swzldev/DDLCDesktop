@@ -444,7 +444,7 @@ void character_logic::show_settings_user_menu() {
 
 	visuals->set_chars_per_second(100.0f);
 
-	std::string message = "User name: " + config_->user_name + "\n";
+	std::string message = "User name: " + config_->user_name + " | Language: " + config_->language + "\n";
 	message += "Pronouns: " + config_->pronouns + "\n";
 	message += "Choose an option...";
 	visuals->set_saying(message);
@@ -458,6 +458,12 @@ void character_logic::show_settings_user_menu() {
 	} });
 	visuals->add_button({ "Pronouns", [this]() {
 		await_input_custom("Enter your pronouns: ", &config_->pronouns, [this](bool success) {
+			if (success) config::save(); // save config
+			show_settings_user_menu();
+		});
+	} });
+	visuals->add_button({ "Language", [this]() {
+		await_input_custom("Enter your language (does not affect UI): ", &config_->language, [this](bool success) {
 			if (success) config::save(); // save config
 			show_settings_user_menu();
 		});
