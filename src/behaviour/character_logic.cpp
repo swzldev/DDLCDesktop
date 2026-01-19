@@ -521,6 +521,17 @@ void character_logic::await_input_custom(const std::string& prompt, std::string*
 	};
 
 	visuals->clear_buttons();
+	visuals->add_button({ "Copy", [this]() {
+		input::set_clipboard_text(*current_input_);
+	} });
+	visuals->add_button({ "Paste", [this]() {
+		std::string clip = input::get_clipboard_text();
+		for (char c : clip) {
+			if (current_input_->length() < INPUT_MAX_LENGTH) {
+				current_input_->push_back(c);
+			}
+		}
+	} });
 	visuals->add_button({ "Cancel", [this, cleanup]() {
 		// on cancel
 		cleanup(false);
