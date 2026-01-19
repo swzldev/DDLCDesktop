@@ -229,6 +229,9 @@ std::string character_ai::get_endpoint() {
 }
 
 character_state character_ai::handle_interaction_internal(const character_interaction& interaction) {
+	api_->set_api_key(config_->api_key);
+	api_->set_endpoint(get_endpoint());
+
 	std::string prompt = build_prompt(interaction);
 	std::string response = api_->get_response(prompt);
 
