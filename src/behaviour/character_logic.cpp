@@ -521,6 +521,9 @@ void character_logic::await_input_custom(const std::string& prompt, std::string*
 	};
 
 	visuals->clear_buttons();
+	visuals->add_button({ "Clear", [this]() {
+		*current_input_ = "";
+	} });
 	visuals->add_button({ "Copy", [this]() {
 		input::set_clipboard_text(*current_input_);
 	} });
