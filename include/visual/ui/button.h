@@ -29,13 +29,14 @@ public:
 		const std::function<void()>& on_click_alt = nullptr,
 		bool* is_disabled = nullptr,
 		sprite* img = nullptr,
-		bool is_toggled = false
+		bool is_toggled = false,
+		bool swapped = false
 	)
 		: style_(style), type_(type),
 		text_(label), text_alt_(label_alt),
 		img_(img),
 		on_click_(on_click), on_click_alt_(on_click_alt),
-		disabled_(is_disabled), toggled_(is_toggled),
+		disabled_(is_disabled), toggled_(is_toggled), swapped_(swapped),
 		id_(next_id++) {
 	}
 
