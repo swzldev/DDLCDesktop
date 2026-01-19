@@ -38,9 +38,6 @@ character_logic::character_logic(window* window) {
 
 	// create ai
 	ai = new character_ai();
-	ai->set_character(character_);
-	ai->set_api_mode(config_->api);
-	ai->set_api_key(config_->api_key);
 
 	if (fs::exists("character_state.json")) {
 		ai->load_state("character_state.json");
@@ -308,7 +305,6 @@ void character_logic::show_settings_api_menu() {
 				else {
 					visuals->show_message("Invalid API mode. Supported: 'OpenAI', 'OpenRouter'.");
 				}
-				ai->set_api_mode(config_->api);
 				config::save(); // save config
 			}
 			delete new_api;
@@ -318,7 +314,6 @@ void character_logic::show_settings_api_menu() {
 	visuals->add_button({ "Model", [this]() {
 		await_input_custom("Enter model: ", &config_->model, [this](bool success) {
 			if (success) {
-				ai->set_model(config_->model);
 				config::save(); // save config
 			}
 			show_settings_api_menu();
@@ -327,7 +322,6 @@ void character_logic::show_settings_api_menu() {
 	visuals->add_button({ "API Key", [this]() {
 		await_input_custom("Enter API key: ", &config_->api_key, [this](bool success) {
 			if (success) {
-				ai->set_api_key(config_->api_key);
 				config::save(); // save config
 			}
 			show_settings_api_menu();
@@ -358,7 +352,7 @@ void character_logic::show_settings_character_menu() {
 		await_input_custom("Enter your API (OpenRouter/OpenAI): ", new_preset, [this, new_preset](bool success) {
 			if (success) {
 				if (supports_behaviour_preset(character_, *new_preset)) {
-					visuals->show_popup("Warning: Changing the character will reset all progress. Continue?", [this, ch](int result) {
+					visuals->show_popup("Warning: Changing the character will reset all progress. Continue?", [this, new_preset](int result) {
 						if (result == 0) {
 							config_->behaviour_preset = *new_preset;
 							reset_all();
@@ -379,7 +373,6 @@ void character_logic::show_settings_character_menu() {
 					}
 					visuals->show_message("Invalid behaviour preset. Supported: " + supported);
 				}
-				ai->set_api_mode(config_->api);
 				config::save(); // save config
 			}
 			delete new_preset;
@@ -678,7 +671,6 @@ void character_logic::set_character(ddlc_character new_character) {
 	}
 
 	character_ = new_character;
-	ai->set_character(character_);
 	config::get()->character = character_;
 	config::save();
 	reset_all();
