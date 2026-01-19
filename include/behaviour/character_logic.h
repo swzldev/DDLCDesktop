@@ -80,6 +80,7 @@ private:
 	void show_settings_menu();
 	void show_settings_api_menu();
 	void show_settings_character_menu();
+	void show_settings_character_change_menu();
 	void show_settings_user_menu();
 
 	void await_choice(bool show_immediate = false);
