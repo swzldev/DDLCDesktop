@@ -337,7 +337,7 @@ void character_logic::show_settings_character_menu() {
 
 	std::string current_ch = ddlc_character_to_string(character_);
 	std::string message = "Current character: " + current_ch + "\n";
-	std::string message = "Current preset: " + config_->behaviour_preset + "\n";
+	message += "Current preset: " + config_->behaviour_preset + "\n";
 	message += "Choose an option...";
 
 	visuals->set_chars_per_second(100.0f);
