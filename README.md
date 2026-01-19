@@ -184,6 +184,20 @@
 
 <h2>Changelog</h2>
 
+### Unreleased
+- Added support for each characters "casual" outfit varients.
+- Improved character sizing and positioning (it's now more consistent, and more restricted, also works on monitors other than 1080p)
+- Allowed support for other languages.
+- Fixed text rendering so it shouldn't have any more weird characters in sentences and stuff.
+- Fixed a bug where clicking the buttons would also count as clicking the character.
+- Fixed a bug where there was a small 1-2px gap between the characters heads and bodies.
+- Added the ability to drag them around.
+- Added custom pronoun support.
+- Fixed a bug where some models would wrap the json data in code fences.
+- Fixed a bug where it would crash when changing to a character that doesnt support the current pose/expression.
+- The textbox no longer disappears if theyre not saying anything, which previously prevented access to any of the buttons such as "close".
+- All config.json options are now built-in to the app under the "settings" button.
+
 ### 1.0.0 [11/01/2026]
 - Added support for custom inputs.
 - Added OpenRouter API support.
