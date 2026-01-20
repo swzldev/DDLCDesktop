@@ -29,6 +29,7 @@ enum class error_state {
 enum class menu_state {
 	MAIN,
 	SETTINGS,
+	SETUP,
 };
 
 class window;
@@ -68,7 +69,11 @@ private:
 	bool input_mode_btn_disabled_ = true;
 	bool custom_mode_ = false;
 	std::string current_input_prompt_;
-	std::string* current_input_;
+	std::string* current_input_ = nullptr;
+
+	bool in_setup_ = false;
+	unsigned int setup_step_ = 0;
+	void show_setup(unsigned int step);
 
 	// auto
 	bool auto_mode_ = false;

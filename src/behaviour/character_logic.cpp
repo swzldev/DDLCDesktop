@@ -27,14 +27,27 @@ namespace fs = std::filesystem;
 character_logic::character_logic(window* window) {
 	window_ = window;
 
+	if (!fs::exists("config.json")) {
+		in_setup_ = true;
+		setup_step_ = 0;
+	}
+
 	config_ = config::get();
 	character_ = config_->character;
 
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
 
-	// main menu
-	show_main_menu();
+	// permanent buttons
+	visuals->add_button({ "Close", [this]() {
+		if (!in_setup_) {
+			config::save();
+			ai->handle_close_interaction();
+			ai->save_state("character_state.json");
+		}
+
+		window_->close();
+	} }, true);
 
 	// create ai
 	ai = new character_ai();
@@ -62,7 +75,7 @@ character_logic::~character_logic() {
 }
 
 void character_logic::handle_interaction(const character_interaction& interaction) {
-	if (interaction.get_kind() != character_interaction::kind::CLICK || current_menu_ != menu_state::MAIN) {
+	if (interaction.get_kind() != character_interaction::kind::CLICK || current_menu_ == menu_state::SETTINGS) {
 		return;
 	}
 
@@ -83,9 +96,16 @@ void character_logic::tick(float delta_time) {
 	if (paused_) return;
 
 	if (first_tick_) {
-		// window opened
-		character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
-		begin_think(interaction);
+		if (in_setup_) {
+			show_setup(setup_step_);
+		}
+		else {
+			show_main_menu();
+
+			// window opened
+			character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
+			begin_think(interaction);
+		}
 
 		first_tick_ = false;
 	}
@@ -102,7 +122,7 @@ void character_logic::tick(float delta_time) {
 		}
 
 		visuals->tick(delta_time);
-		return;
+		if (current_menu_ != menu_state::SETUP) return;
 	}
 
 	if (state_ == logic_state::THINKING) {
@@ -220,17 +240,128 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	display_current_interaction();
 }
 
+void character_logic::show_setup(unsigned int step) {
+	visuals->set_chars_per_second(30.0f);
+
+	visuals->clear_buttons();
+
+	if (step == 0) {
+		// part 1
+		const int size = 1000;
+		int x = (sys::display_width() / 2) - (size / 2);
+		int y = (sys::display_height()) - size;
+
+		visuals->set_position(x, y);
+		visuals->set_scale(size);
+
+		current_state.interactions = error_stories::firstrun_story_p1();
+		state_ = logic_state::TALKING;
+		current_menu_ = menu_state::SETUP;
+		interaction_index_ = 0;
+		display_current_interaction();
+	}
+	else if (step == 1) {
+		// collect name
+		await_input_custom("What's your name?: ", &config_->user_name, [this](bool success) {
+			if (success && !config_->user_name.empty()) {
+				setup_step_++;
+				show_setup(setup_step_);
+			}
+			else {
+				visuals->show_message("Please enter a valid name.");
+				show_setup(setup_step_); // retry
+			}
+		});
+	}
+	else if (step == 2) {
+		// collect pronouns
+		await_input_custom("What are your pronouns?: ", &config_->pronouns, [this](bool success) {
+			if (success && !config_->pronouns.empty()) {
+				setup_step_++;
+				show_setup(setup_step_);
+			}
+			else {
+				visuals->show_message("Please enter valid pronouns.");
+				show_setup(setup_step_); // retry
+			}
+		});
+	}
+	else if (step == 3) {
+		// part 2
+		current_state.interactions = error_stories::firstrun_story_p2(config_->user_name);
+		state_ = logic_state::TALKING;
+		interaction_index_ = 0;
+		display_current_interaction();
+	}
+	else if (step == 4) {
+		const int size = 800;
+		int x = (sys::display_width() / 6 * 4) - (size / 2);
+		int y = (sys::display_height()) - size;
+
+		visuals->set_position(x, y);
+		visuals->set_scale(size);
+
+		// try open openrouter website
+		HINSTANCE h = ShellExecuteW(
+			NULL,
+			L"open",
+			L"https://www.openrouter.ai",
+			NULL,
+			NULL,
+			SW_SHOWMAXIMIZED
+		);
+
+		if ((INT_PTR)h <= 32) {
+			visuals->show_message("Failed to open web browser. Please visit https://www.openrouter.ai manually.");
+		}
+	}
+	else if (step == 5) {
+		// part 3
+		current_state.interactions = error_stories::firstrun_story_p3();
+		state_ = logic_state::TALKING;
+		interaction_index_ = 0;
+		display_current_interaction();
+	}
+	else if (step == 6) {
+		// collect api key
+		await_input_custom("Enter your OpenRouter API key: ", &config_->api_key, [this](bool success) {
+			if (success && !config_->api_key.empty()) {
+				setup_step_++;
+				show_setup(setup_step_);
+			}
+			else {
+				visuals->show_message("Please enter a valid API key.");
+				show_setup(setup_step_); // retry
+			}
+		});
+	}
+	else if (step == 7) {
+		// part 4
+		const int size = 1000;
+		int x = (sys::display_width() / 2) - (size / 2);
+		int y = (sys::display_height()) - size;
+
+		visuals->set_position(x, y);
+		visuals->set_scale(size);
+
+		current_state.interactions = error_stories::firstrun_story_p4();
+		state_ = logic_state::TALKING;
+		interaction_index_ = 0;
+		display_current_interaction();
+	}
+	else {
+		// done
+		in_setup_ = false;
+		config::save();
+		reset_all();
+	}
+}
+
 void character_logic::show_main_menu() {
 	visuals->clear_buttons();
 	current_menu_ = menu_state::MAIN;
 
 	// set buttons
-	visuals->add_button({ "Close", [this]() {
-		ai->handle_close_interaction();
-		ai->save_state("character_state.json");
-
-		window_->close();
-	} });
 	visuals->add_button({ "Auto", [this]() {
 			auto_mode_ = true;
 		},
@@ -670,6 +801,10 @@ void character_logic::advance_interaction() {
 		}
 		else if (error_state_ == error_state::FATAL) {
 			window_->close();
+		}
+		else if (in_setup_) {
+			setup_step_++;
+			show_setup(setup_step_);
 		}
 		else {
 			if (!current_state.actions.empty()) {
