@@ -200,7 +200,9 @@ void character_visuals::draw_all_buttons() {
 	float total_width = 0.0f; // normalized & with padding
 	float height = 0.0f;
 
-	for (auto& button : buttons_) {
+	std::vector<button> all_buttons = buttons_;
+	all_buttons.insert(all_buttons.begin(), buttons_permanent_.begin(), buttons_permanent_.end());
+	for (auto& button : all_buttons) {
 		std::wstring wtext = utf8_to_wstring(button.text());
 
 		// measure (size 2.2)
