@@ -54,8 +54,8 @@ std::vector<character_state::interaction> error_stories::firstrun_story_p4() {
         {"https://discord.gg/CyerbjvyMb", "c", "1", "1"},
         {"\"You can also change more settings in the app.\"", "d", "1", "1"},
         {"\"Just click the 'settings' button.\"", "d", "1", "1"},
-        {"\"I hope you have fun using this mod!\"", "k", "2", "2"},
-        {"\"- Swazy\"", "n", "1", "1"},
+        {"I hope you have fun using this mod!", "k", "2", "2"},
+        {"- Swazy", "n", "1", "1"},
         {"\"Wait what did I just say?\"", "o", "1", "1"},
     };
 }
