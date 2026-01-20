@@ -55,7 +55,7 @@ public:
 		is_speaking_ = false;
 	}
 
-	inline void add_button(const button& btn, bool permanent) {
+	inline void add_button(const button& btn, bool permanent = false) {
 		if (permanent) {
 			buttons_permanent_.push_back(btn);
 		}
