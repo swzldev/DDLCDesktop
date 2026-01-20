@@ -33,12 +33,14 @@ std::vector<character_state::interaction> error_stories::firstrun_story_p2(const
 }
 std::vector<character_state::interaction> error_stories::firstrun_story_p3() {
     return {
+        {"\"...\"", "p", "1", "1"},
         {"\"Did it work?\"", "p", "1", "1"},
-        {"\"What do you see?\"", "p", "1", "1"},
+        {"\"What do you see?\"", "m", "1", "1"},
         {"\"Alright...\"", "q", "1", "1"},
-        {"\"You're going to need to make an account on this website.\"", "h", "2", "2"},
-        {"\"Then, just click 'Get API Key'.\"", "d", "2", "2"},
-        {"\"Then 'Create API Key'.\"", "d", "2", "2"},
+        {"\"Just click this bright blue button that says 'Get API Key'\"", "h", "2", "2"},
+        {"\"You might need to create an account...\"", "q", "1", "1"},
+        {"\"I'm sure it wont take too long!\"", "j", "2", "2"},
+        {"\"Once that's all done, just click 'Create API Key'.\"", "d", "2", "2"},
         {"\"Give it a name and click create!\"", "j", "2", "2"},
     };
 }
