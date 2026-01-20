@@ -4,7 +4,7 @@
   <p>Ever wondered what it would be like to have your own DDLC character on your desktop? Well now you can!</p>
   <p>
     <img src="https://img.shields.io/badge/status-stable-green" alt="Status: Stable">
-    <img src="https://img.shields.io/badge/latest_version-1.0.0-red" alt="Latest: 1.0.0">
+    <img src="https://img.shields.io/badge/latest_version-1.1.0-red" alt="Latest: 1.1.0">
   </p>
 
   [Discord] | [Features] | [Installation] | [Controls] | [Issues] | [Changelog] | [Contributing] | [License]
@@ -57,6 +57,10 @@
 
 <h3>Font (OPTIONAL)</h3>
 <p>By default Just Monika attempts to use 3 fonts, "Aller" -> "Segoe UI" -> "Arial". If you want it to use the original DDLC font (Aller), you will need to install it onto your system. Again, it is not provided with the binaries for copyright reasons, but you can download it for free <a href="https://www.1001fonts.com/aller-font.html">here</a>.<p>
+
+> [!IMPORTANT]
+> On versions past 1.1.0, the rest of the installation process is now built into the app. As long as you've completed the two steps above, you can open JustMonika.exe and follow the instructions that should appear. I will keep the legacy guide below for reference, as some of it may still be useful (for example, inside the app's settings menu it is useful to see the different character preset names, etc.)
+> You should also note that all the config.json options are now built into the app under the "settings" button. You should no longer ever need to modify config.json manually.
 
 <h3>Config.json & API Key</h3>
 <p>Next to JustMonika.exe there is a file called config.json. Open this file in a text editor and you will see the following:</p>
@@ -184,7 +188,7 @@
 
 <h2>Changelog</h2>
 
-### Unreleased
+### [1.1.0] [20/01/2026]
 - Added support for each characters "casual" outfit varients.
 - Improved character sizing and positioning (it's now more consistent, and more restricted, also works on monitors other than 1080p)
 - Allowed support for other languages.
@@ -197,6 +201,7 @@
 - Fixed a bug where it would crash when changing to a character that doesnt support the current pose/expression.
 - The textbox no longer disappears if theyre not saying anything, which previously prevented access to any of the buttons such as "close".
 - All config.json options are now built-in to the app under the "settings" button.
+- Adding interactive setup if on a fresh installation.
 
 ### 1.0.0 [11/01/2026]
 - Added support for custom inputs.
