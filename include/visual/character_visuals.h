@@ -91,7 +91,7 @@ private:
 	// buttons
 	std::vector<button> buttons_permanent_;
 	std::vector<button> buttons_;
-	button* current_button_ = nullptr;
+	int current_button_id_ = -1;
 	int current_option_ = -1;
 
 	// popup

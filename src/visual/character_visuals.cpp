@@ -101,7 +101,7 @@ void character_visuals::reset(ddlc_character character) {
 	is_speaking_ = false;
 
 	buttons_.clear();
-	current_button_ = nullptr;
+	current_button_id_ = -1;
 
 	window_->reset();
 	
@@ -189,10 +189,12 @@ void character_visuals::draw_all_buttons() {
 	const float buttons_y = 0.86f;
 
 	struct button_draw_data {
-		button* btn;
+		int btn_id;
 		std::wstring text;
 		float width;
 		float height;
+		bool is_disabled;
+		bool is_toggled;
 		// ^^ including padding
 	};
 	std::vector<button_draw_data> predraw_data;
@@ -215,7 +217,7 @@ void character_visuals::draw_all_buttons() {
 		height = std::max(height, height_normalized);
 		total_width += width_normalized;
 
-		predraw_data.push_back({ &button, wtext, width_normalized, height_normalized});
+		predraw_data.push_back({ button.id(), wtext, width_normalized, height_normalized, button.is_disabled(), button.is_toggled() });
 	}
 
 	D2D_COLOR_F btn_col = D2D1::ColorF(0, 0, 0, 0.7f);
@@ -241,20 +243,20 @@ void character_visuals::draw_all_buttons() {
 		}
 
 		if (hovered) {
-			current_button_ = data.btn;
+			current_button_id_ = data.btn_id;
 			btn_col = D2D1::ColorF(1, 1, 1, 0.65f);
 		}
 		else {
-			if (current_button_ == data.btn) {
-				current_button_ = nullptr;
+			if (current_button_id_ == data.btn_id) {
+				current_button_id_ = -1;
 			}
 			btn_col = D2D1::ColorF(0.333f, 0.137f, 0.137f, 1);
 		}
 
-		if (data.btn && data.btn->is_disabled()) {
+		if (data.is_disabled) {
 			btn_col = D2D1::ColorF(0.333f, 0.137f, 0.137f, 0.35f);
 		}
-		else if (data.btn && data.btn->is_toggled()) {
+		else if (data.is_toggled) {
 			btn_col = D2D1::ColorF(1, 1, 1);
 		}
 
@@ -348,10 +350,21 @@ void character_visuals::draw_popup() {
 }
 
 int character_visuals::on_mouse_click() {
-	if (current_button_) {
-		current_button_->click();
-		return 1; // handled
-	}
+if (current_button_id_ != -1) {
+// Find button by ID in storage vectors
+for (auto& btn : buttons_permanent_) {
+if (btn.id() == current_button_id_) {
+btn.click();
+return 1; // handled
+}
+}
+for (auto& btn : buttons_) {
+if (btn.id() == current_button_id_) {
+btn.click();
+return 1; // handled
+}
+}
+}
 	if (popup_ && current_option_ != -1) {
 		popup_response_ = (current_option_ == 1);
 		popup_ = false;
