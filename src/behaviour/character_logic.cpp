@@ -294,8 +294,8 @@ void character_logic::show_setup(unsigned int step) {
 		display_current_interaction();
 	}
 	else if (step == 4) {
-		const int size = 800;
-		int x = (sys::display_width() / 6 * 4) - (size / 2);
+		const int size = 750;
+		int x = (sys::display_width() / 8 * 6) - (size / 2);
 		int y = (sys::display_height()) - size;
 
 		visuals->set_position(x, y);
@@ -314,6 +314,8 @@ void character_logic::show_setup(unsigned int step) {
 		if ((INT_PTR)h <= 32) {
 			visuals->show_message("Failed to open web browser. Please visit https://www.openrouter.ai manually.");
 		}
+		setup_step_++;
+		show_setup(setup_step_);
 	}
 	else if (step == 5) {
 		// part 3
