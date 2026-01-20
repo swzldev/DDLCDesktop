@@ -55,17 +55,11 @@ public:
 		is_speaking_ = false;
 	}
 
-	inline unsigned int add_button(const button& btn) {
-		buttons_.push_back(btn);
-		return btn.id();
-	}
-	inline void remove_button(unsigned int id) {
-		buttons_.erase(
-			std::remove_if(buttons_.begin(), buttons_.end(), [id](const button& btn) {
-					return btn.id() == id;
-			}),
-			buttons_.end()
-		);
+	inline void add_button(const button& btn, bool permanent) {
+		if (permanent) {
+			buttons_permanent_.push_back(btn);
+		}
+		else buttons_.push_back(btn);
 	}
 	inline void clear_buttons() {
 		buttons_.clear();
@@ -95,6 +89,7 @@ private:
 	float chars_per_second_ = 50.0f;
 
 	// buttons
+	std::vector<button> buttons_permanent_;
 	std::vector<button> buttons_;
 	button* current_button_ = nullptr;
 	int current_option_ = -1;
