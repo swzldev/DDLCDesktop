@@ -31,7 +31,7 @@ std::vector<character_state::interaction> error_stories::firstrun_story_p2(const
         {"\"Just give me a second...\"", "m", "1", "1"},
     };
 }
-std::vector<character_state::interaction> error_stories::firstrun_story_p3(const std::string& name) {
+std::vector<character_state::interaction> error_stories::firstrun_story_p3() {
     return {
         {"\"Did it work?\"", "p", "1", "1"},
         {"\"What do you see?\"", "p", "1", "1"},
@@ -42,7 +42,7 @@ std::vector<character_state::interaction> error_stories::firstrun_story_p3(const
         {"\"Give it a name and click create!\"", "j", "2", "2"},
     };
 }
-std::vector<character_state::interaction> error_stories::firstrun_story_p4(const std::string& name) {
+std::vector<character_state::interaction> error_stories::firstrun_story_p4() {
     return {
         {"\"Thanks so much!\"", "j", "2", "2"},
         {"\"I guess that means setup is complete.\"", "q", "1", "1"},
