@@ -26,7 +26,13 @@ void config::load() {
   }
 
   json j;
-  file >> j;
+  try {
+    file >> j;
+  } catch (const json::parse_error &) {
+    file.close();
+    load_default();
+    return;
+  }
   file.close();
 
   std::unique_ptr<config> cfg = std::make_unique<config>();
