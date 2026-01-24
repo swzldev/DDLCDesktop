@@ -212,6 +212,13 @@ void character_ai::worker_loop() {
     }
 
     if (cancel_requested_.load(std::memory_order_relaxed)) {
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        // Clear processing and any pending result on late cancellation
+        pending_result_ = character_state{};
+        has_result_.store(false, std::memory_order_relaxed);
+        is_processing_.store(false, std::memory_order_relaxed);
+      }
       continue;
     }
 
