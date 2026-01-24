@@ -75,7 +75,7 @@
 }
 </code></pre>
 <ul>
-  <li><code>"api"</code>: The API to use, either "openai" or "openrouter". OpenRouter is reccomended as it has a freetier.</ li>
+  <li><code>"api"</code>: The API to use: "openai", "openrouter", or "custom". OpenRouter is recommended as it has a free tier. Use "custom" for local LLMs or other OpenAI-compatible endpoints.</li>
   <li><code>"api_key"</code>: Your API key for the chosen API.</li>
   <li><code>"model"</code>: The model to use for the character. If you don't know what to choose you can find info in the models section of this guide.</li>
   <li><code>"message_history_size"</code>: The number of previous messages to keep in context for the character. Higher values will improve context but may increase costs. A good number is usually 6-10</li>
@@ -100,6 +100,21 @@
 
 > [!TIP]
 > If you've found a model that works well, please let me know on the discord so I can update the documentation!
+
+<h5>Custom Endpoints:</h5>
+<p>If you want to use a local LLM server or other OpenAI-compatible API, set <code>"api": "custom"</code> and configure your endpoint URL via the in-app Settings menu (Settings → API → Endpoint). The following software has been tested:</p>
+<ul>
+  <li><strong>LM Studio</strong> - Set endpoint to <code>http://localhost:1234/v1/responses</code></li>
+  <li><strong>Ollama</strong> - With OpenAI compatibility layer</li>
+  <li><strong>Text Generation WebUI</strong> - With OpenAI API extension</li>
+  <li><strong>LocalAI</strong> - Any OpenAI-compatible local server</li>
+</ul>
+
+> [!IMPORTANT]
+> Custom endpoints must be OpenAI API compatible and support the <code>/v1/responses</code> endpoint format. Make sure to include the full URL path in your endpoint configuration.
+
+> [!TIP]
+> Some local servers don't require an API key. In that case, you can leave the API Key field empty or enter any placeholder value.
 
 <h4>Characters:</h4>
 <ul>
