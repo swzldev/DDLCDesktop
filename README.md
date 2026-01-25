@@ -4,7 +4,7 @@
   <p>Ever wondered what it would be like to have your own DDLC character on your desktop? Well now you can!</p>
   <p>
     <img src="https://img.shields.io/badge/status-stable-green" alt="Status: Stable">
-    <img src="https://img.shields.io/badge/latest_version-1.1.0-red" alt="Latest: 1.1.0">
+    <img src="https://img.shields.io/badge/latest_version-1.1.1-red" alt="Latest: 1.1.1">
   </p>
 
   [Discord] | [Features] | [Installation] | [Controls] | [Issues] | [Changelog] | [Contributing] | [License]
@@ -205,7 +205,10 @@
 
 <h2>Changelog</h2>
 
-### [1.1.0] [20/01/2026]
+### 1.1.1 [25/01/2026]
+- Added support for custom endpoints (local LLM servers, etc.)
+
+### 1.1.0 [20/01/2026]
 - Added support for each characters "casual" outfit varients.
 - Improved character sizing and positioning (it's now more consistent, and more restricted, also works on monitors other than 1080p)
 - Allowed support for other languages.
