@@ -30,17 +30,19 @@
 <h2>Features</h2>
 <ul>
   <li>An interactive DDLC character that sits on your desktop and talks to you.</li>
-  <li>Real AI interactions using the OpenAI api.</li>
-  <li>Respond similar to how you would in the game (with a set of 1-4 options).</li>
+  <li>Real AI interactions using modern LLM APIs (OpenAI, OpenRouter, etc.).</li>
+  <li>Respond similar to how you would in the game with a set of 1-4 options, or optionally a custom message.</li>
   <li>They react to things you do - currently its fairly limited though.</li>
 </ul>
 
 <h2>Installation</h2>
 <p>Installation is fairly simple however there are a few nuances before you can be up and running.</p>
 
-<p>Since the installation can be quite confusing, for non-tech savvy users, there is a <a href="https://www.youtube.com/watch?v=a_A4Sm2gPh0">YouTube guide</a> that explains everything in detail.</p>
+<p>Since the installation can be quite confusing, for non-tech savvy users, read the following message carefully.</p>
 
-<p>If you're fine with a written guide you can simply follow the instructions here. First install the application binaries from the <a href="https://github.com/swzldev/DDLCDesktop/releases">releases</a> page. It should be called something like: <code>DDLCDesktop-*.*.*.zip</code></p>
+<p>There is a <a href="https://www.youtube.com/watch?v=a_A4Sm2gPh0">YouTube guide</a> (**DONT CLICK IT YET**), that explains everything in detail. HOWEVER, I am very lazy and havn't had time to remake it, you should ONLY watch 0:00-4:41, aka the game asset extraction and font installation. When downloading newer versions you will notice there is NO `config.json` file - This is intentional! Once you're at this stage you can open the application and let Monika guide you through instead of doing it manually. When I reupdate the tutorial I will remove this message but please stop telling me there's no config file, IT'S INTENTIONAL!</p>
+
+<p>If you're fine with a written guide you can simply follow the instructions here. First install the application binaries from the <a href="https://github.com/swzldev/DDLCDesktop/releases">releases</a> page (make sure you pick the one at the top). It should be called something like: <code>DDLCDesktop-*.*.*.zip</code></p>
 <p>Once downloaded, extract the contents somewhere (make sure it's not somewhere with limited permissions such as Program Files or System32).</p>
 
 <p>Once extracted simply follow the instructions below:</p>
