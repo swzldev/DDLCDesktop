@@ -205,7 +205,7 @@
 
 <h2>Changelog</h2>
 
-### 1.2.0 [25/01/2026]
+### 1.1.1 [25/01/2026]
 - Added support for custom endpoints (local LLM servers, etc.)
 - Improved the error message for bad API responses to be less ambiguous and confusing.
 
