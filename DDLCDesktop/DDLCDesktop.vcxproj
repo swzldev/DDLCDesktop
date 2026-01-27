@@ -22,7 +22,7 @@
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{52d1bd1f-1f13-40fb-b246-7c7f78ed6e98}</ProjectGuid>
-    <RootNamespace>JustMonika</RootNamespace>
+    <RootNamespace>DDLCDesktop</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -131,7 +131,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\behaviour\memory\message_history.cpp" />
+    <ClCompile Include="src\behaviour\memory\character_memory.cpp" />
     <ClCompile Include="src\ddlc\characters.cpp" />
+    <ClCompile Include="src\ddlc\expressions.cpp" />
+    <ClCompile Include="src\ddlc\poses.cpp" />
     <ClCompile Include="src\error\error_stories.cpp" />
     <ClCompile Include="src\behaviour\ai\character_ai.cpp" />
     <ClCompile Include="src\behaviour\ai\ai_api.cpp" />
@@ -157,6 +161,8 @@
     <ClInclude Include="include\behaviour\character_interaction.h" />
     <ClInclude Include="include\behaviour\character_logic.h" />
     <ClInclude Include="include\behaviour\character_state.h" />
+    <ClInclude Include="include\behaviour\memory\character_memory.h" />
+    <ClInclude Include="include\behaviour\memory\message_history.h" />
     <ClInclude Include="include\config\config.h" />
     <ClInclude Include="include\core\input.h" />
     <ClInclude Include="include\core\renderer.h" />
@@ -164,6 +170,8 @@
     <ClInclude Include="include\core\widget.h" />
     <ClInclude Include="include\core\window.h" />
     <ClInclude Include="include\ddlc\characters.h" />
+    <ClInclude Include="include\ddlc\expressions.h" />
+    <ClInclude Include="include\ddlc\poses.h" />
     <ClInclude Include="include\error\ddlcd_runtime_error.h" />
     <ClInclude Include="include\error\error_stories.h" />
     <ClInclude Include="include\output\log.h" />

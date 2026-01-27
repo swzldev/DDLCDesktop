@@ -53,6 +53,7 @@ public:
 
 	character_visuals* visuals;
 	character_ai* ai;
+	character_memory memory;
 	character_state current_state;
 
 private:

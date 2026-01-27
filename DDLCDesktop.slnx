@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Updater/Updater.vcxproj" Id="de89da4d-77f6-4e74-94b2-bef53cd2fc9d" />
+  <Project Path="DDLCDesktop/DDLCDesktop.vcxproj" Id="52d1bd1f-1f13-40fb-b246-7c7f78ed6e98" />
+</Solution>

@@ -44,7 +44,7 @@ character_logic::character_logic(window *window) {
                          if (!in_setup_) {
                            config::save();
                            ai->handle_close_interaction();
-                           ai->save_state("character_state.json");
+                           ai->save_state();
                          }
 
                          window_->close();
@@ -53,10 +53,8 @@ character_logic::character_logic(window *window) {
 
   // create ai
   ai = new character_ai();
-
-  if (fs::exists("character_state.json")) {
-    ai->load_state("character_state.json");
-  }
+  ai->set_memory(&memory);
+  ai->load_state();
 
   window_->on_mouse_click.push_back([this]() {
     character_interaction interaction(character_interaction::kind::CLICK);
@@ -66,7 +64,7 @@ character_logic::character_logic(window *window) {
 }
 character_logic::~character_logic() {
   if (ai) {
-    ai->save_state("character_state.json");
+    ai->save_state();
     delete ai;
     ai = nullptr;
   }

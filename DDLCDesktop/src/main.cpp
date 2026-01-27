@@ -9,6 +9,8 @@
 #include <core/widget.h>
 #include <output/log.h>
 
+#include <curl/curl.h>
+
 #pragma comment(lib, "Dbghelp.lib")
 
 struct curl_global_raii
