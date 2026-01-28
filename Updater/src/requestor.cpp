@@ -21,9 +21,16 @@ requestor::~requestor() {
 }
 
 std::string requestor::request(const std::string& url) {
+	if (!curl_) {
+		return "";
+	}
+
 	std::string response;
 
 	curl_easy_setopt(curl_, CURLOPT_URL, url.c_str());
+
+	// required for github api requests
+	curl_easy_setopt(curl_, CURLOPT_USERAGENT, "DDLCDesktop-Updater");
 
 	curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &response);

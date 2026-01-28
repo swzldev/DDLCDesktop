@@ -131,11 +131,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\manifest.cpp" />
+    <ClCompile Include="src\output.cpp" />
     <ClCompile Include="src\requestor.cpp" />
     <ClCompile Include="src\updater.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\manifest.h" />
+    <ClInclude Include="include\output.h" />
     <ClInclude Include="include\requestor.h" />
     <ClInclude Include="include\updater.h" />
   </ItemGroup>

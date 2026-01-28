@@ -24,12 +24,24 @@
     <ClCompile Include="src\requestor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\manifest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\updater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\requestor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\manifest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
