@@ -203,6 +203,10 @@
 
 <h2>Changelog</h2>
 
+### [Unreleased]
+- Added an updater project that is able to automatically download new versions as and when they release.
+- Added an installer project that makes installation much easier & auto-extracts game assets.
+
 ### [1.1.0] [20/01/2026]
 - Added support for each characters "casual" outfit varients.
 - Improved character sizing and positioning (it's now more consistent, and more restricted, also works on monitors other than 1080p)
