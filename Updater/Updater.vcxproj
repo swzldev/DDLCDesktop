@@ -142,6 +142,10 @@
     <ClInclude Include="include\output.h" />
     <ClInclude Include="include\requestor.h" />
     <ClInclude Include="include\updater.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Updater.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
