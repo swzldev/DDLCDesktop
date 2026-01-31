@@ -30,7 +30,8 @@
         {
             label1 = new Label();
             panel1 = new Panel();
-            checkBox1 = new CheckBox();
+            createDesktopShortcut = new CheckBox();
+            createStartMenuShortcut = new CheckBox();
             label2 = new Label();
             button1 = new Button();
             textBox1 = new TextBox();
@@ -47,7 +48,8 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(checkBox1);
+            panel1.Controls.Add(createDesktopShortcut);
+            panel1.Controls.Add(createStartMenuShortcut);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(button1);
             panel1.Controls.Add(textBox1);
@@ -58,18 +60,31 @@
             panel1.Size = new Size(432, 243);
             panel1.TabIndex = 1;
             // 
-            // checkBox1
+            // createDesktopShortcut
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Checked = true;
-            checkBox1.CheckState = CheckState.Checked;
-            checkBox1.Location = new Point(13, 80);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(198, 19);
-            checkBox1.TabIndex = 5;
-            checkBox1.Text = "Open DDLC font download page";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            createDesktopShortcut.AutoSize = true;
+            createDesktopShortcut.Checked = true;
+            createDesktopShortcut.CheckState = CheckState.Checked;
+            createDesktopShortcut.Location = new Point(13, 105);
+            createDesktopShortcut.Name = "createDesktopShortcut";
+            createDesktopShortcut.Size = new Size(161, 19);
+            createDesktopShortcut.TabIndex = 5;
+            createDesktopShortcut.Text = "Create a desktop shortcut";
+            createDesktopShortcut.UseVisualStyleBackColor = true;
+            createDesktopShortcut.CheckedChanged += createDesktopShortcut_CheckedChanged;
+            // 
+            // createStartMenuShortcut
+            // 
+            createStartMenuShortcut.AutoSize = true;
+            createStartMenuShortcut.Checked = true;
+            createStartMenuShortcut.CheckState = CheckState.Checked;
+            createStartMenuShortcut.Location = new Point(13, 80);
+            createStartMenuShortcut.Name = "createStartMenuShortcut";
+            createStartMenuShortcut.Size = new Size(176, 19);
+            createStartMenuShortcut.TabIndex = 5;
+            createStartMenuShortcut.Text = "Create a start menu shortcut";
+            createStartMenuShortcut.UseVisualStyleBackColor = true;
+            createStartMenuShortcut.CheckedChanged += createStartMenuShortcut_CheckedChanged;
             // 
             // label2
             // 
@@ -117,6 +132,7 @@
         private Button button1;
         private TextBox textBox1;
         private Label label2;
-        private CheckBox checkBox1;
+        private CheckBox createDesktopShortcut;
+        private CheckBox createStartMenuShortcut;
     }
 }

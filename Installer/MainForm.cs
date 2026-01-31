@@ -32,6 +32,12 @@ namespace Installer
             rightBtn.Enabled = rightEnabled;
         }
 
+        public void NextPage()
+        {
+            currentPageIndex++;
+            ShowPage(currentPageIndex);
+        }
+
         public void ShowPage(int pageIndex)
         {
             currentPage?.OnLeavePage();
@@ -65,7 +71,9 @@ namespace Installer
             pages = [
                 new WelcomePage(),
                 new AssetsPage(this, sharedCtx),
-                new OptionsPage(this, sharedCtx)
+                new OptionsPage(this, sharedCtx),
+                new InstallPage(this, sharedCtx),
+                new FinishedPage(sharedCtx)
             ];
         }
 
@@ -98,6 +106,7 @@ namespace Installer
             currentPageIndex++;
             if (currentPageIndex >= pages.Count)
             {
+                currentPage?.OnLeavePage();
                 Application.Exit();
                 return;
             }

@@ -94,9 +94,14 @@ namespace Installer
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void createStartMenuShortcut_CheckedChanged(object sender, EventArgs e)
         {
-            ctx.openFontPage = checkBox1.Checked;
+            ctx.createStartMenuShortcut = createStartMenuShortcut.Checked;
+        }
+
+        private void createDesktopShortcut_CheckedChanged(object sender, EventArgs e)
+        {
+            ctx.createDesktopShortcut = createDesktopShortcut.Checked;
         }
     }
 }

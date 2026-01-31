@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             contentPanel = new Panel();
             rightBtn = new Button();
             leftBtn = new Button();
@@ -129,6 +130,7 @@
             Controls.Add(pictureBox1);
             Controls.Add(contentPanel);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
             Text = "DDLCDesktop Installer";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();

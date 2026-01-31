@@ -30,32 +30,31 @@ namespace Installer
             InitializeComponent();
         }
 
-        private string? GetImagesRpaPath(string folder)
+        private bool IsValidDDLCDir(string folder)
         {
             if (string.IsNullOrEmpty(folder))
             {
-                return null;
+                return false;
             }
                 
             if (!Directory.Exists(folder))
             {
-                return null;
+                return false;
             }
 
-            // check if the folder contains the "game" folder
+            // Check if the folder contains the "game" folder
             string gameFolderPath = Path.Combine(folder, "game");
-            if (Directory.Exists(gameFolderPath))
+            if (!Directory.Exists(gameFolderPath))
             {
-                folder = gameFolderPath;
+                return false;
             }
-            // otherwise we can assume the folder path is already the "game" folder
 
-            string imagesRpaPath = Path.Combine(folder, "images.rpa");
+            string imagesRpaPath = Path.Combine(gameFolderPath, "images.rpa");
             if (!File.Exists(imagesRpaPath))
             {
-                return null;
+                return false;
             }
-            return imagesRpaPath;
+            return true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -63,12 +62,13 @@ namespace Installer
             FolderBrowserDialog fbd = new();
             if (fbd.ShowDialog() == DialogResult.OK)
             {
-                string? imagesRpaPath = GetImagesRpaPath(fbd.SelectedPath);
-                if (imagesRpaPath != null)
+                if (IsValidDDLCDir(fbd.SelectedPath))
                 {
                     mf.SetButtonsEnabled(true, true);
-                    textBox1.Text = fbd.SelectedPath;
-                    ctx.imagesRpaPath = imagesRpaPath!;
+                    string gf = fbd.SelectedPath;
+                    textBox1.Text = gf;
+                    ctx.ddlcFolder = gf;
+                    ctx.ddlcGameFolder = Path.Combine(gf, "game");
                 }
                 else
                 {
