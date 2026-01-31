@@ -250,7 +250,7 @@ bool updater::create_update_script(const fs::path& update_dir, const fs::path& i
 		return false;
 	}
 
-	std::string exe_name = "JustMonika.exe";
+	std::string exe_name = "DDLCDesktop.exe";
 	DWORD process_id = GetCurrentProcessId();
 
 	script << "@echo off\n";
