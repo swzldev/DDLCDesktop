@@ -49,7 +49,6 @@ character_ai::~character_ai() {
     }
 
     delete api_;
-    delete memory_;
 }
 
 void character_ai::handle_close_interaction() {

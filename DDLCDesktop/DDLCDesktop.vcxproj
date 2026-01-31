@@ -172,6 +172,7 @@
     <ClInclude Include="include\ddlc\characters.h" />
     <ClInclude Include="include\ddlc\expressions.h" />
     <ClInclude Include="include\ddlc\poses.h" />
+    <ClInclude Include="include\ddlc_desktop.h" />
     <ClInclude Include="include\error\ddlcd_runtime_error.h" />
     <ClInclude Include="include\error\error_stories.h" />
     <ClInclude Include="include\output\log.h" />

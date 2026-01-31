@@ -7,6 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include <ddlc_desktop.h>
 #include <behaviour/ai/character_ai.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/character_state.h>
@@ -26,6 +27,10 @@ namespace fs = std::filesystem;
 
 character_logic::character_logic(window *window) {
   window_ = window;
+
+  if (!fs::exists("manifest.json")) {
+      create_default_manifest();
+  }
 
   if (!fs::exists("config.json")) {
     in_setup_ = true;
@@ -97,18 +102,8 @@ void character_logic::tick(float delta_time) {
     return;
 
   if (first_tick_) {
-    if (in_setup_) {
-      show_setup(setup_step_);
-    } else {
-      show_main_menu();
-
-      // window opened
-      character_interaction interaction(
-          character_interaction::kind::WINDOW_OPEN);
-      begin_think(interaction);
-    }
-
-    first_tick_ = false;
+      awake();
+      first_tick_ = false;
   }
 
   if (visuals->in_popup()) {
@@ -196,6 +191,25 @@ void character_logic::tick(float delta_time) {
 
   visuals->tick(delta_time);
 }
+void character_logic::awake() {
+    if (in_setup_) {
+        show_setup(setup_step_);
+    }
+    else {
+        show_main_menu();
+
+        if (update_available()) {
+            in_update_ = true;
+			show_update_menu();
+        }
+        else {
+            // window opened
+            character_interaction interaction(
+                character_interaction::kind::WINDOW_OPEN);
+            begin_think(interaction);
+        }
+    }
+}
 
 void character_logic::handle_error(const ddlcd_runtime_error &error) {
   // cleanup
@@ -245,6 +259,38 @@ void character_logic::handle_error(const ddlcd_runtime_error &error) {
   display_current_interaction();
 }
 
+void character_logic::show_update_menu() {
+	visuals->set_chars_per_second(50.0f);
+
+	visuals->clear_buttons();
+
+    current_state.interactions = error_stories::update_story(config_->user_name);
+    state_ = logic_state::TALKING;
+    current_menu_ = menu_state::UPDATE;
+    interaction_index_ = 0;
+    display_current_interaction();
+}
+void character_logic::show_confirm_update() {
+    visuals->show_popup(
+        "A new update is available! Would you like to download it now?",
+        [this](int response) {
+            if (response == 0) {
+                // yes
+				wchar_t cmd[] = L"Updater.exe upgrade";
+				run_cmd_hidden(cmd, false);
+                window_->close();
+            } else {
+                // no
+                in_update_ = false;
+                state_ = logic_state::IDLE;
+                show_main_menu();
+                handle_interaction(
+                    character_interaction(character_interaction::kind::CLICK)
+                );
+            }
+        },
+		{ "Yes", "No" });
+}
 void character_logic::show_setup(unsigned int step) {
   visuals->set_chars_per_second(30.0f);
 
@@ -351,6 +397,17 @@ void character_logic::show_setup(unsigned int step) {
     config::save();
     reset_all();
   }
+}
+
+bool character_logic::update_available() {
+    if (!fs::exists("Updater.exe")) {
+        // updater not present
+        return false;
+    }
+
+	wchar_t cmd[] = L"Updater.exe check";
+    int available = run_cmd_hidden(cmd);
+    return (available == 1);
 }
 
 void character_logic::show_main_menu() {
@@ -731,6 +788,8 @@ void character_logic::reset_all() {
   visuals->reset(character_);
   show_main_menu();
 
+  first_tick_ = true;
+
   // start new interaction
   character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
   begin_think(interaction);
@@ -824,7 +883,11 @@ void character_logic::advance_interaction() {
     } else if (in_setup_) {
       setup_step_++;
       show_setup(setup_step_);
-    } else {
+    }
+    else if (in_update_) {
+        show_confirm_update();
+    }
+    else {
       if (!current_state.actions.empty()) {
         if (custom_mode_) {
           await_input();
@@ -838,6 +901,16 @@ void character_logic::advance_interaction() {
       }
     }
   }
+}
+
+void character_logic::create_default_manifest() {
+    json manifest_json;
+
+	manifest_json["version"] = DDLC_DESKTOP_VERSION;
+
+    std::ofstream manifest_file("manifest.json");
+    manifest_file << manifest_json.dump(4);
+    manifest_file.close();
 }
 
 void character_logic::set_character(ddlc_character new_character) {
@@ -854,6 +927,43 @@ void character_logic::set_character(ddlc_character new_character) {
 
   config::save();
   reset_all();
+}
+
+int character_logic::run_cmd_hidden(wchar_t* cmd, bool wait) {
+    STARTUPINFOW si = { 0 };
+    PROCESS_INFORMATION pi = { 0 };
+
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+
+    BOOL ok = CreateProcessW(
+        nullptr,
+        cmd,
+        nullptr,
+        nullptr,
+        FALSE,
+        CREATE_NO_WINDOW,
+        nullptr,
+        nullptr,
+        &si,
+        &pi
+    );
+
+    if (ok)
+    {
+        int ec = 0;
+        if (wait) {
+            WaitForSingleObject(pi.hProcess, INFINITE);
+            DWORD exit_code;
+            GetExitCodeProcess(pi.hProcess, &exit_code);
+			ec = static_cast<int>(exit_code);
+        }
+
+        CloseHandle(pi.hThread);
+        CloseHandle(pi.hProcess);
+        return ec;
+    }
 }
 
 void character_logic::refresh_display() {

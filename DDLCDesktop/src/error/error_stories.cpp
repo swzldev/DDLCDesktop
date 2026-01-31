@@ -60,6 +60,14 @@ std::vector<character_state::interaction> error_stories::firstrun_story_p4() {
     };
 }
 
+std::vector<character_state::interaction> error_stories::update_story(const std::string& name) {
+    return {
+        {"\"Hey " + name + "!\"", "j", "2", "2"},
+        {"\"It looks like a new update has been released.\"", "k", "1", "1"},
+        {"\"Would you like to download it? It will only take a second!\"", "b", "2", "1"},
+    };
+}
+
 std::vector<character_state::interaction> error_stories::fail_load_config_story() {
     return {
         {"\"...\"", "d", "1", "1"},
