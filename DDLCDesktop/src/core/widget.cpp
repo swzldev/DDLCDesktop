@@ -6,23 +6,12 @@
 #include <core/window.h>
 #include <core/renderer.h>
 #include <core/input.h>
-#include <behaviour/character_logic.h>
+#include <logic/character_logic.h>
 #include <behaviour/character_interaction.h>
 #include <visual/sprite.h>
 #include <error/ddlcd_runtime_error.h>
 
 namespace fs = std::filesystem;
-
-widget::~widget() {
-	if (window_) {
-		delete window_;
-		window_ = nullptr;
-	}
-	if (logic_) {
-		delete logic_;
-		logic_ = nullptr;
-	}
-}
 
 void widget::main_loop() {
 	running_ = true;
@@ -82,9 +71,9 @@ widget::widget() {
 	}
 
 	// allocate
-	window_ = new window(this);
+	window_ = std::make_unique<window>(this);
 	renderer_ = window_->get_renderer();
-	logic_ = new character_logic(window_);
+	logic_ = std::make_unique<character_logic>(window_.get());
 }
 
 void widget::render() {

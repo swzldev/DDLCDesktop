@@ -3,11 +3,11 @@
 #include <chrono>
 
 #include <core/window.h>
-#include <behaviour/character_logic.h>
+#include <logic/character_logic.h>
 
 class widget {
 public:
-	~widget();
+	~widget() = default;
 
 	static widget& get_instance() {
 		static widget instance;
@@ -36,19 +36,18 @@ public:
 	}
 
 	inline character_logic* get_logic() {
-		return logic_;
+		return logic_.get();
 	}
 
 private:
 	widget();
 
-	window* window_;
+	std::unique_ptr<window> window_;
 	renderer* renderer_;
-	bool running_ = true;
+	std::unique_ptr<character_logic> logic_;
 
 	std::chrono::high_resolution_clock::time_point last_time_;
-
-	character_logic* logic_;
+	bool running_ = true;
 
 	void render();
 };
