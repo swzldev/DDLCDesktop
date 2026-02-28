@@ -5,13 +5,10 @@
 #include <logic/iconversation_state.h>
 #include <logic/character_logic.h>
 
-class thinking_state : public iconversation_state {
+class settings_state : public iconversation_state {
 public:
-	static constexpr float THINKING_DOTS_SPEED = 3.0f; // 1/sec
-
-public:
-	thinking_state(character_logic* logic, const character_interaction& interaction)
-		: logic_(logic), interaction_(interaction) {
+	settings_state(character_logic* logic)
+		: logic_(logic) {
 	}
 
 	void enter() override;
@@ -23,9 +20,6 @@ public:
 
 private:
 	character_logic* logic_;
-
-	character_interaction interaction_;
-	bool error_occurred_ = false;
 
 	std::unique_ptr<iconversation_state> next_state_;
 };

@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include <cstdint>
+#include <unordered_map>
 #include <Windows.h>
 #include <dcomp.h>
 #include <d3d11.h>
@@ -21,6 +22,14 @@
 using namespace Microsoft::WRL;
 
 class window;
+
+enum class font_family {
+	ALLER,
+	RIFFIC,
+	HALOGEN,
+	SEGOE_UI,
+	ARIAL
+};
 
 class renderer {
 public:
@@ -40,11 +49,12 @@ public:
 
 	void draw_sprite(sprite* spr, float x = 0.0f, float y = 0.0f);
 	void draw_sprite(sprite* spr, float x, float y, float width, float height);
-	void draw_text(const std::wstring& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f);
+	void draw_text(const std::wstring& text, float x, float y, float width, float height, float size = 4.0f, float outline = 0.0f, font_family font = font_family::ALLER, float letter_spacing = 0.01f);
 
 	std::vector<uint8_t> get_alpha_map();
 
-	D2D1_SIZE_F measure_text(const std::wstring& text, float size = 4.0f);
+	static D2D1_SIZE_F measure_text(const std::wstring& text, float size = 4.0f, font_family primary_font = font_family::ALLER, float letter_spacing = 0.0f);
+	static const wchar_t* get_font_name(font_family font);
 
 	std::vector<std::function<void()>> post_draw_queue;
 
@@ -81,5 +91,10 @@ private:
 
 	void create_render_target();
 
-	bool create_text_format(const std::vector<std::wstring>& font_families, float size);
+	static ComPtr<IDWriteFactory> get_static_dwrite_factory();
+	static ComPtr<IDWriteTextFormat> create_text_format_static(const std::vector<font_family>& fonts, float size);
+	static ComPtr<IDWriteTextLayout> create_text_layout_static(const std::wstring& text, const std::vector<font_family>& fonts, float size, float letter_spacing, float max_width, float max_height);
+
+	bool create_text_format(const std::vector<font_family>& fonts, float size);
+	ComPtr<IDWriteTextLayout> create_text_layout(const std::wstring& text, const std::vector<font_family>& fonts, float size, float letter_spacing, float max_width, float max_height);
 };

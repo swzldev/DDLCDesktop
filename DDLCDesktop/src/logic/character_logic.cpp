@@ -15,7 +15,10 @@
 #include <config/config.h>
 #include <core/input.h>
 #include <core/sys.h>
+#include <core/widget.h>
 #include <core/window.h>
+#include <core/textbox.h>
+#include <core/character.h>
 #include <ddlc/characters.h>
 #include <error/ddlcd_runtime_error.h>
 #include <error/error_stories.h>
@@ -26,8 +29,10 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-character_logic::character_logic(window* window) {
-    window_ = window;
+character_logic::character_logic(widget* widget) {
+	widget_ = widget;
+    tbox = widget->tbox.get();
+	settingz = widget->settings_menu.get();
 
     if (!fs::exists("manifest.json")) {
         create_default_manifest();
@@ -36,8 +41,10 @@ character_logic::character_logic(window* window) {
     config_ = config::get();
     character_ = config_->character;
 
-    // create visuals
-    visuals = new character_visuals(window_->get_renderer(), character_);
+    // create default character
+    auto chr = std::make_unique<character>(widget_, ddlc_character::MONIKA);
+	widget_->characters.push_back(std::move(chr));
+	this->chr = widget_->characters[0].get();
 
     // create ai
     ai = std::make_unique<character_ai>();
@@ -45,21 +52,23 @@ character_logic::character_logic(window* window) {
     ai->set_memory(memory.get());
     ai->load_state();
 
-    window_->on_mouse_click.push_back([this]() {
-        character_interaction interaction(character_interaction::kind::CLICK);
-        handle_interaction(interaction);
-        return 0;
-    });
-
     if (!fs::exists("config.json")) {
         
     }
-    current_state_ = std::make_unique<idle_state>(this);
+    transition_state(std::make_unique<idle_state>(this));
+
+    tbox->window->on_mouse_click.bind([this](window_event* event, window_event_data) {
+        character_interaction click_interaction(character_interaction::kind::CLICK);
+        handle_interaction(click_interaction);
+        event->stop_propagation();
+	});
 }
 
 void character_logic::handle_interaction(const character_interaction &interaction) {
     // delegate to state
-	current_state_->handle_interaction(interaction);
+    if (current_state_) {
+        current_state_->handle_interaction(interaction);
+    }
 }
 
 void character_logic::tick(float delta_time) {
@@ -71,13 +80,7 @@ void character_logic::tick(float delta_time) {
         return;
     }
 
-    if (visuals->in_popup()) {
-        return;
-    }
-
     current_state_->tick(delta_time);
-    visuals->tick(delta_time);
-
     if (auto ns = current_state_->next_state(); ns != nullptr) {
         transition_state(std::move(ns));
     }
@@ -86,12 +89,20 @@ void character_logic::awake() {
     
 }
 
+void character_logic::shutdown() const {
+	ai->save_state();
+    widget_->stop();
+}
+
 void character_logic::handle_error(const ddlcd_runtime_error& err) {
 
 }
 
 void character_logic::reset_chars_per_second() {
-	visuals->set_chars_per_second(DEFAULT_CHARS_PER_SECOND);
+	tbox->visuals->set_chars_per_second(DEFAULT_CHARS_PER_SECOND);
+}
+
+void character_logic::generate_ai_response() {
 }
 
 void character_logic::transition_state(std::unique_ptr<iconversation_state> new_state) {
@@ -116,7 +127,6 @@ bool character_logic::update_available() {
 
 void character_logic::reset_all() {
     ai->cancel_and_reset();
-    visuals->reset(character_);
 
     first_tick_ = true;
 }

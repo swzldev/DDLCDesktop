@@ -24,6 +24,14 @@ sprite::~sprite() {
 	}
 }
 
+sprite* sprite::get_white() {
+	static sprite* white = nullptr;
+	if (!white) {
+		white = load_from_file("assets/ddlcdesktop/white.png");
+	}
+	return white;
+}
+
 sprite* sprite::load_from_file(const std::string& filepath) {
 	// check if cached
 	if (sprite_cache_.find(filepath) != sprite_cache_.end()) {

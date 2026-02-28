@@ -4,6 +4,7 @@
 #include <logic/states/idle_state.h>
 
 void talking_state::enter() {
+	logic_->tbox->visuals->show();
 	logic_->reset_chars_per_second();
 	interaction_index_ = 0;
 	auto_timer_ = 0.0f;
@@ -12,7 +13,7 @@ void talking_state::enter() {
 void talking_state::exit() {
 }
 void talking_state::tick(float delta_time) {
-	if (auto_mode_ && !logic_->visuals->is_speaking()) {
+	if (auto_mode_ && !logic_->tbox->visuals->is_speaking()) {
 		auto_timer_ += delta_time;
 		if (auto_timer_ >= 3.0f) {
 			advance_interaction();
@@ -21,9 +22,9 @@ void talking_state::tick(float delta_time) {
 }
 void talking_state::handle_interaction(const character_interaction& interaction) {
 	if (interaction.get_kind() == character_interaction::kind::CLICK) {
-		if (logic_->visuals->is_speaking()) {
+		if (logic_->tbox->visuals->is_speaking()) {
 			// skip animation
-			logic_->visuals->finish_speaking();
+			logic_->tbox->visuals->finish_speaking();
 		}
 		else {
 			advance_interaction();
@@ -52,9 +53,9 @@ void talking_state::advance_interaction() {
 void talking_state::display_current_interaction() {
 	const auto& interaction = state_.interactions[interaction_index_];
 
-	logic_->visuals->set_expression(interaction.expression);
-	logic_->visuals->set_pose(interaction.pose_left, interaction.pose_right);
-	logic_->visuals->set_saying(interaction.saying);
+	logic_->chr->visuals->set_expression(interaction.expression);
+	logic_->chr->visuals->set_pose(interaction.pose_left, interaction.pose_right);
+	logic_->tbox->visuals->set_saying(interaction.saying);
 
 	// TODO: position/scale changes
 }

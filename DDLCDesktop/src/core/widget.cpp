@@ -6,6 +6,7 @@
 #include <core/window.h>
 #include <core/renderer.h>
 #include <core/input.h>
+#include <core/textbox.h>
 #include <logic/character_logic.h>
 #include <behaviour/character_interaction.h>
 #include <visual/sprite.h>
@@ -28,12 +29,24 @@ void widget::main_loop() {
 
 				input::tick();
 
-				window_->poll_events();
-				if (window_->should_close()) {
-					stop();
+				// poll all windows
+				for (const auto& chr : characters) {
+					chr->window->poll_events();
 				}
+				tbox->window->poll_events();
+				settings_menu->window->poll_events();
 
+				// logic tick
 				logic_->tick(delta_time);
+				// character visuals tick
+				for (const auto& chr : characters) {
+					chr->visuals->tick(delta_time);
+				}
+				// textbox visuals tick
+				tbox->visuals->tick(delta_time);
+				settings_menu->tick(delta_time);
+
+				// render
 				render();
 
 				last_time_ = now;
@@ -47,6 +60,13 @@ void widget::main_loop() {
 			logic_->handle_error(e);
 		}
 	}
+
+	// close all windows
+	for (const auto& chr : characters) {
+		chr->window->close();
+	}
+	tbox->window->close();
+	settings_menu->window->close();
 
 	sprite::cleanup_all_sprites();
 }
@@ -71,13 +91,16 @@ widget::widget() {
 	}
 
 	// allocate
-	window_ = std::make_unique<window>(this);
-	renderer_ = window_->get_renderer();
-	logic_ = std::make_unique<character_logic>(window_.get());
+	tbox = std::make_unique<textbox>(this);
+	settings_menu = std::make_unique<settings>(this);
+	logic_ = std::make_unique<character_logic>(this);
 }
 
 void widget::render() {
-	renderer_->begin_draw();
-	logic_->visuals->draw();
-	renderer_->end_draw();
+	// render all characters
+	for (const auto& chr : characters) {
+		chr->draw();
+	}
+	tbox->draw();
+	settings_menu->draw();
 }
