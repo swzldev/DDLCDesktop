@@ -131,10 +131,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\gui\controls\gui_checkbox.cpp" />
-    <ClCompile Include="src\gui\controls\gui_slider.cpp" />
-    <ClCompile Include="src\gui\controls\gui_textbox.cpp" />
-    <ClCompile Include="src\gui\controls\gui_label.cpp" />
     <ClCompile Include="src\behaviour\memory\message_history.cpp" />
     <ClCompile Include="src\behaviour\memory\character_memory.cpp" />
     <ClCompile Include="src\core\character.cpp" />
@@ -160,7 +156,6 @@
     <ClCompile Include="src\logic\states\thinking_state.cpp" />
     <ClCompile Include="src\output\log.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\gui\gui_controller.cpp" />
     <ClCompile Include="src\utility\screen_units.cpp" />
     <ClCompile Include="src\utility\string_utils.cpp" />
     <ClCompile Include="src\visual\textbox_visuals.cpp" />
@@ -174,13 +169,8 @@
     <ClInclude Include="include\behaviour\ai\system_prompts.h" />
     <ClInclude Include="include\behaviour\character_interaction.h" />
     <ClInclude Include="include\behaviour\interactions\interaction_manager.h" />
-    <ClInclude Include="include\gui\controls\gui_checkbox.h" />
-    <ClInclude Include="include\gui\controls\gui_slider.h" />
-    <ClInclude Include="include\gui\controls\gui_textbox.h" />
-    <ClInclude Include="include\settings\settings.h" />
     <ClInclude Include="include\core\character.h" />
     <ClInclude Include="include\core\textbox.h" />
-    <ClInclude Include="include\gui\controls\gui_label.h" />
     <ClInclude Include="include\logic\character_logic.h" />
     <ClInclude Include="include\behaviour\character_state.h" />
     <ClInclude Include="include\behaviour\memory\character_memory.h" />
@@ -204,10 +194,6 @@
     <ClInclude Include="include\logic\states\talking_state.h" />
     <ClInclude Include="include\logic\states\thinking_state.h" />
     <ClInclude Include="include\output\log.h" />
-    <ClInclude Include="include\gui\gui_control.h" />
-    <ClInclude Include="include\gui\gui_controller.h" />
-    <ClInclude Include="include\gui\gui_view.h" />
-    <ClInclude Include="include\settings\settings_controller.h" />
     <ClInclude Include="include\utility\bounds.h" />
     <ClInclude Include="include\utility\screen_units.h" />
     <ClInclude Include="include\utility\string_utils.h" />

@@ -27,7 +27,6 @@ public:
 
 	std::unique_ptr<textbox> tbox;
 	std::vector<std::unique_ptr<character>> characters;
-	std::unique_ptr<settings> settings_menu;
 
 private:
 	widget();

@@ -6,13 +6,23 @@
 #include <core/window.h>
 #include <core/renderer.h>
 #include <core/input.h>
-#include <core/textbox.h>
-#include <logic/character_logic.h>
+#include <behaviour/character_logic.h>
 #include <behaviour/character_interaction.h>
 #include <visual/sprite.h>
 #include <error/ddlcd_runtime_error.h>
 
 namespace fs = std::filesystem;
+
+widget::~widget() {
+	if (window_) {
+		delete window_;
+		window_ = nullptr;
+	}
+	if (logic_) {
+		delete logic_;
+		logic_ = nullptr;
+	}
+}
 
 void widget::main_loop() {
 	running_ = true;
@@ -29,24 +39,12 @@ void widget::main_loop() {
 
 				input::tick();
 
-				// poll all windows
-				for (const auto& chr : characters) {
-					chr->window->poll_events();
+				window_->poll_events();
+				if (window_->should_close()) {
+					stop();
 				}
-				tbox->window->poll_events();
-				settings_menu->window->poll_events();
 
-				// logic tick
 				logic_->tick(delta_time);
-				// character visuals tick
-				for (const auto& chr : characters) {
-					chr->visuals->tick(delta_time);
-				}
-				// textbox visuals tick
-				tbox->visuals->tick(delta_time);
-				settings_menu->tick(delta_time);
-
-				// render
 				render();
 
 				last_time_ = now;
@@ -60,13 +58,6 @@ void widget::main_loop() {
 			logic_->handle_error(e);
 		}
 	}
-
-	// close all windows
-	for (const auto& chr : characters) {
-		chr->window->close();
-	}
-	tbox->window->close();
-	settings_menu->window->close();
 
 	sprite::cleanup_all_sprites();
 }
@@ -91,16 +82,13 @@ widget::widget() {
 	}
 
 	// allocate
-	tbox = std::make_unique<textbox>(this);
-	settings_menu = std::make_unique<settings>(this);
-	logic_ = std::make_unique<character_logic>(this);
+	window_ = new window(this);
+	renderer_ = window_->get_renderer();
+	logic_ = new character_logic(window_);
 }
 
 void widget::render() {
-	// render all characters
-	for (const auto& chr : characters) {
-		chr->draw();
-	}
-	tbox->draw();
-	settings_menu->draw();
+	renderer_->begin_draw();
+	logic_->visuals->draw();
+	renderer_->end_draw();
 }

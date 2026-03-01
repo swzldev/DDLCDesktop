@@ -10,39 +10,61 @@
 #include <core/input.h>
 #include <core/sys.h>
 
-
-void window_event::invoke(window_event_data data) {
-	propagation_stopped_ = false;
-	for (const auto& handler : handlers_) {
-		if (propagation_stopped_) break;
-		handler(this, data);
-	}
-}
-
 window::window(widget* widget) {
 	widget_ = widget;
-	create_window(true);
-}
-window::window(widget* widget, int width, int height) {
-	widget_ = widget;
-	width_ = width;
-	height_ = height;
-	create_window(true);
-}
-window::window(widget* widget, int width, int height, int x, int y) {
-	widget_ = widget;
-	width_ = width;
-	height_ = height;
-	pos_x_ = x;
-	pos_y_ = y;
-	create_window(true);
+
+	HINSTANCE hInstance = GetModuleHandle(NULL);
+	
+	// set DPI awareness
+	SetProcessDpiAwarenessContext(
+		DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+	);
+
+	// window class
+	WNDCLASSEXW wc = {};
+	wc.cbSize = sizeof(WNDCLASSEXW);
+	wc.lpfnWndProc = wnd_proc;
+	wc.hInstance = hInstance;
+	wc.lpszClassName = L"JustMonikaWindowClass";
+	wc.hCursor = LoadCursor(NULL, IDC_HAND);
+	RegisterClassExW(&wc);
+
+	width_ = DEF_WINDOW_WIDTH;
+	height_ = DEF_WINDOW_HEIGHT;
+	pos_x_ = sys::display_width() - width_ - 100;
+	pos_y_ = sys::display_height() - height_;
+
+	// create window
+	hwnd_ = CreateWindowExW(
+		WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST,
+		L"JustMonikaWindowClass",
+		L"",
+		WS_POPUP,
+		pos_x_, pos_y_,
+		width_, height_,
+		NULL, NULL, hInstance, this
+	);
+
+	// create renderer
+	create_renderer();
+
+	// show window
+	show();
+
+	// initial surface update
+	update_surface();
+	renderer_->post_draw_queue.push_back([this]() {
+		update_surface();
+	});
 }
 window::~window() {
 	if (hwnd_) {
 		DestroyWindow(hwnd_);
+		hwnd_ = NULL;
 	}
 	if (renderer_) {
 		delete renderer_;
+		renderer_ = nullptr;
 	}
 }
 
@@ -66,15 +88,12 @@ void window::reset() {
 		SWP_NOACTIVATE
 	);
 
-	if (renderer_) {
-		renderer_->resize(width_, height_);
-	}
-
 	renderer_->post_draw_queue.push_back([this]() {
 		update_surface();
 	});
 }
-void window::move(pixels_t x, pixels_t y) {
+
+void window::set_position(int x, int y) {
 	pos_x_ = x;
 	pos_y_ = y;
 	SetWindowPos(
@@ -89,23 +108,19 @@ void window::move(pixels_t x, pixels_t y) {
 		update_surface();
 	});
 }
-void window::resize(pixels_t w, pixels_t h) {
-	if (w <= 0 || h <= 0) {
+void window::resize(int size) {
+	if (size <= 0) {
 		throw std::invalid_argument("Size must be positive");
 	}
-	width_ = w;
-	height_ = h;
+	width_ = size;
+	height_ = size;
 	SetWindowPos(
 		hwnd_,
 		HWND_TOPMOST,
 		0, 0,
-		w, h,
+		size, size,
 		SWP_NOMOVE | SWP_NOACTIVATE
 	);
-
-	if (renderer_) {
-		renderer_->resize(w, h);
-	}
 
 	renderer_->post_draw_queue.push_back([this]() {
 		update_surface();
@@ -177,49 +192,17 @@ void window::update_surface() const {
 	ReleaseDC(nullptr, screen);
 }
 
-void window::create_window(bool show) {
-	HINSTANCE hInstance = GetModuleHandle(NULL);
-
-	// set DPI awareness
-	SetProcessDpiAwarenessContext(
-		DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-	);
-
-	// window class
-	WNDCLASSEXW wc = {};
-	wc.cbSize = sizeof(WNDCLASSEXW);
-	wc.lpfnWndProc = wnd_proc;
-	wc.hInstance = hInstance;
-	wc.lpszClassName = L"JustMonikaWindowClass";
-	wc.hCursor = LoadCursor(NULL, IDC_HAND);
-	RegisterClassExW(&wc);
-
-	// create window
-	hwnd_ = CreateWindowExW(
-		WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST,
-		L"JustMonikaWindowClass",
-		L"",
-		WS_POPUP,
-		pos_x_, pos_y_,
-		width_, height_,
-		NULL, NULL, hInstance, this
-	);
-
-	// create renderer
-	create_renderer();
-
-	// show window
-	if (show) this->show();
-
-	// initial surface update
-	update_surface();
-	renderer_->post_draw_queue.push_back([this]() {
-		update_surface();
-	});
-}
 void window::create_renderer() {
 	if (!renderer_) {
 		renderer_ = new renderer(this, hwnd_, width_, height_);
+	}
+}
+
+void window::invoke(const std::vector<std::function<int()>>& event) const {
+	for (auto event_it = event.begin(); event_it != event.end(); event_it++) {
+		if ((*event_it)() != 0) {
+			break;
+		}
 	}
 }
 
@@ -247,7 +230,7 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			win->mouse_x_ = GET_X_LPARAM(lParam);
 			win->mouse_y_ = GET_Y_LPARAM(lParam);
 
-			if (win->draggable && tracking_ && (wParam & MK_LBUTTON) && !dragging_)
+			if (tracking_ && (wParam & MK_LBUTTON) && !dragging_)
 			{
 				int dx = abs(win->mouse_x_ - down_.x);
 				int dy = abs(win->mouse_y_ - down_.y);
@@ -264,7 +247,7 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 
-			win->on_mouse_move.invoke({ win->mouse_x_, win->mouse_y_ });
+			win->invoke(win->on_mouse_move);
 		}
 		return 0;
 	}
@@ -275,8 +258,6 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		dragging_ = false;
 
 		SetCapture(hwnd);
-
-		win->on_mouse_down.invoke({win->mouse_x_, win->mouse_y_});
 
 		return 0;
 	}
@@ -289,10 +270,18 @@ LRESULT window::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		ReleaseCapture();
 
 		if (was_click && win) {
-			win->on_mouse_click.invoke({ win->mouse_x_, win->mouse_y_ });
+			win->invoke(win->on_mouse_click);
 		}
-		win->on_mouse_up.invoke({ win->mouse_x_, win->mouse_y_ });
 
+		return 0;
+	}
+	case WM_SIZE: {
+		if (win->renderer_) {
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+
+			win->renderer_->resize(x, y);
+		}
 		return 0;
 	}
 	case WM_CHAR:

@@ -318,36 +318,35 @@ void renderer::draw_sprite(sprite* spr, float x, float y, float width, float hei
         nullptr
     );
 }
-void renderer::draw_text(const std::wstring& text, float x, float y, float width, float height, float size, float outline, font_family font, float letter_spacing) {
+void renderer::draw_text(const std::wstring& text, float x, float y, float width, float height, float size, float outline) {
     if (!d2d_brush_) {
         return;
     }
 
-    float hf = height_;
-    float wf = width_;
-
-    float px = x * wf;
-    float py = y * hf;
-    float layout_width = width * wf;
-    float layout_height = height * hf;
-
-    std::vector<font_family> fonts = { font, font_family::ALLER, font_family::SEGOE_UI, font_family::ARIAL };
-    ComPtr<IDWriteTextLayout> text_layout = create_text_layout(text, fonts, size, letter_spacing, layout_width, layout_height);
-    if (!text_layout) {
+	// create text format
+    if (!create_text_format({ L"Aller", L"Segoe UI", L"Arial" }, size)) {
         return;
-    }
+	}
 
-	D2D1_RECT_F layout_rect = D2D1::RectF(
-        px - layout_width / 2.0f,
-        py - layout_height / 2.0f,
-        px + layout_width / 2.0f,
-        py + layout_height / 2.0f
+    float sf = height_;
+
+	x *= sf;
+	y *= sf;
+	width *= sf;
+	height *= sf;
+
+    // center the container box around x, y
+    D2D1_RECT_F layout_rect = D2D1::RectF(
+        x - width / 2.0f,
+        y - height / 2.0f,
+        x + width / 2.0f,
+        y + height / 2.0f
     );
 
     // stroke
     if (outline > 0.0f) {
         d2d_brush_->SetColor(stroke_color_);
-        float outline_thickness = outline * (wf / sys::display_width());
+        float outline_thickness = outline * (sf / sys::display_width());
         const int samples = 16;
 
         for (int i = 0; i < samples; i++) {
@@ -355,14 +354,18 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
             float ox = cosf(angle) * outline_thickness;
             float oy = sinf(angle) * outline_thickness;
 
-            D2D1_POINT_2F origin = D2D1::Point2F(
+            D2D1_RECT_F outline_rect = D2D1::RectF(
                 layout_rect.left + ox,
-                layout_rect.top + oy
+                layout_rect.top + oy,
+                layout_rect.right + ox,
+                layout_rect.bottom + oy
             );
 
-            d2d_ctx_->DrawTextLayout(
-                origin,
-                text_layout.Get(),
+            d2d_ctx_->DrawTextW(
+                text.c_str(),
+                static_cast<UINT32>(text.length()),
+                dwrite_text_format_.Get(),
+                &outline_rect,
                 d2d_brush_.Get()
             );
         }
@@ -370,10 +373,11 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
 
     // main text
     d2d_brush_->SetColor(text_color_);
-    D2D1_POINT_2F origin = D2D1::Point2F(layout_rect.left, layout_rect.top);
-    d2d_ctx_->DrawTextLayout(
-        origin,
-        text_layout.Get(),
+    d2d_ctx_->DrawTextW(
+        text.c_str(),
+        static_cast<UINT32>(text.length()),
+        dwrite_text_format_.Get(),
+        &layout_rect,
         d2d_brush_.Get()
     );
 }
@@ -410,33 +414,35 @@ std::vector<uint8_t> renderer::get_alpha_map() {
     return alpha_map;
 }
 
-D2D1_SIZE_F renderer::measure_text(const std::wstring& text, float size, font_family primary_font, float letter_spacing) {
-    std::vector<font_family> fonts = { primary_font, font_family::SEGOE_UI, font_family::ARIAL };
-
-    ComPtr<IDWriteTextLayout> text_layout = create_text_layout_static(text, fonts, size, letter_spacing, FLT_MAX, FLT_MAX);
-    if (!text_layout) {
+D2D1_SIZE_F renderer::measure_text(const std::wstring& text, float size) {
+    // create text format with the desired font size
+    if (!create_text_format({ L"Aller", L"Segoe UI", L"Arial" }, size)) {
         return D2D1::SizeF(0, 0);
     }
 
-    DWRITE_TEXT_METRICS metrics;
-    HRESULT hr = text_layout->GetMetrics(&metrics);
+    // create text layout (no constraints)
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
+    HRESULT hr = dwrite_factory_->CreateTextLayout(
+        text.c_str(),
+        static_cast<UINT32>(text.length()),
+        dwrite_text_format_.Get(),
+        FLT_MAX,
+        FLT_MAX,
+        &text_layout
+    );
     if (FAILED(hr)) {
         return D2D1::SizeF(0, 0);
     }
 
-    return D2D1::SizeF(metrics.width, metrics.height);
-}
-const wchar_t* renderer::get_font_name(font_family font) {
-    static const std::unordered_map<font_family, const wchar_t*> font_map = {
-        { font_family::ALLER, L"Aller" },
-        { font_family::RIFFIC, L"Riffic Free" },
-        { font_family::HALOGEN, L"Halogen" },
-        { font_family::SEGOE_UI, L"Segoe UI" },
-        { font_family::ARIAL, L"Arial" }
-    };
+    // text metrics
+    DWRITE_TEXT_METRICS metrics;
+    hr = text_layout->GetMetrics(&metrics);
+    if (FAILED(hr)) {
+        return D2D1::SizeF(0, 0);
+    }
 
-    auto it = font_map.find(font);
-    return it != font_map.end() ? it->second : L"Arial";
+    // return text size
+    return D2D1::SizeF(metrics.width, metrics.height);
 }
 
 void renderer::create_render_target() {
@@ -526,92 +532,13 @@ void renderer::create_render_target() {
     }
 }
 
-ComPtr<IDWriteFactory> renderer::get_static_dwrite_factory() {
-    static ComPtr<IDWriteFactory> factory;
-
-    if (!factory) {
-        HRESULT hr = DWriteCreateFactory(
-            DWRITE_FACTORY_TYPE_SHARED,
-            __uuidof(IDWriteFactory),
-            reinterpret_cast<IUnknown**>(factory.GetAddressOf())
-        );
-        if (FAILED(hr)) {
-            throw std::runtime_error("Failed to create static DWrite factory");
-        }
-    }
-
-    return factory;
-}
-ComPtr<IDWriteTextFormat> renderer::create_text_format_static(const std::vector<font_family>& fonts, float size) {
-    float base_font_size = sys::display_height() / 650.0f;
-    float font_size = base_font_size * size;
-
-    ComPtr<IDWriteFactory> factory = get_static_dwrite_factory();
-    ComPtr<IDWriteTextFormat> text_format;
-
-    for (const auto& font : fonts) {
-        const wchar_t* font_name = get_font_name(font);
-        HRESULT hr = factory->CreateTextFormat(
-            font_name,
-            nullptr,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            font_size,
-            L"en-us",
-            &text_format
-        );
-        if (SUCCEEDED(hr)) {
-            return text_format;
-        }
-    }
-
-    return nullptr;
-}
-ComPtr<IDWriteTextLayout> renderer::create_text_layout_static(const std::wstring& text, const std::vector<font_family>& fonts, float size, float letter_spacing, float max_width, float max_height) {
-    ComPtr<IDWriteTextFormat> text_format = create_text_format_static(fonts, size);
-    if (!text_format) {
-        return nullptr;
-    }
-
-    ComPtr<IDWriteFactory> factory = get_static_dwrite_factory();
-    ComPtr<IDWriteTextLayout> text_layout;
-
-    HRESULT hr = factory->CreateTextLayout(
-        text.c_str(),
-        static_cast<UINT32>(text.length()),
-        text_format.Get(),
-        max_width,
-        max_height,
-        &text_layout
-    );
-    if (FAILED(hr)) {
-        return nullptr;
-    }
-
-    float base_font_size = sys::display_height() / 650.0f;
-    float font_size = base_font_size * size;
-    float spacing = font_size * letter_spacing;
-
-    if (!text.empty() && spacing != 0.0f) {
-        DWRITE_TEXT_RANGE text_range = { 0, static_cast<UINT32>(text.length()) };
-        ComPtr<IDWriteTextLayout1> text_layout1;
-        if (SUCCEEDED(text_layout.As(&text_layout1)) && text_layout1) {
-            text_layout1->SetCharacterSpacing(0.0f, spacing, 0.0f, text_range);
-        }
-    }
-
-    return text_layout;
-}
-
-bool renderer::create_text_format(const std::vector<font_family>& fonts, float size) {
-	float base_font_size = sys::display_height() / 650.0f;
+bool renderer::create_text_format(const std::vector<std::wstring>& font_families, float size) {
+    float base_font_size = height_ / 100.0f;
 	float font_size = base_font_size * size;
 
-    for (const auto& font : fonts) {
-        const wchar_t* font_name = get_font_name(font);
+    for (const auto& family : font_families) {
         HRESULT hr = dwrite_factory_->CreateTextFormat(
-            font_name,
+            family.c_str(),
             nullptr,
             DWRITE_FONT_WEIGHT_NORMAL,
             DWRITE_FONT_STYLE_NORMAL,
@@ -621,43 +548,9 @@ bool renderer::create_text_format(const std::vector<font_family>& fonts, float s
             &dwrite_text_format_
         );
         if (SUCCEEDED(hr)) {
-            dwrite_text_format_->SetTextAlignment(text_alignment_);
-            dwrite_text_format_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			dwrite_text_format_->SetTextAlignment(text_alignment_);
             return true;
         }
-    }
+	}
 	return false;
-}
-
-ComPtr<IDWriteTextLayout> renderer::create_text_layout(const std::wstring& text, const std::vector<font_family>& fonts, float size, float letter_spacing, float max_width, float max_height) {
-    if (!create_text_format(fonts, size)) {
-        return nullptr;
-    }
-
-    ComPtr<IDWriteTextLayout> text_layout;
-    HRESULT hr = dwrite_factory_->CreateTextLayout(
-        text.c_str(),
-        static_cast<UINT32>(text.length()),
-        dwrite_text_format_.Get(),
-        max_width,
-        max_height,
-        &text_layout
-    );
-    if (FAILED(hr)) {
-        return nullptr;
-    }
-
-    float base_font_size = sys::display_height() / 650.0f;
-    float font_size = base_font_size * size;
-    float spacing = font_size * letter_spacing;
-
-    if (!text.empty() && spacing != 0.0f) {
-        DWRITE_TEXT_RANGE text_range = { 0, static_cast<UINT32>(text.length()) };
-        ComPtr<IDWriteTextLayout1> text_layout1;
-        if (SUCCEEDED(text_layout.As(&text_layout1)) && text_layout1) {
-            text_layout1->SetCharacterSpacing(0.0f, spacing, 0.0f, text_range);
-        }
-    }
-
-    return text_layout;
 }
