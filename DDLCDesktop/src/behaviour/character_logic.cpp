@@ -28,9 +28,7 @@ namespace fs = std::filesystem;
 character_logic::character_logic(window* window) {
     window_ = window;
 
-    if (!fs::exists("manifest.json")) {
-        create_default_manifest();
-    }
+    create_default_manifest();
 
     if (!fs::exists("config.json")) {
         in_setup_ = true;
