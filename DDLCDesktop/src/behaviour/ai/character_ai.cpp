@@ -295,6 +295,10 @@ character_ai::build_prompt(const character_interaction &interaction) {
   payload["model"] = config_->model;
   payload["input"] = messages;
 
+  if (config_->max_tokens > 0) {
+      payload["max_output_tokens"] = config_->max_tokens;
+  }
+
   return payload.dump();
 }
 std::string

@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Configuration;
 
 namespace Installer
 {
@@ -34,6 +35,7 @@ namespace Installer
             ExtractInstallerFiles();
             ExtractRPAs();
             CreateShortcuts();
+            InstallFonts();
             mf.NextPage();
         }
 
@@ -113,32 +115,32 @@ namespace Installer
                 Application.DoEvents();
 
                 // Run on images.rpa
-                string imagesRpaPath = Path.Combine(ctx.ddlcGameFolder, "images.rpa");
-                ProcessStartInfo startInfo = new()
+                string[] rpaFiles = ["images.rpa", "audio.rpa", "fonts.rpa"];
+                foreach (string rpaFile in rpaFiles)
                 {
-                    FileName = rpaExtractPath,
-                    Arguments = $"\"{imagesRpaPath}\"",
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                };
-
-                using Process process = Process.Start(startInfo)!;
-                process.StandardInput.WriteLine();
-                process.WaitForExit();
-                if (process.ExitCode != 0)
-                {
-                    string errorOutput = process.StandardError.ReadToEnd();
-                    throw new Exception("RPA extraction failed: " + errorOutput);
+                    string path = Path.Combine(ctx.ddlcGameFolder, rpaFile);
+                    if (File.Exists(path))
+                    {
+                        RunRPAExtract(path);
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException("Could not find RPA file: " + rpaFile);
+                    }
+                    installProgress.Value++;
+                    Application.DoEvents();
                 }
-                installProgress.Value = 5;
-                Application.DoEvents();
+
+                string imagesRpaPath = Path.Combine(ctx.ddlcGameFolder, "images.rpa");
 
                 string imagesFolder = Path.Combine(ctx.ddlcGameFolder, "images");
                 string guiFolder = Path.Combine(ctx.ddlcGameFolder, "gui");
-                if (!Directory.Exists(imagesFolder) || !Directory.Exists(guiFolder))
+                string sfxFolder = Path.Combine(ctx.ddlcGameFolder, "sfx");
+                string bgmFolder = Path.Combine(ctx.ddlcGameFolder, "bgm");
+                if (!Directory.Exists(imagesFolder) ||
+                    !Directory.Exists(guiFolder) ||
+                    !Directory.Exists(sfxFolder) ||
+                    !Directory.Exists(bgmFolder))
                 {
                     throw new Exception("RPA extraction did not produce expected folders.");
                 }
@@ -153,8 +155,12 @@ namespace Installer
 
                 string destImagesFolder = Path.Combine(assetsFolder, "images");
                 string destGuiFolder = Path.Combine(assetsFolder, "gui");
+                string destSfxFolder = Path.Combine(assetsFolder, "sfx");
+                string destBgmFolder = Path.Combine(assetsFolder, "bgm");
                 Directory.Move(imagesFolder, destImagesFolder);
                 Directory.Move(guiFolder, destGuiFolder);
+                Directory.Move(sfxFolder, destSfxFolder);
+                Directory.Move(bgmFolder, destBgmFolder);
                 installProgress.Value = 6;
                 Application.DoEvents();
             }
@@ -162,6 +168,28 @@ namespace Installer
             {
                 MessageBox.Show("An error occurred while extracting game assets: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
+            }
+        }
+
+        private void RunRPAExtract(string rpaPath)
+        {
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = Path.Combine(ctx.installPath, "rpaExtract.exe"),
+                Arguments = $"\"{rpaPath}\"",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+            };
+            using Process process = Process.Start(startInfo)!;
+            process.StandardInput.WriteLine();
+            process.WaitForExit();
+            if (process.ExitCode != 0)
+            {
+                string errorOutput = process.StandardError.ReadToEnd();
+                throw new Exception("RPA extraction failed: " + errorOutput);
             }
         }
 
@@ -213,6 +241,33 @@ namespace Installer
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while creating shortcuts: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+        }
+
+        private void InstallFonts()
+        {
+            if (!ctx.installDDLCFonts)
+            {
+                return;
+            }
+            installStatusLabel.Text = "Installing fonts...";
+            try
+            {
+                string fontsSourceFolder = Path.Combine(ctx.installPath, "assets", "fonts");
+                string fontsDestFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Fonts");
+                foreach (string fontFile in Directory.GetFiles(fontsSourceFolder))
+                {
+                    string destPath = Path.Combine(fontsDestFolder, Path.GetFileName(fontFile));
+                    if (!File.Exists(destPath))
+                    {
+                        File.Copy(fontFile, destPath);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while installing fonts: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
         }

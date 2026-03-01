@@ -57,6 +57,8 @@ void config::load() {
   cfg->custom_endpoint = j.value("custom_endpoint", "");
   // message history size
   cfg->message_history_size = j.value("message_history_size", 6);
+  // max tokens
+  cfg->max_tokens = j.value("max_tokens", 0);
 
   // pronouns
   cfg->pronouns = j.value("pronouns", "he/him");
@@ -113,6 +115,8 @@ bool config::save() {
   j["custom_endpoint"] = loaded_->custom_endpoint;
   // message history size
   j["message_history_size"] = loaded_->message_history_size;
+  // max tokens
+  j["max_tokens"] = loaded_->max_tokens;
   // pronouns
   j["pronouns"] = loaded_->pronouns;
   // user name

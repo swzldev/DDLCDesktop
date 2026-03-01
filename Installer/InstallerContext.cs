@@ -12,5 +12,6 @@ namespace Installer
 
         public bool createStartMenuShortcut = true;
         public bool createDesktopShortcut = true;
+        public bool installDDLCFonts = true;
     }
 }

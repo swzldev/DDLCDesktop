@@ -103,5 +103,10 @@ namespace Installer
         {
             ctx.createDesktopShortcut = createDesktopShortcut.Checked;
         }
+
+        private void installFonts_CheckedChanged(object sender, EventArgs e)
+        {
+            ctx.installDDLCFonts = installFonts.Checked;
+        }
     }
 }

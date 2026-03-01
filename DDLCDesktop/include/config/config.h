@@ -25,6 +25,7 @@ public:
       custom_endpoint; // custom endpoint. this theoretically works with any api
                        // that is compatible with openai's endpoint bullsh
   int message_history_size;
+  int max_tokens;
 
   // behaviour
   std::string pronouns;

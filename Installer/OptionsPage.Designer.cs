@@ -35,6 +35,7 @@
             label2 = new Label();
             button1 = new Button();
             textBox1 = new TextBox();
+            installFonts = new CheckBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -48,6 +49,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(installFonts);
             panel1.Controls.Add(createDesktopShortcut);
             panel1.Controls.Add(createStartMenuShortcut);
             panel1.Controls.Add(label2);
@@ -113,6 +115,19 @@
             textBox1.Size = new Size(325, 23);
             textBox1.TabIndex = 2;
             // 
+            // installFonts
+            // 
+            installFonts.AutoSize = true;
+            installFonts.Checked = true;
+            installFonts.CheckState = CheckState.Checked;
+            installFonts.Location = new Point(13, 130);
+            installFonts.Name = "installFonts";
+            installFonts.Size = new Size(214, 19);
+            installFonts.TabIndex = 5;
+            installFonts.Text = "Install DDLC Fonts (Recommended)";
+            installFonts.UseVisualStyleBackColor = true;
+            installFonts.CheckedChanged += installFonts_CheckedChanged;
+            // 
             // OptionsPage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -134,5 +149,6 @@
         private Label label2;
         private CheckBox createDesktopShortcut;
         private CheckBox createStartMenuShortcut;
+        private CheckBox installFonts;
     }
 }

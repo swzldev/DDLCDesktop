@@ -28,13 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FinishedPage));
             label1 = new Label();
             panel1 = new Panel();
             linkLabel1 = new LinkLabel();
             startDDLCDesktop = new CheckBox();
-            openFontSite = new CheckBox();
-            label2 = new Label();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -50,8 +47,6 @@
             // 
             panel1.Controls.Add(linkLabel1);
             panel1.Controls.Add(startDDLCDesktop);
-            panel1.Controls.Add(openFontSite);
-            panel1.Controls.Add(label2);
             panel1.Controls.Add(label1);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
@@ -74,33 +69,12 @@
             startDDLCDesktop.AutoSize = true;
             startDDLCDesktop.Checked = true;
             startDDLCDesktop.CheckState = CheckState.Checked;
-            startDDLCDesktop.Location = new Point(13, 91);
+            startDDLCDesktop.Location = new Point(13, 128);
             startDDLCDesktop.Name = "startDDLCDesktop";
             startDDLCDesktop.Size = new Size(126, 19);
             startDDLCDesktop.TabIndex = 5;
             startDDLCDesktop.Text = "Start DDLCDesktop";
             startDDLCDesktop.UseVisualStyleBackColor = true;
-            // 
-            // openFontSite
-            // 
-            openFontSite.AutoSize = true;
-            openFontSite.Checked = true;
-            openFontSite.CheckState = CheckState.Checked;
-            openFontSite.Location = new Point(13, 116);
-            openFontSite.Name = "openFontSite";
-            openFontSite.Size = new Size(198, 19);
-            openFontSite.TabIndex = 5;
-            openFontSite.Text = "Open DDLC font download page";
-            openFontSite.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            label2.Font = new Font("Segoe UI", 8.25F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            label2.Location = new Point(13, 138);
-            label2.Name = "label2";
-            label2.Size = new Size(341, 66);
-            label2.TabIndex = 0;
-            label2.Text = resources.GetString("label2.Text");
             // 
             // FinishedPage
             // 
@@ -118,9 +92,7 @@
 
         private Label label1;
         private Panel panel1;
-        private CheckBox openFontSite;
         private LinkLabel linkLabel1;
-        private Label label2;
         private CheckBox startDDLCDesktop;
     }
 }

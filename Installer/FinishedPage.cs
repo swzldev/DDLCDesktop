@@ -27,10 +27,6 @@ namespace Installer
             {
                 StartDDLCDesktop();
             }
-            if (openFontSite.Checked)
-            {
-                OpenDDLCFontPage();
-            }
         }
 
         public FinishedPage(InstallerContext ctx)
@@ -54,25 +50,6 @@ namespace Installer
             catch (Exception ex)
             {
                 MessageBox.Show("Failed to start DDLCDesktop: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void OpenDDLCFontPage()
-        {
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "https://www.1001fonts.com/aller-font.html",
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to open web page: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Copy the URL to clipboard as a fallback
-                Clipboard.SetText("https://www.1001fonts.com/aller-font.html");
-                MessageBox.Show("Link has been copied to clipboard.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }
