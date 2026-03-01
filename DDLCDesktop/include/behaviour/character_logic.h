@@ -1,0 +1,108 @@
+#pragma once
+
+#include <memory>
+
+#include <visual/character_visuals.h>
+#include <behaviour/character_interaction.h>
+#include <behaviour/ai/character_ai.h>
+#include <ddlc/characters.h>
+#include <config/config.h>
+#include <error/ddlcd_runtime_error.h>
+
+#include <nlohmann/json.hpp>
+
+enum class logic_state {
+	IDLE,
+	THINKING,
+	TALKING,
+	AWAITING_CHOICE,
+	AWAITING_INPUT,
+	AWAITING_INPUT_SETTINGS,
+};
+
+enum class error_state {
+	NONE,
+	NON_FATAL,
+	FATAL,
+};
+
+enum class menu_state {
+	MAIN,
+	SETTINGS,
+	SETUP,
+};
+
+class window;
+
+class character_logic {
+public:
+	static constexpr int INPUT_MAX_LENGTH = 170;
+	static constexpr float AUTO_MODE_DELAY_SEC = 3.0f;
+
+public:
+	character_logic(window* window);
+	~character_logic();
+
+	void handle_interaction(const character_interaction& interaction);
+
+	inline void pause() { paused_ = true; }
+	inline void unpause() { paused_ = false; }
+	void tick(float delta_time);
+
+	void handle_error(const ddlcd_runtime_error& error);
+
+	character_visuals* visuals;
+	character_ai* ai;
+	character_state current_state;
+
+private:
+	window* window_ = nullptr;
+	config* config_ = nullptr;
+	ddlc_character character_ = ddlc_character::MONIKA;
+	bool first_tick_ = true;
+	bool paused_ = false;
+
+	error_state error_state_ = error_state::NONE;
+	logic_state state_ = logic_state::IDLE;
+	unsigned int interaction_index_ = 0;
+
+	bool input_mode_btn_disabled_ = true;
+	bool custom_mode_ = false;
+	std::string current_input_prompt_;
+	std::string* current_input_ = nullptr;
+
+	bool in_setup_ = false;
+	unsigned int setup_step_ = 0;
+	void show_setup(unsigned int step);
+
+	// auto
+	bool auto_mode_ = false;
+	float auto_timer_ = 0.0f;
+
+	// menus
+	menu_state current_menu_ = menu_state::MAIN;
+	void show_main_menu();
+	void show_settings_menu();
+	void show_settings_api_menu();
+	void show_settings_character_menu();
+	void show_settings_character_change_menu();
+	void show_settings_user_menu();
+
+	void await_choice(bool show_immediate = false);
+	void await_input();
+	void await_input_custom(const std::string& prompt, std::string* value, const std::function<void(bool)>& callback);
+
+	int get_choice_input(int num_choices);
+
+	void reset_all();
+
+	void begin_think(const character_interaction& interaction);
+
+	void display_think();
+	void display_current_interaction();
+	void advance_interaction();
+
+	void set_character(ddlc_character new_character);
+
+	void refresh_display();
+};

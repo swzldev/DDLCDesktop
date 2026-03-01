@@ -10,8 +10,6 @@ class sprite {
 public:
 	~sprite();
 
-	static sprite* get_white();
-
 	static sprite* load_from_file(const std::string& filepath);
 	static void cleanup_all_sprites();
 

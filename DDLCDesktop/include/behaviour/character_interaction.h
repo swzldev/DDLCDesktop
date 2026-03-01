@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 class character_interaction {
 public:
 	enum class kind {

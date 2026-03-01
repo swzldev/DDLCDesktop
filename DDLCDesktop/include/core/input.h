@@ -11,7 +11,7 @@ public:
 
 	static void tick();
 
-	static void begin_input_recording(const std::function<void(wchar_t)>& recorder);
+	static void begin_input_recording(std::string* buffer, int max_length = 50, std::function<void()> on_submit = nullptr);
 	static void end_input_recording();
 
 	static std::string get_clipboard_text();
@@ -25,5 +25,7 @@ private:
 	static bool key_states_[256];
 	static bool prev_key_states_[256];
 
-	static std::function<void(wchar_t)> input_recorder_;
+	static std::function<void()> on_submit_;
+	static std::string* cur_input_buffer_;
+	static int max_input_length_;
 };

@@ -11,7 +11,6 @@
 #include <behaviour/character_state.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/ai/ai_api.h>
-#include <behaviour/memory/character_memory.h>
 #include <config/config.h>
 
 #include <nlohmann/json.hpp>
@@ -21,18 +20,14 @@ public:
 	character_ai();
 	~character_ai();
 
-	inline void set_memory(character_memory* memory) {
-		memory_ = memory;
-	}
-
 	void handle_close_interaction(); // doesnt use AI, so dont need async
 
 	void handle_interaction_async(const character_interaction& interaction);
 	bool is_response_ready() const;
 	character_state get_response();
 
-	void save_state();
-	void load_state();
+	void save_state(const char* path);
+	void load_state(const char* path);
 	void reset_state();
 	void cancel_and_reset();
 
@@ -42,8 +37,13 @@ public:
 
 private:
 	config* config_ = nullptr;
-	ai_api* api_ = nullptr;
-	character_memory* memory_ = nullptr;
+	ai_api* api_;
+
+	struct message {
+		std::string role;
+		std::string content;
+	};
+	std::vector<message> conversation_history_;
 
 	std::thread worker_;
 	std::atomic<bool> stop_worker_{ false };
@@ -58,6 +58,14 @@ private:
 
 	void request_cancel();
 
+	inline void add_to_history(const std::string& role, const std::string& content) {
+		conversation_history_.push_back({ role, content });
+		// limit history size (dont include system prompt)
+		if (conversation_history_.size() > config_->message_history_size + 1) {
+			conversation_history_.erase(conversation_history_.begin() + 1);
+		}
+	}
+
 	void worker_loop();
 
 	std::string get_endpoint();
@@ -69,6 +77,9 @@ private:
 	bool response_is_error(const std::string& response);
 	std::string extract_content_from_response(const std::string& response);
 	character_state parse_response(const std::string& raw_response);
+	std::string get_pose_code_left(const std::string& pose);
+	std::string get_pose_code_right(const std::string& pose);
+	std::string get_expression_code(const std::string& expression);
 
 	std::string get_system_prompt() const;
 };

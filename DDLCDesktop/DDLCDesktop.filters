@@ -36,6 +36,12 @@
     <ClCompile Include="src\behaviour\character_logic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\behaviour\character_logic_input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\behaviour\character_logic_menus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\behaviour\ai\ai_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
