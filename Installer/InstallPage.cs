@@ -254,7 +254,7 @@ namespace Installer
             installStatusLabel.Text = "Installing fonts...";
             try
             {
-                string fontsSourceFolder = Path.Combine(ctx.installPath, "assets", "fonts");
+                string fontsSourceFolder = Path.Combine(ctx.installPath, "assets", "gui", "fonts");
                 string fontsDestFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Fonts");
                 foreach (string fontFile in Directory.GetFiles(fontsSourceFolder))
                 {
