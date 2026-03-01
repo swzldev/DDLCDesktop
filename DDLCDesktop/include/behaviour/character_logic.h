@@ -30,6 +30,7 @@ enum class menu_state {
 	MAIN,
 	SETTINGS,
 	SETUP,
+	UPDATE,
 };
 
 class window;
@@ -48,6 +49,7 @@ public:
 	inline void pause() { paused_ = true; }
 	inline void unpause() { paused_ = false; }
 	void tick(float delta_time);
+	void awake();
 
 	void handle_error(const ddlcd_runtime_error& error);
 
@@ -71,9 +73,14 @@ private:
 	std::string current_input_prompt_;
 	std::string* current_input_ = nullptr;
 
+	bool in_update_ = false;
+	void show_update_menu();
+	void show_confirm_update();
 	bool in_setup_ = false;
 	unsigned int setup_step_ = 0;
 	void show_setup(unsigned int step);
+
+	bool update_available();
 
 	// auto
 	bool auto_mode_ = false;
@@ -102,7 +109,11 @@ private:
 	void display_current_interaction();
 	void advance_interaction();
 
+	void create_default_manifest();
+
 	void set_character(ddlc_character new_character);
+
+	int run_cmd_hidden(wchar_t* cmd, bool wait = true);
 
 	void refresh_display();
 };
