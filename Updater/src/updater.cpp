@@ -143,7 +143,8 @@ std::string updater::get_latest_version() {
 	json json_response =
 		json::parse(requestor_.request("https://api.github.com/repos/swzldev/DDLCDesktop/releases/latest"));
 
-	return json_response.value("tag_name", "");
+	return json_response.value("tag_name", "").substr(1);
+	// ignore the 'v' prefix for consistency ^^
 }
 std::string updater::get_current_version() {
 	if (!manifest_.loaded) {
@@ -157,12 +158,12 @@ bool updater::validate_version(const std::string& version) {
 	}
 	
 	// invalid versions
-	if (version == "v1.0.0"
-		|| version == "v1.0.0-alpha"
-		|| version == "v1.0.0-beta"
-		|| version == "v1.1.0"
-		|| version == "v1.1.1") {
-		output::print("Note: versions before v1.2.0 don't support the updater.");
+	if (version == "1.0.0"
+		|| version == "1.0.0-alpha"
+		|| version == "1.0.0-beta"
+		|| version == "1.1.0"
+		|| version == "1.1.1") {
+		output::print("Note: versions before 1.2.0 don't support the updater.");
 		return false;
 	}
 

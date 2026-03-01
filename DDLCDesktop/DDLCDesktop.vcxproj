@@ -175,6 +175,10 @@
     <ClInclude Include="lib\nlohmann-json\include\nlohmann\json.hpp" />
     <ClInclude Include="lib\nlohmann-json\include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="lib\stb\include\stb_image.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DDLCDesktop.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
