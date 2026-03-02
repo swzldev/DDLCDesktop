@@ -63,8 +63,11 @@ character_logic::~character_logic() {
 	}
 }
 
-void character_logic::handle_interaction(
-	const character_interaction& interaction) {
+void character_logic::handle_interaction(const character_interaction& interaction) {
+	if (paused_ || visuals->in_popup()) {
+		return;
+	}
+
 	if (interaction.get_kind() != character_interaction::kind::CLICK ||
 		current_menu_ == menu_state::SETTINGS) {
 		return;
