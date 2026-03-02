@@ -163,7 +163,7 @@ bool updater::validate_version(const std::string& version) {
 		|| version == "1.0.0-beta"
 		|| version == "1.1.0"
 		|| version == "1.1.1") {
-		output::print("Note: versions before 1.2.0 don't support the updater.");
+		output::print("Note: versions before 2.0.0 don't support the updater.");
 		return false;
 	}
 
@@ -171,7 +171,7 @@ bool updater::validate_version(const std::string& version) {
 		json::parse(requestor_.request("https://api.github.com/repos/swzldev/DDLCDesktop/tags"));
 
 	for (const auto& tag : json_response) {
-		if (tag.value("name", "") == version) {
+		if (tag.value("name", "").substr(1) == version) {
 			return true;
 		}
 	}
