@@ -17,6 +17,7 @@ public:
 	std::string get_latest_version();
 	std::string get_current_version();
 	bool validate_version(const std::string& version);
+	bool version_greater(const std::string& v1, const std::string& v2);
 
 private:
 	requestor requestor_;

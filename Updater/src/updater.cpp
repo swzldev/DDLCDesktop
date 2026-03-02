@@ -26,7 +26,7 @@ bool updater::has_update() {
 		return false;
 	}
 
-	if (current_version != latest_version) {
+	if (version_greater(latest_version, current_version)) {
 		return true;
 	}
 	return false;
@@ -177,6 +177,26 @@ bool updater::validate_version(const std::string& version) {
 	}
 
 	return false;
+}
+
+bool updater::version_greater(const std::string& v1, const std::string& v2) {
+	// versions are in the format "major.minor.patch" with optional "-alpha" or "-beta" suffix
+	auto parse_version = [](const std::string& v) {
+		int major = 0, minor = 0, patch = 0;
+		std::string suffix;
+		size_t pos = v.find('-');
+		std::string version_part = (pos == std::string::npos) ? v : v.substr(0, pos);
+		suffix = (pos == std::string::npos) ? "" : v.substr(pos);
+		sscanf_s(version_part.c_str(), "%d.%d.%d", &major, &minor, &patch);
+		return std::make_tuple(major, minor, patch, suffix);
+	};
+
+	auto [major1, minor1, patch1, suffix1] = parse_version(v1);
+	auto [major2, minor2, patch2, suffix2] = parse_version(v2);
+
+	if (major1 != major2) return major1 > major2;
+	if (minor1 != minor2) return minor1 > minor2;
+	if (patch1 != patch2) return patch1 > patch2;
 }
 
 void updater::apply_update(const fs::path& update_dir) {
