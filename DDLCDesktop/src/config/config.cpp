@@ -169,7 +169,7 @@ void config::load_default() {
   // API key
   loaded_->api_key = "";
   // model
-  loaded_->model = "meta-llama/llama-3.3-70b-instruct:free";
+  loaded_->model = "meta-llama/llama-3.3-70b-instruct";
   // custom endpoint
   loaded_->custom_endpoint = "";
   // message history size
