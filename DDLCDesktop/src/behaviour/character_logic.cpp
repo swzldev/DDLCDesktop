@@ -41,19 +41,6 @@ character_logic::character_logic(window* window) {
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
 
-	// permanent buttons
-	visuals->add_button({ "Close",
-						 [this]() {
-						   if (!in_setup_) {
-							 config::save();
-							 ai->handle_close_interaction();
-							 ai->save_state("character_state.json");
-						   }
-
-						   window_->close();
-						 } },
-		true);
-
 	// create ai
 	ai = new character_ai();
 	ai->load_state("character_state.json");
@@ -300,6 +287,17 @@ void character_logic::show_setup(unsigned int step) {
 	visuals->set_chars_per_second(30.0f);
 
 	visuals->clear_buttons();
+	visuals->add_button({ "Quit",
+		[this]() {
+			if (!in_setup_) {
+				config::save();
+				ai->handle_close_interaction();
+				ai->save_state("character_state.json");
+			}
+
+			window_->close();
+		} }
+	);
 
 	if (step == 0) {
 		// part 1
@@ -318,9 +316,10 @@ void character_logic::show_setup(unsigned int step) {
 	}
 	else if (step == 1) {
 		// collect name
-		await_input_custom("What's your name?: ", &config_->user_name,
-			[this](bool success) {
-				if (success && !config_->user_name.empty()) {
+		await_input_custom("What's your name?: ", "",
+			[this](bool success, const std::string& value) {
+				if (success && !value.empty()) {
+					config_->user_name = value;
 					setup_step_++;
 					show_setup(setup_step_);
 				}
@@ -332,9 +331,10 @@ void character_logic::show_setup(unsigned int step) {
 	}
 	else if (step == 2) {
 		// collect pronouns
-		await_input_custom(
-			"What are your pronouns?: ", &config_->pronouns, [this](bool success) {
-				if (success && !config_->pronouns.empty()) {
+		await_input_custom("What are your pronouns? (e.g. he/him): ", "",
+			[this](bool success, const std::string& value) {
+				if (success && !value.empty()) {
+					config_->pronouns = value;
 					setup_step_++;
 					show_setup(setup_step_);
 				}
@@ -380,15 +380,15 @@ void character_logic::show_setup(unsigned int step) {
 	}
 	else if (step == 6) {
 		// collect api key
-		await_input_custom("Enter your OpenRouter API key: ", &config_->api_key,
-			[this](bool success) {
-				if (success && !config_->api_key.empty()) {
+		await_input_custom("Enter your OpenRouter API key: ", config_->api_key,
+			[this](bool success, const std::string& value) {
+				if (success && !value.empty()) {
+					config_->api_key = value;
 					setup_step_++;
 					show_setup(setup_step_);
 				}
 				else {
-					visuals->show_message(
-						"Please enter a valid API key.");
+					visuals->show_message("Please enter a valid API key.");
 					show_setup(setup_step_); // retry
 				}
 			});
@@ -431,24 +431,38 @@ void character_logic::show_main_menu() {
 	current_menu_ = menu_state::MAIN;
 
 	// set buttons
-	visuals->add_button({
-		"Auto",
+	visuals->add_button({ "Quit",
+		[this]() {
+			if (!in_setup_) {
+				config::save();
+				ai->handle_close_interaction();
+				ai->save_state("character_state.json");
+			}
+
+			window_->close();
+		} }
+	);
+	visuals->add_button({"Auto",
 		[this]() { auto_mode_ = true; },
 		button_style::LABEL,
 		button_type::TOGGLE,
 		"",
 		[this]() { auto_mode_ = false; },
-		});
-	visuals->add_button({ "Reset", [this]() {
-						   if (state_ == logic_state::THINKING) {
-							 return; // dont reset while thinking
-						   }
-						   reset_all();
-						 } });
-	visuals->add_button({ "Custom", [this]() { await_input(); },
-						 button_style::LABEL, button_type::SWAP, "Actions",
-						 [this]() { await_choice(/*true*/); },
-						 &input_mode_btn_disabled_ });
+	});
+	visuals->add_button({"Reset",
+		[this]() {
+			if (state_ == logic_state::THINKING) {
+				return; // dont reset while thinking
+			}
+			reset_all();
+		}
+	});
+	visuals->add_button({ "Custom",
+		[this]() { await_input(); },
+		button_style::LABEL, button_type::SWAP, "Actions",
+		[this]() { await_choice(/*true*/); },
+		&input_mode_btn_disabled_
+	});
 	visuals->add_button({ "Settings", [this]() { show_settings_menu(); } });
 
 	refresh_display();
@@ -462,8 +476,7 @@ void character_logic::show_settings_menu() {
 
 	// set buttons
 	visuals->add_button({ "API", [this]() { show_settings_api_menu(); } });
-	visuals->add_button(
-		{ "Character", [this]() { show_settings_character_menu(); } });
+	visuals->add_button({ "Character", [this]() { show_settings_character_menu(); } });
 	visuals->add_button({ "User", [this]() { show_settings_user_menu(); } });
 	visuals->add_button({ "Back", [this]() { show_main_menu(); } });
 }
@@ -477,8 +490,7 @@ void character_logic::show_settings_api_menu() {
 		: (config_->api == api::OPENROUTER) ? "OpenRouter"
 		: "Custom";
 
-	std::string message =
-		"API: " + api_str + " | Model: " + config_->model + "\n";
+	std::string message = "API: " + api_str + " | Model: " + config_->model + "\n";
 	if (config_->api == api::CUSTOM) {
 		std::string endpoint_display = config_->custom_endpoint.empty()
 			? "[Not set]"
@@ -490,61 +502,59 @@ void character_logic::show_settings_api_menu() {
 	visuals->set_saying(message);
 
 	// set buttons
-	visuals->add_button(
-		{ "API Mode", [this]() {
-		   std::string* new_api = new std::string();
-		   await_input_custom(
-			   "Enter your API (OpenRouter/OpenAI/Custom): ", new_api,
-			   [this, new_api](bool success) {
-				 if (success) {
-				   std::string new_api_lower = string_utils::to_lower(*new_api);
-				   if (new_api_lower == "openai") {
-					 config_->api = api::OPENAI;
-				   }
-   else if (new_api_lower == "openrouter") {
-  config_->api = api::OPENROUTER;
-}
-else if (new_api_lower == "custom") {
-config_->api = api::CUSTOM;
-}
-else {
-visuals->show_message("Invalid API mode. Supported: "
-					  "'OpenAI', 'OpenRouter', 'Custom'.");
-}
-config::save(); // save config
-}
-delete new_api;
-show_settings_api_menu();
-});
-} });
+	visuals->add_button({ "API Mode", [this]() {
+		await_input_custom("Enter your API (OpenRouter/OpenAI/Custom): ", "",
+			[this](bool success, const std::string& value) {
+				if (success) {
+					std::string api_lower = string_utils::to_lower(value);
+					if (api_lower == "openai") {
+						config_->api = api::OPENAI;
+					}
+					else if (api_lower == "openrouter") {
+						config_->api = api::OPENROUTER;
+					}
+					else if (api_lower == "custom") {
+						config_->api = api::CUSTOM;
+					}
+					else {
+						visuals->show_message("Invalid API mode. Supported: "
+							"'OpenAI', 'OpenRouter', 'Custom'.");
+					}
+					config::save(); // save config
+				}
+				show_settings_api_menu();
+			});
+	} });
 	visuals->add_button({ "Model", [this]() {
-						   await_input_custom("Enter model: ", &config_->model,
-											  [this](bool success) {
-												if (success) {
-												  config::save(); // save config
-												}
-												show_settings_api_menu();
+						   await_input_custom("Enter model: ", config_->model,
+											  [this](bool success, const std::string& value) {
+												  if (success) {
+													  config_->model = value;
+													  config::save(); // save config
+												  }
+												  show_settings_api_menu();
 											  });
 						 } });
 	visuals->add_button({ "API Key", [this]() {
-						   await_input_custom(
-							   "Enter API key: ", &config_->api_key,
-							   [this](bool success) {
-								 if (success) {
-								   config::save(); // save config
-								 }
-								 show_settings_api_menu();
-							   });
+						   await_input_custom("Enter API key: ", config_->api_key,
+											  [this](bool success, const std::string& value) {
+												  if (success) {
+													  config_->api_key = value;
+													  config::save(); // save config
+												  }
+												  show_settings_api_menu();
+											  });
 						 } });
 	if (config_->api == api::CUSTOM) {
 		visuals->add_button(
 			{ "Endpoint", [this]() {
-			   await_input_custom("Enter endpoint URL: ", &config_->custom_endpoint,
-								  [this](bool success) {
-									if (success) {
-									  config::save(); // save config
-									}
-									show_settings_api_menu();
+			   await_input_custom("Enter endpoint URL: ", config_->custom_endpoint,
+								  [this](bool success, const std::string& value) {
+									  if (success) {
+										  config_->custom_endpoint = value;
+										  config::save(); // save config
+									  }
+									  show_settings_api_menu();
 								  });
 			 } });
 	}
@@ -567,53 +577,48 @@ void character_logic::show_settings_character_menu() {
 						 [this]() { show_settings_character_change_menu(); } });
 	visuals->add_button(
 		{ "Preset", [this]() {
-		   std::string* new_preset = new std::string();
-		   await_input_custom(
-			   "Enter new behaviour preset: ", new_preset,
-			   [this, new_preset](bool success) {
-				 if (success) {
-				   if (supports_behaviour_preset(character_, *new_preset)) {
-					 visuals->show_popup("Warning: Changing the preset will "
-										 "reset all progress. Continue?",
-										 [this, new_preset](int result) {
-										   if (result == 0) {
-											 config_->behaviour_preset =
-												 *new_preset;
-											 reset_all();
-										   }
-										 });
-				   }
-   else {
-  std::string supported;
-  auto presets = get_behaviour_presets(character_);
-  for (size_t i = 0; i < presets.size(); i++) {
-	supported += "'" + presets[i];
-	if (i < presets.size() - 1) {
-	  supported += "', ";
-	}
-else {
-supported += "'";
-}
-}
-visuals->show_message(
-	"Invalid behaviour preset. Supported: " + supported);
-}
-config::save(); // save config
-}
-delete new_preset;
-show_settings_character_menu();
-});
-} });
+			await_input_custom("Enter new behaviour preset: ", config_->behaviour_preset,
+				[this](bool success, const std::string& value) {
+					if (success) {
+						if (supports_behaviour_preset(character_, value)) {
+							visuals->show_popup("Warning: Changing the preset will "
+												"reset all progress. Continue?",
+												[this, value](int result) {
+													if (result == 0) {
+														config_->behaviour_preset = value;
+														reset_all();
+													}
+												});
+						}
+						else {
+							std::string supported;
+							auto presets = get_behaviour_presets(character_);
+							for (size_t i = 0; i < presets.size(); i++) {
+								supported += "'" + presets[i];
+								if (i < presets.size() - 1) {
+									supported += "', ";
+								}
+								else {
+									supported += "'";
+								}
+							}
+							visuals->show_message("Invalid behaviour preset. Supported: " + supported);
+						}
+						config::save(); // save config
+					}
+					show_settings_character_menu();
+				});
+		} });
 	visuals->add_button(
 		{ "Window control: ON",
 		 [this]() {
-		   config_->enable_window_controls = false;
-		   config::save();
+			 config_->enable_window_controls = false;
+			 config::save();
 		 },
 		 button_style::LABEL, button_type::SWAP, "Window control: OFF",
 		 [this]() {
-		   config_->enable_window_controls = true;
-		   config::save();
+			 config_->enable_window_controls = true;
+			 config::save();
 		 },
 		 nullptr, nullptr, false, !config_->enable_window_controls });
 	visuals->add_button({ "Back", [this]() { show_settings_menu(); } });
@@ -673,31 +678,34 @@ void character_logic::show_settings_user_menu() {
 
 	// set buttons
 	visuals->add_button({ "Name", [this]() {
-						   await_input_custom(
-							   "Enter your name: ", &config_->user_name,
-							   [this](bool success) {
-								 if (success)
-								   config::save(); // save config
-								 show_settings_user_menu();
-							   });
+						   await_input_custom("Enter your name: ", config_->user_name,
+											  [this](bool success, const std::string& value) {
+												  if (success) {
+													  config_->user_name = value;
+													  config::save(); // save config
+												  }
+												  show_settings_user_menu();
+											  });
 						 } });
 	visuals->add_button({ "Pronouns", [this]() {
-						   await_input_custom(
-							   "Enter your pronouns: ", &config_->pronouns,
-							   [this](bool success) {
-								 if (success)
-								   config::save(); // save config
-								 show_settings_user_menu();
-							   });
+						   await_input_custom("Enter your pronouns: ", config_->pronouns,
+											  [this](bool success, const std::string& value) {
+												  if (success) {
+													  config_->pronouns = value;
+													  config::save(); // save config
+												  }
+												  show_settings_user_menu();
+											  });
 						 } });
 	visuals->add_button({ "Language", [this]() {
-						   await_input_custom(
-							   "Enter your language (does not affect UI): ",
-							   &config_->language, [this](bool success) {
-								 if (success)
-								   config::save(); // save config
-								 show_settings_user_menu();
-							   });
+						   await_input_custom("Enter your language (does not affect UI): ", config_->language,
+											  [this](bool success, const std::string& value) {
+												  if (success) {
+													  config_->language = value;
+													  config::save(); // save config
+												  }
+												  show_settings_user_menu();
+											  });
 						 } });
 	visuals->add_button({ "Back", [this]() { show_settings_menu(); } });
 }
@@ -726,24 +734,19 @@ void character_logic::await_input() {
 		input_interaction.str_data = live_input_buffer_;
 		input::end_input_recording();
 		begin_think(input_interaction);
-	});
+		});
 
 	custom_mode_ = true;
 	state_ = logic_state::AWAITING_INPUT;
 }
-void character_logic::await_input_custom(
-	const std::string& prompt,
-	std::string* value,
-	const std::function<void(bool)>& callback) {
-
+void character_logic::await_input_custom(const std::string& prompt, const std::string& initial_value, const std::function<void(bool, const std::string&)>& callback) {
 	if (settings_input_.active) {
 		finish_settings_input(false);
 	}
 
 	settings_input_.active = true;
 	settings_input_.prompt = prompt;
-	settings_input_.buffer = value ? *value : "";
-	settings_input_.target = value;
+	settings_input_.buffer = initial_value;
 	settings_input_.callback = callback;
 	settings_input_.restore_state = state_;
 
@@ -763,7 +766,7 @@ void character_logic::await_input_custom(
 
 	input::begin_input_recording(&settings_input_.buffer, INPUT_MAX_LENGTH, [this]() {
 		finish_settings_input(true);
-	});
+		});
 
 	state_ = logic_state::AWAITING_INPUT_SETTINGS;
 }
@@ -774,10 +777,7 @@ void character_logic::finish_settings_input(bool success) {
 
 	input::end_input_recording();
 
-	if (success && settings_input_.target) {
-		*settings_input_.target = settings_input_.buffer;
-	}
-
+	std::string result = settings_input_.buffer;
 	logic_state restore_state = settings_input_.restore_state;
 	auto callback = std::move(settings_input_.callback);
 
@@ -785,7 +785,7 @@ void character_logic::finish_settings_input(bool success) {
 	state_ = restore_state;
 
 	if (callback) {
-		callback(success);
+		callback(success, result);
 	}
 }
 
@@ -1041,7 +1041,7 @@ void character_logic::refresh_display() {
 			input_interaction.str_data = live_input_buffer_;
 			input::end_input_recording();
 			begin_think(input_interaction);
-		});
+			});
 
 		visuals->set_saying_immediate("You: " + live_input_buffer_ + "_");
 		break;

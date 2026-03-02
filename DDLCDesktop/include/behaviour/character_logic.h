@@ -65,7 +65,7 @@ private:
         std::string prompt;
         std::string buffer;
         std::string* target = nullptr;
-        std::function<void(bool)> callback;
+        std::function<void(bool, std::string)> callback;
         logic_state restore_state = logic_state::IDLE;
     };
 
@@ -107,7 +107,7 @@ private:
 
     void await_choice(bool show_immediate = false);
     void await_input();
-    void await_input_custom(const std::string& prompt, std::string* value, const std::function<void(bool)>& callback);
+    void await_input_custom(const std::string& prompt, const std::string& initial_value, const std::function<void(bool, const std::string&)>& callback);
     void finish_settings_input(bool success);
 
     int get_choice_input(int num_choices);
