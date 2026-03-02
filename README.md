@@ -34,7 +34,7 @@ As of v2.0.0, installation is super simple and only takes a few steps.
 
 1) Download the latest release of the installer [here](https://github.com/swzldev/DDLCDesktop/releases). (You'll want the one called DDLCDesktop-Installer-vX.X.X.exe)
 2) Run the installer -- you may need to disable your antivirus, don't worry, it's completely safe, it only appears because the application is not signed. Signing it would cost me [upwards of £500 a year](https://www.digicert.com/signing/code-signing-certificates#code_signing_key_locker).
-3) Follow the instructions on screen, make sure you download it to an appropriate path, the default is usually fine, but you should be careful about putting it into any restricted folders such as System32 or OneDrive -- many people have had issues due to this.
+3) Follow the instructions on screen, make sure you download it to an appropriate path, the default is usually fine, but you should be careful about putting it into any restricted folders such as Program Files or OneDrive -- many people have had issues due to this.
 
 ### Models
 The model you choose has a big impact on how the character behaves. Not all models work effectively, and some can cause crashes if used outside their intended purpose (e.g., using a model designed for coding/reasoning/image generation). Below are some models that have been tested and work well. (Model names may differ depending on your chosen API.)
@@ -121,7 +121,7 @@ By default, the app caches previous conversations and interactions to provide co
 > You can also manually delete the file `character_state.json` generated after the app closes.
 
 > [!TIP]
-> You can disable conversation history by setting the `"openai_message_history_size"` field in `config.json` to 0 (not recommended). Increasing this value will also improve context, but may increase costs per interaction for long conversations.
+> You can disable conversation history by setting the `"message_history_size"` field in `config.json` to 0 (not recommended). Increasing this value will also improve context, but may increase costs per interaction for long conversations.
 ## Issues
 If you encounter any issues, please do one of the following:
 
@@ -141,6 +141,7 @@ If you encounter any issues, please do one of the following:
 #### Added
 - Added an updater project that is able to automatically download new versions as and when they release.
 - Added an installer project that makes installation much easier & auto-extracts game assets.
+- Added a max_tokens entry to the config along with it's in-app setting under API > Token Limit.
 #### Fixed
 - Fixed some memory leak issues with the input handling system.
 - Fixed a bug where interactions would still occur whilst in a popup.
