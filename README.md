@@ -141,6 +141,9 @@ If you encounter any issues, please do one of the following:
 #### Added
 - Added an updater project that is able to automatically download new versions as and when they release.
 - Added an installer project that makes installation much easier & auto-extracts game assets.
+#### Fixed
+- Fixed some memory leak issues with the input handling system.
+- Fixed a bug where interactions would still occur whilst in a popup.
 #### Changed
 - Improved the input handling system which should now be more stable.
 - Changed the 'Close' button to be 'Quit' and removed it from certain parts like in settings.
