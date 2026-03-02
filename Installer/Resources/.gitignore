@@ -1,0 +1,7 @@
+# Ignore files inside 'Private'
+# There not actually private or anything,
+# but they're meant to be switched out often
+# for builds, so we dont want to include it
+# in the repo
+[Pp]rivate/*
+![Pp]rivate/.gitkeep

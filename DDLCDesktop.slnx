@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="DDLCDesktop/DDLCDesktop.vcxproj" Id="52d1bd1f-1f13-40fb-b246-7c7f78ed6e98" />
+  <Project Path="Installer/Installer.csproj" Id="ce16b32a-a383-4575-809e-727387dc90a2" />
+  <Project Path="Updater/Updater.vcxproj" Id="de89da4d-77f6-4e74-94b2-bef53cd2fc9d" />
+</Solution>

@@ -1,162 +1,101 @@
 <div align="center">
-  <img src=".\assets\logo-circle.png" alt="Logo" height="230px">
+  <img src="./assets/logo-circle.png" alt="DDLC Desktop logo" height="230" />
   <h1>DDLC Desktop</h1>
   <p>Ever wondered what it would be like to have your own DDLC character on your desktop? Well now you can!</p>
   <p>
-    <img src="https://img.shields.io/badge/status-stable-green" alt="Status: Stable">
-    <img src="https://img.shields.io/badge/latest_version-1.1.1-red" alt="Latest: 1.1.1">
+    <img src="https://img.shields.io/badge/status-stable-green" alt="Status: Stable" />
+    <img src="https://img.shields.io/github/v/release/swzldev/DDLCDesktop" alt="Latest release" />
   </p>
 
-  [Discord] | [Features] | [Installation] | [Controls] | [Issues] | [Changelog] | [Contributing] | [License]
+  <p>
+    <a href="https://discord.gg/x6a9AF2aSx">Discord</a> |
+    <a href="#features">Features</a> |
+    <a href="#installation">Installation</a> |
+    <a href="#controls">Controls</a> |
+    <a href="#issues">Issues</a> |
+    <a href="#changelog">Changelog</a> |
+    <a href="#contributing">Contributing</a> |
+    <a href="#license">License</a>
+  </p>
 </div>
-
-[Discord]: https://discord.gg/x6a9AF2aSx
-[Features]: #features
-[Installation]: #installation
-[Controls]: #controls
-[Issues]: #issues
-[Changelog]: #changelog
-[Contributing]: #contributing
-[License]: #license
-
-> [!IMPORTANT]
-> This application does not work out of the box - make sure you read the installation instructions carefully before use.
 
 > [!IMPORTANT]
 > Disclaimer: This is an unofficial, fan-made application and is not affiliated with, endorsed by, or approved by Team Salvato.
 > *Doki Doki Literature Club* and all related characters, assets, and trademarks are © Team Salvato.
 > This application does not include or distribute any copyrighted assets. Users must own a legitimate copy of Doki Doki Literature Club and provide their own game files.
 
-<h2>Features</h2>
-<ul>
-  <li>An interactive DDLC character that sits on your desktop and talks to you.</li>
-  <li>Real AI interactions using modern LLM APIs (OpenAI, OpenRouter, etc.).</li>
-  <li>Respond similar to how you would in the game with a set of 1-4 options, or optionally a custom message.</li>
-  <li>They react to things you do - currently its fairly limited though.</li>
-</ul>
+## Features
+- An interactive DDLC character that sits on your desktop and talks to you.
+- Real AI interactions using the `v1/responses` (OpenAI) API request format.
+- Talk to them like in the game with a set of options or a custom message.
 
-<h2>Installation</h2>
-<p>Installation is fairly simple however there are a few nuances before you can be up and running.</p>
+## Installation
+As of v2.0.0, installation is super simple and only takes a few steps.
 
-<p>Since the installation can be quite confusing, for non-tech savvy users, read the following message carefully.</p>
+1) Download the latest release of the installer [here](https://github.com/swzldev/DDLCDesktop/releases). (You'll want the one called DDLCDesktop-Installer-vX.X.X.exe)
+2) Run the installer -- you may need to disable your antivirus, don't worry, it's completely safe, it only appears because the application is not signed. Signing it would cost me [upwards of £500 a year](https://www.digicert.com/signing/code-signing-certificates#code_signing_key_locker).
+3) Follow the instructions on screen, make sure you download it to an appropriate path, the default is usually fine, but you should be careful about putting it into any restricted folders such as Program Files or OneDrive -- many people have had issues due to this.
 
-<p>There is a <a href="https://www.youtube.com/watch?v=a_A4Sm2gPh0">YouTube guide</a> (**DONT CLICK IT YET**), that explains everything in detail. HOWEVER, I am very lazy and havn't had time to remake it, you should ONLY watch 0:00-4:41, aka the game asset extraction and font installation. When downloading newer versions you will notice there is NO `config.json` file - This is intentional! Once you're at this stage you can open the application and let Monika guide you through instead of doing it manually. When I reupdate the tutorial I will remove this message but please stop telling me there's no config file, IT'S INTENTIONAL!</p>
+### Models
+The model you choose has a big impact on how the character behaves. Not all models work effectively, and some can cause crashes if used outside their intended purpose (e.g., using a model designed for coding/reasoning/image generation). Below are some models that have been tested and work well. (Model names may differ depending on your chosen API.)
 
-<p>If you're fine with a written guide you can simply follow the instructions here. First install the application binaries from the <a href="https://github.com/swzldev/DDLCDesktop/releases">releases</a> page (make sure you pick the one at the top). It should be called something like: <code>DDLCDesktop-*.*.*.zip</code></p>
-<p>Once downloaded, extract the contents somewhere (make sure it's not somewhere with limited permissions such as Program Files or System32).</p>
+#### OpenRouter
+- `"meta-llama/llama-3.3-70b-instruct:free"` - Probably the best free model, works very well.
+- `"openai/gpt-4o-mini"` - Good general purpose model, cheap and effective.
+- `"openai/gpt-4.1"` - My personal favourite, realistic responses but slightly more expensive.
 
-<p>Once extracted simply follow the instructions below:</p>
-
-<h3>Assets</h3>
-<p>For copyright reasons, the DDLC assets are not provided as part of the application, but you can extract them from the game very easily in just a few steps.</p>
-<ol>
-  <li>Download <a href="https://iwanplays.itch.io/rpaex">RPA Extract</a>.</li>
-  <li>Open the DDLC installation directory and go into the "game" folder. Once inside drag the "images.rpa" file onto the rpaExtract.exe executable.</li>
-  <li>Back in the "DDLC/game" folder, 2 new directories should appear, "images" and "gui", drag both of them into the "assets" folder of JustMonika.</li>
-</ol>
-<p>If you're confused you can use the visual diagram below:</p>
-<img width="1668" height="801" alt="image" src="https://github.com/user-attachments/assets/82ba9a7e-7535-418e-9642-593cc6c8c1c2" />
-
-<h3>Font (OPTIONAL)</h3>
-<p>By default Just Monika attempts to use 3 fonts, "Aller" -> "Segoe UI" -> "Arial". If you want it to use the original DDLC font (Aller), you will need to install it onto your system. Again, it is not provided with the binaries for copyright reasons, but you can download it for free <a href="https://www.1001fonts.com/aller-font.html">here</a>.<p>
-
-> [!IMPORTANT]
-> On versions past 1.1.0, the rest of the installation process is now built into the app. As long as you've completed the two steps above, you can open JustMonika.exe and follow the instructions that should appear. I will keep the legacy guide below for reference, as some of it may still be useful (for example, inside the app's settings menu it is useful to see the different character preset names, etc.)
-> You should also note that all the config.json options are now built into the app under the "settings" button. You should no longer ever need to modify config.json manually.
-
-<h3>Config.json & API Key</h3>
-<p>Next to JustMonika.exe there is a file called config.json. Open this file in a text editor and you will see the following:</p>
-<pre><code>{
-  "api": "openrouter",
-  "api_key": "&lt;your api key&gt;",
-  "model": "",
-  "message_history_size": 6,
-  "user_name": "&lt;your name&gt;",
-  "behaviour_preset": "default",
-  "character": "monika"
-}
-</code></pre>
-<ul>
-  <li><code>"api"</code>: The API to use: "openai", "openrouter", or "custom". OpenRouter is recommended as it has a free tier. Use "custom" for local LLMs or other OpenAI-compatible endpoints.</li>
-  <li><code>"api_key"</code>: Your API key for the chosen API.</li>
-  <li><code>"model"</code>: The model to use for the character. If you don't know what to choose you can find info in the models section of this guide.</li>
-  <li><code>"message_history_size"</code>: The number of previous messages to keep in context for the character. Higher values will improve context but may increase costs. A good number is usually 6-10</li>
-  <li><code>"user_name"</code>: The name the character will call you.</li>
-  <li><code>"behaviour_preset"</code>: The behaviour preset for the character. More info in the behaviour presets section  of  this guide.</li>
-  <li><code>"character"</code>: The character to use. More info in the characters section of this guide.</li>
-</ul>
-
-<h4>Models:</h4>
-<p>The model you choose will have a big impact on how the character behaves. Additionally, not all models work effectively and some will cause crashes if not used for their intended purpose (e.g. using a model designed for coding, or reasoning, image generation, etc.). Below are some models that have been tested and are effective along with any additional info. Note the model names may differ depending on your chosen API.</p>
-<h5>OpenRouter:</h5>
-<ul>
-  <li><code>"meta-llama/llama-3.3-70b-instruct:free"</code> - Probably the best free model, works very well.</li>
-  <li><code>"openai/gpt-4o-mini"</code> - Good general purpose model, cheap and effective.</li>
-  <li><code>"openai/gpt-4.1"</code> - My personal favourite, realistic responses but slightly more expensive.</li>
-</ul>
-<h5>OpenAI:</h5>
-<ul>
-  <li><code>"gpt-4o-mini"</code> - Good general purpose model, cheap and effective.</li>
-  <li><code>"gpt-4.1"</code> - My personal favourite, realistic responses but slightly more expensive.</li>
-</ul>
+#### OpenAI
+- `"gpt-4o-mini"` - Good general purpose model, cheap and effective.
+- `"gpt-4.1"` - My personal favourite, realistic responses but slightly more expensive.
 
 > [!TIP]
 > If you've found a model that works well, please let me know on the discord so I can update the documentation!
 
-<h5>Custom Endpoints:</h5>
-<p>If you want to use a local LLM server or other OpenAI-compatible API, set <code>"api": "custom"</code> and configure your endpoint URL via the in-app Settings menu (Settings → API → Endpoint). The following software has been tested:</p>
-<ul>
-  <li><strong>LM Studio</strong> - Set endpoint to <code>http://localhost:1234/v1/responses</code></li>
-  <li><strong>Ollama</strong> - With OpenAI compatibility layer</li>
-  <li><strong>Text Generation WebUI</strong> - With OpenAI API extension</li>
-  <li><strong>LocalAI</strong> - Any OpenAI-compatible local server</li>
-</ul>
+### Custom endpoints
+If you want to use a local LLM server or other OpenAI-compatible API, set `"api": "custom"` and configure your endpoint URL via the in-app Settings menu (Settings -> API -> Endpoint). The following software has been tested:
+
+- **LM Studio** - Set endpoint to `http://localhost:1234/v1/responses`
+- **Ollama** - With OpenAI compatibility layer
+- **Text Generation WebUI** - With OpenAI API extension
 
 > [!IMPORTANT]
-> Custom endpoints must be OpenAI API compatible and support the <code>/v1/responses</code> endpoint format. Make sure to include the full URL path in your endpoint configuration.
+> Custom endpoints must be OpenAI API compatible and support the `/v1/responses` endpoint format. Make sure to include the full URL path in your endpoint configuration.
 
 > [!TIP]
 > Some local servers don't require an API key. In that case, you can leave the API Key field empty or enter any placeholder value.
 
-<h4>Characters:</h4>
-<ul>
-  <li><code>"monika"</code> - Monika (default)</li>
-  <li><code>"yuri"</code> - Yuri</li>
-  <li><code>"natsuki"</code> - Natsuki</li>
-  <li><code>"sayori"</code> - Sayori</li>
-</ul>
+### Characters
+- `"monika"` - Monika (default)
+- `"yuri"` - Yuri
+- `"natsuki"` - Natsuki
+- `"sayori"` - Sayori
 
-<h4>Behaviour Presets:</h4>
-<h5>Monika:</h5>
-<ul>
-  <li><code>"postgame"</code> - Post-game Monika (default)</li>
-  <li><code>"romantic"</code> - Monika acts more flirty and romantic</li>
-  <li><code>"confident"</code> - Monika acts more confident</li>
-  <li><code>"obsessive"</code> - Monika acts more crazy, confident and obsessive</li>
-  <li><code>"shy"</code> - Monika acts more shy and playful</li>
-</ul>
-<h5>Yuri:</h5>
-<ul>
-  <li><code>"postgame"</code> - Post-game Yuri (default)</li>
-  <li><code>"romantic"</code> - Yuri acts more romantic (similar to act 1)</li>
-  <li><code>"obsessive"</code> - Yuri acts more crazy and obsessive (similar to act 2)</li>
-  <li><code>"shy"</code> - Yuri acts more shy and hesitant</li>
-</ul>
-<h5>Natsuki:</h5>
-<ul>
-  <li><code>"postgame"</code> - Post-game Natsuki (default)</li>
-  <li><code>"romantic"</code> - Natsuki acts more romantic but tries to hide it</li>
-  <li><code>"hurt"</code> - Natsuki acts more hurt/abandoned (kind of similar to act 2)</li>
-  <li><code>"playful"</code> - Natsuki acts more playful and relaxed (similar to her baking hangout before the festival)</li>
-</ul>
-<h5>Sayori:</h5>
-<ul>
-  <li><code>"postgame"</code> - Postgame Sayori (default)</li>
-  <li><code>"depressed"</code> - Sayori acts more melancholy and sad (similar to the end of act 1)</li>
-  <li><code>"happy"</code> - Sayori acts more happy and bubbly (similar to the start of act 1)</li>
-  <li><code>"romantic"</code> - Sayori acts romantic</li>
-  <li><code>"obsessive"</code> - Sayori acts more obsessive and condident (like the end of act 4)</li>
-</ul>
+### Behaviour presets
+#### Monika
+- `"postgame"` - Post-game Monika (default)
+- `"romantic"` - Monika acts more flirty and romantic
+- `"confident"` - Monika acts more confident
+- `"obsessive"` - Monika acts more crazy, confident and obsessive
+- `"shy"` - Monika acts more shy and playful
+
+#### Yuri
+- `"postgame"` - Post-game Yuri (default)
+- `"romantic"` - Yuri acts more romantic (similar to act 1)
+- `"obsessive"` - Yuri acts more crazy and obsessive (similar to act 2)
+- `"shy"` - Yuri acts more shy and hesitant
+
+#### Natsuki
+- `"postgame"` - Post-game Natsuki (default)
+- `"romantic"` - Natsuki acts more romantic but tries to hide it
+- `"hurt"` - Natsuki acts more hurt/abandoned (kind of similar to act 2)
+- `"playful"` - Natsuki acts more playful and relaxed (similar to her baking hangout before the festival)
+
+#### Sayori
+- `"postgame"` - Postgame Sayori (default)
+- `"depressed"` - Sayori acts more melancholy and sad (similar to the end of act 1)
+- `"happy"` - Sayori acts more happy and bubbly (similar to the start of act 1)
+- `"romantic"` - Sayori acts romantic
+- `"obsessive"` - Sayori acts more obsessive and condident (like the end of act 4)
 
 > [!TIP]
 > Make sure you type everything into the config in lowercase exactly how it's written above - it's case sensitive!
@@ -164,46 +103,52 @@
 > [!TIP]
 > Stuck? Join the [discord](https://discord.gg/x6a9AF2aSx) (In there you can also find a YouTube tutorial that goes through everything in detail).
 
-<h2>Controls</h2>
-<p>The controls are made up of a number of events that Monika listens for:</p>
+## Controls
+The controls are made up of a number of events that the character listens for:
 
-<h3>Application interactions:</h3>
-<ul>
-  <li>Opening the app: Opening the app will prompt the chosen character to start up a conversation.</li>
-  <li>Clicking them: Clicking them when they're not speaking will prompt them to begin a conversation. Whilst in a conversation, clicking will move to the next sentence.</li>
-  <li>Closing the app: To close the app you can press the 'close' button at the bottom of the dialogue box, the character will be notified when you close their window and the next time you open them they won't have forgotten.</li>
-</ul>
+### Application interactions
+- **Opening the app:** Opening the app prompts the chosen character to start a conversation.
+- **Clicking them:** Clicking them when they're not speaking prompts them to begin a conversation. Whilst in a conversation, clicking moves to the next sentence.
+- **Closing the app:** Press the **Close** button at the bottom of the dialogue box. The character will be notified when you close their window and the next time you open them they won't have forgotten.
 
-<h3>User interactions:</h3>
-<ul>
-  <li>Responding to them: After a conversation has finished, they may give a number of options you can choose to reply with by pressing the corresponding key: 1, 2, 3 or 4. You can also press the "Custom" button to type your own reply. Whilst in custom mode, you can press the "Actions" button to toggle back to the available actions.</li>
-</ul
+### User interactions
+- **Responding to them:** After a conversation finishes, they may give up to 4 options you can reply with by pressing the corresponding key: 1, 2, 3 or 4. You can also press the **Custom** button to type your own reply. Whilst in custom mode, you can press the **Actions** button to toggle back to the available actions.
 
-<h3>Resetting conversations</h3>
-<p>By default, the app will cache previous conversations and interactions to provide context and a more immersive experience. However, if you want to reset the conversation history, you can click the "Reset" button in the textbox. Note that clicking it while in the "thinking" state (displaying the 3 dots) won't work. You need to click it mid conversation to reset correctly.</p>
+### Resetting conversations
+By default, the app caches previous conversations and interactions to provide context and a more immersive experience. If you want to reset the conversation history, click the **Reset** button in the textbox. Note that clicking it while in the "thinking" state (displaying the 3 dots) won't work — you need to click it mid conversation to reset correctly.
 
 > [!TIP]
-> You can also manually delete the file <code>character_state.json</code> generated after the app closes.
+> You can also manually delete the file `character_state.json` generated after the app closes.
 
 > [!TIP]
-> You can disable conversation history by setting the <code>"openai_message_history_size"</code> field in config.json to 0 (Not reccomended). Increasing this value will also improve context, but may increase costs per interaction for long conversations.
+> You can disable conversation history by setting the `"message_history_size"` field in `config.json` to 0 (not recommended). Increasing this value will also improve context, but may increase costs per interaction for long conversations.
+## Issues
+If you encounter any issues, please do one of the following:
 
-<h2>Issues</h2>
-<p>If you encounter any issues, please do one of the following:</p>
+- Read through the known issues below.
+- Join the Discord and report it in the `#bug-report` channel (preferred — I'm most active there and can often help with troubleshooting).
+- Open an issue on the [GitHub issues page](https://github.com/swzldev/DDLCDesktop/issues). Please include as much information as possible: your `config.json` settings, API used, model used, and any error messages. As a minimum, upload `log.txt`, a screenshot of the error (if applicable), and the `mini_dump.mdmp` dump file (if one was created), plus what you were doing before the crash occurred.
 
-<ul>
-  <li>Read through the known issues below.</li>
-  <li>Join the discord and report it in the #bug-report channel - This is the preferred method as I am most active on there and can often help with troubleshooting.</li>
-  <li>Open an issue on the <a href="https://github.com/swzldev/DDLCDesktop/issues">GitHub issues page</a> - Please make sure to include as much information as possible including your config.json settings, API used, model used and any error messages you may have received. As a minimum you should upload the log.txt, a screenshot of the error (if applicable) and the mini_dump.mdmp dump file (if one was created), plus whatever you we're doing before the crash occurred.</li>
-</ul>
+### Known issues
+- Some models may produce invalid outputs causing crashes. If this happens, try resetting or switching to a different model. This should prompt an in-app error where the character will tell you something has gone wrong, but you can also try resetting and see if that solves your issue.
+- Stuck in a cycle of the character telling you the API response failed:
+  - If it happens very quickly (the character only thinks for a second or two), your API key is likely invalid or out of credits.
+  - If it happens after a longer period (10+ seconds), the model may be producing invalid outputs causing crashes. Try switching to a different model or resetting using the **Reset** button.
 
-<h3>Known Issues</h3>
-<ul>
-  <li>Some models may produce invalid outputs causing crashes. If this happens, try resetting or switching to a different model. This should prompt an in-app error where Monika will tell you if something has gone wrong but just incase you can try to reset it and see if that solves your issue.</li>
-  <li>Stuck on a cycle of Monika telling you the API response failed. If it happens very quickly (i.e. the character only thinks for a second or two before telling you the API response failed) then it's likely your API key is invalid or has run out of credits. If it happens after a longer period of time (i.e. 10+ seconds) then it's likely the model is producing invalid outputs causing crashes. Try switching to a different model or resetting using the "Reset" button.</li>
-</ul>
+## Changelog
 
-<h2>Changelog</h2>
+### [2.0.0]
+#### Added
+- Added an updater project that is able to automatically download new versions as and when they release.
+- Added an installer project that makes installation much easier & auto-extracts game assets.
+- Added a max_tokens entry to the config along with it's in-app setting under API > Token Limit.
+#### Fixed
+- Fixed some memory leak issues with the input handling system.
+- Fixed a bug where interactions would still occur whilst in a popup.
+#### Changed
+- Improved the input handling system which should now be more stable.
+- Changed the 'Close' button to be 'Quit' and removed it from certain parts like in settings.
+- Improved some error messages.
 
 ### 1.1.1 [25/01/2026]
 - Added support for custom endpoints (local LLM servers, etc.)
@@ -252,8 +197,8 @@
 - Added fallbacks for when the AI generates bad character poses/expressions to prevent crashes.
 - Fixed various bugs and improved stability.
 
-<h2>Contributing</h2>
-<p>This application is written pretty poorly, as I made it in a single day, therefore I'll likely accept most contributions so feel free to do so.</p>
+## Contributing
+This application is written pretty poorly (I made it in a single day), so I'll likely accept most contributions — feel free to jump in.
 
-<h2>License</h2>
-<p>MIT license, feel free to do whatever you want with it, I don't really care, I made this just as a fun side project.</p>
+## License
+MIT license — feel free to do whatever you want with it. I made this as a fun side project.
