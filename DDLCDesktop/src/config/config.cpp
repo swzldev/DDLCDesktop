@@ -62,7 +62,7 @@ void config::load() {
 	// message history size
 	cfg->message_history_size = j.value("message_history_size", 6);
 	// max tokens
-	cfg->max_tokens = j.value("max_tokens", 0);
+	cfg->max_tokens = j.value("max_tokens", 2000);
 
 	// pronouns
 	cfg->pronouns = j.value("pronouns", "he/him");
