@@ -25,6 +25,10 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
+namespace {
+	bool checked_for_update_session = false;
+}
+
 character_logic::character_logic(window* window) {
 	window_ = window;
 
@@ -49,7 +53,7 @@ character_logic::character_logic(window* window) {
 		character_interaction interaction(character_interaction::kind::CLICK);
 		handle_interaction(interaction);
 		return 0;
-		});
+	});
 }
 character_logic::~character_logic() {
 	if (ai) {
@@ -192,9 +196,10 @@ void character_logic::awake() {
 	else {
 		show_main_menu();
 
-		if (update_available()) {
+		if (!checked_for_update_session && update_available()) {
 			in_update_ = true;
 			show_update_menu();
+			checked_for_update_session = true;
 		}
 		else {
 			// window opened
