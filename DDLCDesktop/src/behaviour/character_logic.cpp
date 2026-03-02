@@ -500,7 +500,6 @@ void character_logic::show_settings_api_menu() {
 			: config_->custom_endpoint;
 		message += "Endpoint: " + endpoint_display + "\n";
 	}
-	message += "API Key: [Hidden]\n";
 	message += "Choose an option...";
 	visuals->set_saying(message);
 
@@ -548,6 +547,31 @@ void character_logic::show_settings_api_menu() {
 												  show_settings_api_menu();
 											  });
 						 } });
+	visuals->add_button({ "Token Limit", [this]() {
+		await_input_custom("Enter Token Limit (0 for infinite): ", std::to_string(config_->max_tokens),
+			[this](bool success, const std::string& value) {
+				if (success) {
+					try {
+						int tokens = std::stoi(value);
+						if (tokens <= 0) {
+							visuals->show_message("Please enter a positive integer for token limit.");
+						}
+						else {
+							if (tokens != 0 && tokens < 500) {
+								visuals->show_message("Warning: Setting a very low token limit (<500) may cause bugs, it is not recommended.");
+							}
+
+							config_->max_tokens = tokens;
+							config::save(); // save config
+						}
+					}
+					catch (const std::exception&) {
+						visuals->show_message("Invalid input. Please enter a valid integer for token limit.");
+					}
+				}
+				show_settings_api_menu();
+			});
+	} });
 	if (config_->api == api::CUSTOM) {
 		visuals->add_button(
 			{ "Endpoint", [this]() {
@@ -769,7 +793,7 @@ void character_logic::await_input_custom(const std::string& prompt, const std::s
 
 	input::begin_input_recording(&settings_input_.buffer, INPUT_MAX_LENGTH, [this]() {
 		finish_settings_input(true);
-		});
+	});
 
 	state_ = logic_state::AWAITING_INPUT_SETTINGS;
 }
