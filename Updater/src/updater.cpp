@@ -76,12 +76,12 @@ void updater::perform_update(const std::string& version) {
 	}
 
 	json tag_response =
-		json::parse(requestor_.request("https://api.github.com/repos/swzldev/DDLCDesktop/releases/tags/" + v));
+		json::parse(requestor_.request("https://api.github.com/repos/swzldev/DDLCDesktop/releases/tags/v" + v));
 
 	std::string update_zip;
 	for (const auto& asset : tag_response["assets"]) {
 		std::string asset_name = asset.value("name", "");
-		if (asset_name == "DDLCDesktop-" + v + ".zip") {
+		if (asset_name == "DDLCDesktop-v" + v + ".zip") {
 			update_zip = asset.value("browser_download_url", "");
 			break;
 		}
@@ -158,11 +158,7 @@ bool updater::validate_version(const std::string& version) {
 	}
 	
 	// invalid versions
-	if (version == "1.0.0"
-		|| version == "1.0.0-alpha"
-		|| version == "1.0.0-beta"
-		|| version == "1.1.0"
-		|| version == "1.1.1") {
+	if (version_greater("2.0.0", version)) {
 		output::print("Note: versions before 2.0.0 don't support the updater.");
 		return false;
 	}
@@ -291,7 +287,6 @@ bool updater::create_update_script(const fs::path& update_dir, const fs::path& i
 
 	script << "echo Cleaning up...\n";
 	script << "rd /s /q \"" << update_dir.parent_path().string() << "\"";
-	script << "(goto) 2>nul & del \"%~f0\"\n";
 
 	script.close();
 	return true;
