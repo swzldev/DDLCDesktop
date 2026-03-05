@@ -1,3 +1,5 @@
 #pragma once
 
-void d_panic(const char* message);
+#include <string>
+
+void d_panic(const std::string& message);

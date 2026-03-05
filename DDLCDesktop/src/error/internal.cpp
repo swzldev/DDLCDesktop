@@ -1,8 +1,9 @@
 #include <error/internal.h>
 
 #include <Windows.h>
+#include <string>
 
-void d_panic(const char* message) {
+void d_panic(const std::string& message) {
 	MessageBoxA(NULL, message, "Fatal Runtime Error", MB_ICONERROR | MB_OK);
 	exit(1);
 }
