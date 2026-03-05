@@ -4,8 +4,8 @@
 #include <memory>
 #include <string>
 
-#include <behaviour/ai/character_ai.h>
 #include <behaviour/character_interaction.h>
+#include <ai/character_ai.h>
 #include <config/config.h>
 #include <ddlc/characters.h>
 #include <error/ddlcd_runtime_error.h>

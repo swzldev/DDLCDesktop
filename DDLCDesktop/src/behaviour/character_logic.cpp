@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #include <ddlc_desktop.h>
-#include <behaviour/ai/character_ai.h>
+#include <ai/character_ai.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/character_state.h>
 #include <config/config.h>

@@ -1,4 +1,4 @@
-#include <behaviour/ai/system_prompts.h>
+#include <ai/system_prompts.h>
 
 #include <stdexcept>
 #include <string>

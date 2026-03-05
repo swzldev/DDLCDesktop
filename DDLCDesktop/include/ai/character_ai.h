@@ -10,7 +10,7 @@
 #include <ddlc/characters.h>
 #include <behaviour/character_state.h>
 #include <behaviour/character_interaction.h>
-#include <behaviour/ai/ai_api.h>
+#include <ai/ai_api.h>
 #include <config/config.h>
 
 #include <nlohmann/json.hpp>

@@ -14,8 +14,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include <behaviour/ai/ai_api.h>
-#include <behaviour/ai/system_prompts.h>
+#include <ai/ai_api.h>
+#include <ai/system_prompts.h>
 #include <behaviour/character_interaction.h>
 #include <config/config.h>
 #include <error/ddlcd_runtime_error.h>
