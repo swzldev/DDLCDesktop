@@ -4,6 +4,6 @@
 #include <string>
 
 void d_panic(const std::string& message) {
-	MessageBoxA(NULL, message, "Fatal Runtime Error", MB_ICONERROR | MB_OK);
+	MessageBoxA(NULL, message.c_str(), "Fatal Runtime Error", MB_ICONERROR | MB_OK);
 	exit(1);
 }
