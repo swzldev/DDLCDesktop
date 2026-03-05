@@ -18,6 +18,15 @@ public:
 	}
 	~json_message_repository() = default;
 
+	void reset_all() override {
+		messages_.clear();
+		save();
+	}
+	void reset_channel(int channel) override {
+		messages_.erase(channel);
+		save();
+	}
+
 	std::vector<ai_message> get_messages(int channel = 0) override;
 	void save_message(int channel = 0, const std::string& role, const std::string& content) override;
 
