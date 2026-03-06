@@ -27,7 +27,7 @@ public:
 
 private:
 	static constexpr UINT WM_TRAYICON = WM_APP + 1;
-	static constexpr UINT TRAY_ICON_ID = 599;
+	static constexpr UINT TRAY_ICON_ID = 1;
 	static constexpr UINT ID_DYNAMIC_FIRST = 1001;
 
 private:
