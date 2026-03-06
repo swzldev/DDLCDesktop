@@ -76,4 +76,9 @@ void json_message_repository::save()
 		
 		channels_json.push_back(channel_json);
 	}
+
+	j["channels"] = channels_json;
+
+	std::ofstream file(file_path_);
+	file << j.dump(4);
 }
