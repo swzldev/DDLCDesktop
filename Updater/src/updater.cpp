@@ -193,6 +193,8 @@ bool updater::version_greater(const std::string& v1, const std::string& v2) {
 	if (major1 != major2) return major1 > major2;
 	if (minor1 != minor2) return minor1 > minor2;
 	if (patch1 != patch2) return patch1 > patch2;
+	
+	return false; // might change this
 }
 
 void updater::apply_update(const fs::path& update_dir) {
