@@ -424,7 +424,7 @@ void character_logic::show_setup(unsigned int step) {
 		// done
 		in_setup_ = false;
 		config::save();
-		reset_all();
+		reset_fully(true);
 	}
 }
 
@@ -461,7 +461,7 @@ void character_logic::show_main_menu() {
 			if (state_ == logic_state::THINKING) {
 				return; // dont reset while thinking
 			}
-			reset_all();
+			reset_fully();
 		}
 	});
 	visuals->add_button({ "Custom",
@@ -650,8 +650,7 @@ void character_logic::show_settings_character_menu() {
 	visuals->set_saying(message);
 
 	// set buttons
-	visuals->add_button({ "Switch character",
-						 [this]() { show_settings_character_change_menu(); } });
+	visuals->add_button({ "Switch character", [this]() { show_settings_character_change_menu(); } });
 	visuals->add_button(
 		{ "Preset", [this]() {
 			await_input_custom("Enter new behaviour preset: ", config_->behaviour_preset,
@@ -663,7 +662,7 @@ void character_logic::show_settings_character_menu() {
 												[this, value](int result) {
 													if (result == 0) {
 														config_->behaviour_preset = value;
-														reset_all();
+														reset_fully();
 													}
 												});
 						}
@@ -716,14 +715,7 @@ void character_logic::show_settings_character_change_menu() {
 			visuals->show_message("You cannot change to the same character.");
 		}
 		else
-			visuals->show_popup(
-				"Warning: Changing the character will reset all progress. Continue?",
-				[this, ch](int result) {
-					if (result == 0) {
-						// user confirmed
-						set_character(ch);
-					}
-				});
+			set_character(ch);
 		};
 
 	// set buttons
@@ -885,11 +877,8 @@ int character_logic::get_choice_input(int num_choices) {
 	return choice;
 }
 
-void character_logic::reset_all() {
-	// cleanup
-	repo->reset_all();
-
-	ai->cancel_and_reset();
+void character_logic::reset() {
+	ai->cancel();
 	current_state.interactions.clear();
 	interaction_index_ = 0;
 	error_state_ = error_state::NONE;
@@ -902,6 +891,16 @@ void character_logic::reset_all() {
 	// start new interaction
 	character_interaction interaction(character_interaction::kind::WINDOW_OPEN);
 	begin_think(interaction);
+}
+void character_logic::reset_fully(bool all_characters) {
+	if (all_characters) {
+		repo->reset_all();
+	}
+	else {
+		repo->reset_channel((int)character_);
+	}
+
+	reset();
 }
 
 void character_logic::begin_think(const character_interaction& interaction) {
@@ -988,7 +987,7 @@ void character_logic::advance_interaction() {
 		// end of conversation
 		interaction_index_ = 0;
 		if (error_state_ == error_state::NON_FATAL) {
-			reset_all();
+			reset();
 		}
 		else if (error_state_ == error_state::FATAL) {
 			window_->close();
@@ -1037,11 +1036,13 @@ void character_logic::set_character(ddlc_character new_character) {
 	config_->character = character_;
 
 	if (!supports_behaviour_preset(character_, config_->behaviour_preset)) {
+		visuals->show_message("Current behaviour preset '" + config_->behaviour_preset +
+			"' is not supported by the new character. Reverting to default preset.");
 		config_->behaviour_preset = "default";
 	}
 
 	config::save();
-	reset_all();
+	reset();
 }
 
 int character_logic::run_cmd_hidden(wchar_t* cmd, bool wait) {

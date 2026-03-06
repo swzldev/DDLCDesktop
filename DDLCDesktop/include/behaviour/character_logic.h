@@ -114,7 +114,8 @@ private:
 
     int get_choice_input(int num_choices);
 
-    void reset_all();
+    void reset();
+    void reset_fully(bool all_characters = false);
 
     void begin_think(const character_interaction& interaction);
 
