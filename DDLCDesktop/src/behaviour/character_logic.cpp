@@ -136,17 +136,17 @@ void character_logic::tick(float delta_time) {
 				visuals->set_style(current_state.style);
 
 			// handle errors
-			if (current_state.err != character_state::error::NONE) {
-				switch (current_state.err) {
+			if (current_state.error_code != character_state::error::NONE) {
+				switch (current_state.error_code) {
 				case character_state::error::FAIL_PARSE_RESPONSE_JSON:
 					handle_error(
 						ddlcd_runtime_error(ddlcd_error::FAIL_PARSE_AI_RESPONSE,
-							"Failed to parse AI response as JSON."));
+							current_state.error_message));
 					return;
 				case character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN:
 					handle_error(ddlcd_runtime_error(
 						ddlcd_error::FAIL_PARSE_AI_RESPONSE,
-						"Failed to parse AI response due to unknown format."));
+							"Failed to parse AI response due to unknown format."));
 					return;
 				default:
 					break;

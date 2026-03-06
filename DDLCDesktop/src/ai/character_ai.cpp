@@ -225,9 +225,10 @@ character_state character_ai::handle_interaction_internal(
 #endif
 
 	character_state fail_parse_state{};
-	fail_parse_state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
+	fail_parse_state.error_code = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
 
-	if (response_is_error(response)) {
+	if (std::string err = get_response_error(response); !err.empty()) {
+		fail_parse_state.error_message = err;
 		return fail_parse_state;
 	}
 
@@ -238,8 +239,9 @@ character_state character_ai::handle_interaction_internal(
 	if (!json.empty()) {
 		add_ai_msg(json);
 	}
-	else
+	else {
 		return fail_parse_state;
+	}
 
 	return parse_response(json);
 }
@@ -301,19 +303,26 @@ std::string character_ai::extract_json(const std::string& str) {
 	}
 	return "";
 }
-bool character_ai::response_is_error(const std::string& response) {
+std::string character_ai::get_response_error(const std::string& response) {
 	try {
 		auto j = json::parse(response);
 
 		if (j.contains("error") && !j["error"].is_null()) {
 			log::print("Response was an error: {}\n", j["error"].dump());
-			return true;
+			const auto& err = j["error"];
+			if (err.contains("message") && !err["message"].is_null()) {
+				return err["message"];
+			}
+			return j["error"].dump();
 		}
 	}
-	catch (...) {
-		return true;
+	catch (const std::exception& e) {
+		return std::string("Exception thrown: ") + e.what();
 	}
-	return false;
+	catch (...) {
+		return "Unknown error (likely bad json response)";
+	}
+	return "";
 }
 std::string
 character_ai::extract_content_from_response(const std::string& response) {
@@ -370,10 +379,10 @@ character_state character_ai::parse_response(const std::string& raw_response) {
 	catch (nlohmann::json::exception& e) {
 		log::print("JSON parsing error in AI response: {}\n", e.what());
 
-		state.err = character_state::error::FAIL_PARSE_RESPONSE_JSON;
+		state.error_code = character_state::error::FAIL_PARSE_RESPONSE_JSON;
 	}
 	catch (...) {
-		state.err = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
+		state.error_code = character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN;
 	}
 
 	return state;

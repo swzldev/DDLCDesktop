@@ -76,7 +76,7 @@ private:
 	std::string build_prompt(const character_interaction& interaction);
 	std::string interaction_to_message(const character_interaction& interaction);
 	std::string extract_json(const std::string& str);
-	bool response_is_error(const std::string& response);
+	std::string get_response_error(const std::string& response);
 	std::string extract_content_from_response(const std::string& response);
 	character_state parse_response(const std::string& raw_response);
 	std::string get_pose_code_left(const std::string& pose);

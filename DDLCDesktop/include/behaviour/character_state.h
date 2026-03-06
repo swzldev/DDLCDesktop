@@ -19,7 +19,7 @@ struct character_state {
 		FAIL_PARSE_RESPONSE_UNKNOWN,
 	};
 
-	error err = error::NONE;
+	error error_code = error::NONE;
 	std::string error_message;
 	std::vector<interaction> interactions;
 	std::string style;
