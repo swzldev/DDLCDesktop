@@ -29,7 +29,7 @@ void json_message_repository::load_or_create()
 		file >> j;
 
 		int version = j.value("version", -1);
-		if (version == -1 || version >= VERSION) {
+		if (version == -1 || version > VERSION) {
 			d_panic("Unsupported message repository version! Please delete " + file_path_ + " to reset!");
 		}
 
