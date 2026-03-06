@@ -85,6 +85,26 @@ widget::widget() {
 	window_ = new window(this);
 	renderer_ = window_->get_renderer();
 	logic_ = new character_logic(window_);
+
+	// create noticon (after window)
+	create_noticon();
+}
+
+void widget::create_noticon() {
+	// init
+	noticon_.initialize(L"DDLC Desktop");
+
+	// add buttons
+	noticon_.add_button(L"Quit", [this]() { noticon__quit(); });
+
+	noticon_.set_on_double_click([this]() { noticon__double_click(); });
+}
+
+void widget::noticon__double_click() {
+	window_->show(true);
+}
+void widget::noticon__quit() {
+	stop();
 }
 
 void widget::render() {

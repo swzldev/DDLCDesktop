@@ -2,6 +2,7 @@
 
 #include <chrono>
 
+#include <core/noticon.h>
 #include <core/window.h>
 #include <behaviour/character_logic.h>
 
@@ -42,6 +43,7 @@ public:
 private:
 	widget();
 
+	noticon noticon_;
 	window* window_;
 	renderer* renderer_;
 	bool running_ = true;
@@ -49,6 +51,10 @@ private:
 	std::chrono::high_resolution_clock::time_point last_time_;
 
 	character_logic* logic_;
+
+	void create_noticon();
+	void noticon__double_click();
+	void noticon__quit();
 
 	void render();
 };
