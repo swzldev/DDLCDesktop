@@ -1,4 +1,4 @@
-#include <behaviour/ai/ai_api.h>
+#include <ai/ai_api.h>
 
 #include <string>
 #include <stdexcept>
