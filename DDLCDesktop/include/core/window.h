@@ -40,6 +40,8 @@ public:
 	inline void close() { should_close_ = true; }
 	inline bool should_close() const { return should_close_; }
 
+	inline HWND get_handle() const { return hwnd_; }
+
 	// events
 	std::vector<std::function<int()>> on_mouse_click;
 	std::vector<std::function<int()>> on_mouse_move;
