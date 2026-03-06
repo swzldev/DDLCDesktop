@@ -101,6 +101,7 @@ private:
     menu_state current_menu_ = menu_state::MAIN;
     void show_main_menu();
     void show_settings_menu();
+    void show_settings_general_menu();
     void show_settings_api_menu();
     void show_settings_character_menu();
     void show_settings_character_change_menu();

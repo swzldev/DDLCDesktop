@@ -12,6 +12,7 @@
 #include <behaviour/character_interaction.h>
 #include <behaviour/character_state.h>
 #include <persistance/json_message_repository.h>
+#include <persistance/run_on_boot_helper.h>
 #include <config/config.h>
 #include <core/input.h>
 #include <core/sys.h>
@@ -481,10 +482,56 @@ void character_logic::show_settings_menu() {
 	visuals->set_saying("Choose an option...");
 
 	// set buttons
+	visuals->add_button({ "General", [this]() { show_settings_general_menu(); } });
 	visuals->add_button({ "API", [this]() { show_settings_api_menu(); } });
 	visuals->add_button({ "Character", [this]() { show_settings_character_menu(); } });
 	visuals->add_button({ "User", [this]() { show_settings_user_menu(); } });
 	visuals->add_button({ "Back", [this]() { show_main_menu(); } });
+}
+void character_logic::show_settings_general_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::SETTINGS;
+
+	visuals->set_chars_per_second(100.0f);
+
+	// set buttons
+	visuals->add_button({ "Run in background: ON",
+		[this]() {
+			config_->run_in_background = false;
+			config::save();
+		},
+		button_style::LABEL, button_type::SWAP, "Run in background: OFF",
+		[this]() {
+			visuals->show_message("Closing will now minimise the app. It can be reshown via the system tray.");
+			config_->run_in_background = true;
+			config::save();
+		},
+		nullptr, nullptr, false, !config_->run_in_background
+		}
+	);
+	visuals->add_button({ "Run on boot: ON",
+		[this]() {
+			if (!run_on_boot_helper::disable_run_on_boot()) {
+				visuals->show_message("Failed to disable run on boot. Please try again.");
+				return;
+			}
+			config_->start_on_boot = false;
+			config::save();
+		},
+		button_style::LABEL, button_type::SWAP, "Run on boot: OFF",
+		[this]() {
+			if (!run_on_boot_helper::enable_run_on_boot()) {
+				visuals->show_message("Failed to enable run on boot. Please try again.");
+				return;
+			}
+			visuals->show_message("Run on boot enabled, the application will now open at startup.");
+			config_->start_on_boot = true;
+			config::save();
+		},
+		nullptr, nullptr, false, !config_->start_on_boot
+		}
+	);
+	visuals->add_button({ "Back", [this]() { show_settings_menu(); } });
 }
 void character_logic::show_settings_api_menu() {
 	visuals->clear_buttons();

@@ -148,6 +148,7 @@
     <ClCompile Include="src\output\log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\persistance\json_message_repository.cpp" />
+    <ClCompile Include="src\persistance\run_on_boot_helper.cpp" />
     <ClCompile Include="src\utility\string_utils.cpp" />
     <ClCompile Include="src\visual\ui\button.cpp" />
     <ClCompile Include="src\visual\character_visuals.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="include\output\log.h" />
     <ClInclude Include="include\persistance\imessage_repository.h" />
     <ClInclude Include="include\persistance\json_message_repository.h" />
+    <ClInclude Include="include\persistance\run_on_boot_helper.h" />
     <ClInclude Include="include\utility\string_utils.h" />
     <ClInclude Include="include\visual\ui\button.h" />
     <ClInclude Include="include\visual\character_visuals.h" />
