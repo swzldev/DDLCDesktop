@@ -13,7 +13,7 @@ std::vector<ai_message> json_message_repository::get_messages(int channel) {
 	}
 	return {};
 }
-void json_message_repository::save_message(int channel, const std::string& role, const std::string& content) {
+void json_message_repository::save_message(const std::string& role, const std::string& content, int channel) {
 	messages_[channel].push_back({ role, content });
 	save();
 }

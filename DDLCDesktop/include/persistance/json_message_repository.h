@@ -28,7 +28,7 @@ public:
 	}
 
 	std::vector<ai_message> get_messages(int channel = 0) override;
-	void save_message(int channel = 0, const std::string& role, const std::string& content) override;
+	void save_message(const std::string& role, const std::string& content, int channel = 0) override;
 
 private:
 	std::string file_path_;

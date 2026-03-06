@@ -13,5 +13,5 @@ public:
 	virtual void reset_channel(int channel) = 0;
 
 	virtual std::vector<ai_message> get_messages(int channel) = 0;
-	virtual void save_message(int channel, const std::string& role, const std::string& content) = 0;
+	virtual void save_message(const std::string& role, const std::string& content, int channel) = 0;
 };
