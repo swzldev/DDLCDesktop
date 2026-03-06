@@ -328,7 +328,7 @@ void renderer::draw_text(const std::wstring& text, float x, float y, float width
         return;
 	}
 
-    float sf = height_;
+    float sf = static_cast<float>(height_);
 
 	x *= sf;
 	y *= sf;
