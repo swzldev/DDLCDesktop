@@ -39,7 +39,6 @@ void config::load() {
 	std::unique_ptr<config> cfg = std::make_unique<config>();
 
 	// application
-	cfg->start_on_boot = j.value("start_on_boot", false);
 	cfg->run_in_background = j.value("run_in_background", false);
 
 	// ai
@@ -120,7 +119,6 @@ bool config::save() {
 		break;
 	}
 	// application
-	j["run_on_boot"] = loaded_->start_on_boot;
 	j["run_in_background"] = loaded_->run_in_background;
 	// ai
 	j["api_key"] = loaded_->api_key;

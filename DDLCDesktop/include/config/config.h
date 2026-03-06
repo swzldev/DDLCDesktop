@@ -18,7 +18,6 @@ public:
   static config *get();
 
   // application
-  bool start_on_boot;
   bool run_in_background;
 
   // api
