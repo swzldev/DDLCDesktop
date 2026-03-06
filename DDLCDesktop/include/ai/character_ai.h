@@ -10,6 +10,7 @@
 #include <ddlc/characters.h>
 #include <behaviour/character_state.h>
 #include <behaviour/character_interaction.h>
+#include <persistance/imessage_repository.h>
 #include <ai/ai_api.h>
 #include <config/config.h>
 
@@ -26,8 +27,9 @@ public:
 	bool is_response_ready() const;
 	character_state get_response();
 
-	void save_state(const char* path);
-	void load_state(const char* path);
+	inline void set_repository(imessage_repository* repo) {
+		repo_ = repo;
+	}
 	void reset_state();
 	void cancel_and_reset();
 
@@ -37,13 +39,8 @@ public:
 
 private:
 	config* config_ = nullptr;
+	imessage_repository* repo_ = nullptr;
 	ai_api* api_;
-
-	struct message {
-		std::string role;
-		std::string content;
-	};
-	std::vector<message> conversation_history_;
 
 	std::thread worker_;
 	std::atomic<bool> stop_worker_{ false };
@@ -56,19 +53,23 @@ private:
 	mutable std::mutex mutex_;
 	std::condition_variable cv_;
 
-	void request_cancel();
-
-	inline void add_to_history(const std::string& role, const std::string& content) {
-		conversation_history_.push_back({ role, content });
-		// limit history size (dont include system prompt)
-		if (conversation_history_.size() > config_->message_history_size + 1) {
-			conversation_history_.erase(conversation_history_.begin() + 1);
-		}
+	inline int get_cur_channel() {
+		return (int)config_->character;
 	}
+	inline void add_user_msg(const std::string& msg) {
+		if (!repo_) return;
+		repo_->save_message("user", msg, get_cur_channel());
+	}
+	inline void add_ai_msg(const std::string& msg) {
+		if (!repo_) return;
+		repo_->save_message("assistant", msg, get_cur_channel());
+	}
+
+	void request_cancel();
 
 	void worker_loop();
 
-	std::string get_endpoint();
+	std::string get_endpoint() const;
 
 	character_state handle_interaction_internal(const character_interaction& interaction);
 	std::string build_prompt(const character_interaction& interaction);

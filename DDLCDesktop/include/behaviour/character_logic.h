@@ -57,6 +57,7 @@ public:
 
     character_visuals* visuals;
     character_ai* ai;
+    imessage_repository* repo;
     character_state current_state;
 
 private:

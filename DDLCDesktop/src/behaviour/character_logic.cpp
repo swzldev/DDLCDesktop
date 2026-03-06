@@ -11,6 +11,7 @@
 #include <ai/character_ai.h>
 #include <behaviour/character_interaction.h>
 #include <behaviour/character_state.h>
+#include <persistance/json_message_repository.h>
 #include <config/config.h>
 #include <core/input.h>
 #include <core/sys.h>
@@ -45,9 +46,13 @@ character_logic::character_logic(window* window) {
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
 
+	// create repo
+	fs::create_directories("data");
+	repo = new json_message_repository("data/chat_sessions.json");
+
 	// create ai
 	ai = new character_ai();
-	ai->load_state("character_state.json");
+	ai->set_repository(repo);
 
 	window_->on_mouse_click.push_back([this]() {
 		character_interaction interaction(character_interaction::kind::CLICK);
@@ -57,13 +62,13 @@ character_logic::character_logic(window* window) {
 }
 character_logic::~character_logic() {
 	if (ai) {
-		ai->save_state("character_state.json");
 		delete ai;
-		ai = nullptr;
 	}
 	if (visuals) {
 		delete visuals;
-		visuals = nullptr;
+	}
+	if (repo) {
+		delete repo;
 	}
 }
 
@@ -168,7 +173,7 @@ void character_logic::tick(float delta_time) {
 		}
 	}
 	else if (state_ == logic_state::AWAITING_CHOICE) {
-		int num_actions = current_state.actions.size();
+		int num_actions = (int)current_state.actions.size();
 		int choice = get_choice_input(num_actions);
 
 		if (choice != -1) {
@@ -300,7 +305,6 @@ void character_logic::show_setup(unsigned int step) {
 			if (!in_setup_) {
 				config::save();
 				ai->handle_close_interaction();
-				ai->save_state("character_state.json");
 			}
 
 			window_->close();
@@ -444,7 +448,6 @@ void character_logic::show_main_menu() {
 			if (!in_setup_) {
 				config::save();
 				ai->handle_close_interaction();
-				ai->save_state("character_state.json");
 			}
 
 			window_->close();
@@ -743,7 +746,7 @@ void character_logic::show_settings_user_menu() {
 }
 
 void character_logic::await_choice(bool show_immediate) {
-	int num_actions = current_state.actions.size();
+	int num_actions = (int)current_state.actions.size();
 	std::string message = "Choose an action:\n";
 	for (int i = 0; i < num_actions; i++) {
 		message += std::to_string(i + 1) + ") " + current_state.actions[i] + "    ";
@@ -888,8 +891,8 @@ void character_logic::display_current_interaction() {
 			const int screen_width = sys::display_width();
 			const int screen_height = sys::display_height();
 
-			int min_height = screen_height * 0.5f;
-			int max_height = screen_height * 0.95f;
+			int min_height = static_cast<int>(screen_height * 0.5f);
+			int max_height = static_cast<int>(screen_height * 0.95f);
 
 			int new_x_px;
 			if (inter.new_x == -1) {
@@ -1036,6 +1039,8 @@ int character_logic::run_cmd_hidden(wchar_t* cmd, bool wait) {
 		CloseHandle(pi.hProcess);
 		return ec;
 	}
+
+	return -1;
 }
 
 void character_logic::refresh_display() {
@@ -1073,7 +1078,7 @@ void character_logic::refresh_display() {
 			input_interaction.str_data = live_input_buffer_;
 			input::end_input_recording();
 			begin_think(input_interaction);
-			});
+		});
 
 		visuals->set_saying_immediate("You: " + live_input_buffer_ + "_");
 		break;
