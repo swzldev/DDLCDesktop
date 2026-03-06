@@ -31,6 +31,7 @@ public:
 		repo_ = repo;
 	}
 	void reset_state();
+	void cancel();
 	void cancel_and_reset();
 
 	std::string get_user_name() const;

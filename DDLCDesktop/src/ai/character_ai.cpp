@@ -90,6 +90,9 @@ void character_ai::reset_state() {
 		repo_->reset_channel(get_cur_channel());
 	}
 }
+void character_ai::cancel() {
+	request_cancel();
+}
 void character_ai::cancel_and_reset() {
 	request_cancel();
 	{
