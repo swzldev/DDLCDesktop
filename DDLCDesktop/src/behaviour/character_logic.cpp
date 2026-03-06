@@ -845,9 +845,7 @@ int character_logic::get_choice_input(int num_choices) {
 
 void character_logic::reset_all() {
 	// cleanup
-	if (fs::exists("character_state.json")) {
-		fs::remove("character_state.json");
-	}
+	repo->reset_all();
 
 	ai->cancel_and_reset();
 	current_state.interactions.clear();
