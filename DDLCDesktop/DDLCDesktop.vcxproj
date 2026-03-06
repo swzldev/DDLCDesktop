@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\noticon.cpp" />
     <ClCompile Include="src\ddlc\characters.cpp" />
     <ClCompile Include="src\error\error_stories.cpp" />
     <ClCompile Include="src\ai\character_ai.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="include\behaviour\character_state.h" />
     <ClInclude Include="include\config\config.h" />
     <ClInclude Include="include\core\input.h" />
+    <ClInclude Include="include\core\noticon.h" />
     <ClInclude Include="include\core\renderer.h" />
     <ClInclude Include="include\core\sys.h" />
     <ClInclude Include="include\core\widget.h" />
