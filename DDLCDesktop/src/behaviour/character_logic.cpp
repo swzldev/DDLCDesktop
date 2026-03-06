@@ -443,14 +443,9 @@ void character_logic::show_main_menu() {
 	current_menu_ = menu_state::MAIN;
 
 	// set buttons
-	visuals->add_button({ "Quit",
+	visuals->add_button({ "Close",
 		[this]() {
-			if (!in_setup_) {
-				config::save();
-				ai->handle_close_interaction();
-			}
-
-			window_->close();
+			close();
 		} }
 	);
 	visuals->add_button({"Auto",
@@ -1041,6 +1036,18 @@ int character_logic::run_cmd_hidden(wchar_t* cmd, bool wait) {
 	return -1;
 }
 
+void character_logic::close() {
+	if (config_->run_in_background) {
+		window_->hide();
+	}
+	else {
+		if (!in_setup_) {
+			config::save();
+			ai->handle_close_interaction();
+		}
+		window_->close();
+	}
+}
 void character_logic::refresh_display() {
 	switch (state_) {
 	case logic_state::IDLE:

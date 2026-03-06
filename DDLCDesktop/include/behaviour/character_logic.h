@@ -127,5 +127,6 @@ private:
 
     int run_cmd_hidden(wchar_t* cmd, bool wait = true);
 
+    void close();
     void refresh_display();
 };
