@@ -235,10 +235,6 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 	bool fatal = false;
 
 	switch (error.kind) {
-	case ddlcd_error::FAIL_OPEN_CONFIG:
-		current_state.interactions = error_stories::fail_load_config_story();
-		fatal = true;
-		break;
 	case ddlcd_error::FAIL_AI_RESPONSE:
 		current_state.interactions = error_stories::fail_ai_response_story();
 		fatal = true;

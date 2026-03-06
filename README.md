@@ -137,6 +137,15 @@ If you encounter any issues, please do one of the following:
 
 ## Changelog
 
+### [Unreleased]
+#### Added
+- Added run on boot and run in background settings under the new "general" settings tab.
+- Added a system tray icon to allow the app to be "minimised".
+#### Fixed
+#### Changed
+- Redesigned the message history system to be character-specific, this means each character holds their own history and removes the need to reset context when switching characters.
+#### Removed
+
 ### [2.0.0]
 #### Added
 - Added an updater project that is able to automatically download new versions as and when they release.
