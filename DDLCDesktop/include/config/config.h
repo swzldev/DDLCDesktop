@@ -17,13 +17,15 @@ public:
   static bool save();
   static config *get();
 
+  // application
+  bool start_on_boot;
+  bool run_in_background;
+
   // api
   api api;
   std::string api_key;
   std::string model;
-  std::string
-      custom_endpoint; // custom endpoint. this theoretically works with any api
-                       // that is compatible with openai's endpoint bullsh
+  std::string custom_endpoint;
   int message_history_size;
   int max_tokens;
 

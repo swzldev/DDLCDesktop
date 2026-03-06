@@ -38,7 +38,11 @@ void config::load() {
 
 	std::unique_ptr<config> cfg = std::make_unique<config>();
 
-	// API
+	// application
+	cfg->start_on_boot = j.value("start_on_boot", false);
+	cfg->run_in_background = j.value("run_in_background", false);
+
+	// ai
 	std::string api_str = j.value("api", "");
 	if (api_str == "openai") {
 		cfg->api = api::OPENAI;
@@ -115,25 +119,21 @@ bool config::save() {
 		j["api"] = "custom";
 		break;
 	}
-	// API key
+	// application
+	j["run_on_boot"] = loaded_->start_on_boot;
+	j["run_in_background"] = loaded_->run_in_background;
+	// ai
 	j["api_key"] = loaded_->api_key;
-	// model
 	j["model"] = loaded_->model;
-	// custom endpoint
 	j["custom_endpoint"] = loaded_->custom_endpoint;
-	// message history size
 	j["message_history_size"] = loaded_->message_history_size;
-	// max tokens
 	j["max_tokens"] = loaded_->max_tokens;
-	// pronouns
+	// user
 	j["pronouns"] = loaded_->pronouns;
-	// user name
 	j["user_name"] = loaded_->user_name;
-	// language
 	j["language"] = loaded_->language;
-	// preset
+	// behaviour
 	j["behaviour_preset"] = loaded_->behaviour_preset;
-	// character
 	switch (loaded_->character) {
 	case ddlc_character::MONIKA:
 		j["character"] = "monika";
