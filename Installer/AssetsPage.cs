@@ -20,7 +20,10 @@ namespace Installer
 
         public bool CanButtonRight() => false;
         public bool CanButtonLeft() => true;
-        public void OnEnterPage() { }
+        public void OnEnterPage()
+        {
+            TryFindDDLC();
+        }
         public void OnLeavePage() { }
 
         public AssetsPage(MainForm mf, InstallerContext ctx)
@@ -30,7 +33,7 @@ namespace Installer
             InitializeComponent();
         }
 
-        private bool IsValidDDLCDir(string folder)
+        private static bool IsValidDDLCDir(string folder)
         {
             if (string.IsNullOrEmpty(folder))
             {
@@ -57,6 +60,78 @@ namespace Installer
             return true;
         }
 
+        private void TryFindDDLC()
+        {
+            string? steamPath = GetSteamInstallPath();
+            if (steamPath == null) return;
+
+            string vdfPath = Path.Combine(steamPath, "steamapps", "libraryfolders.vdf");
+            if (!File.Exists(vdfPath)) return;
+
+            var libraryPaths = ParseSteamLibraryFolders(vdfPath);
+            libraryPaths.Insert(0, steamPath);
+
+            foreach (string library in libraryPaths)
+            {
+                string ddlcPath = Path.Combine(library, "steamapps", "common", "Doki Doki Literature Club");
+                if (IsValidDDLCDir(ddlcPath))
+                {
+                    SetDDLCDir(ddlcPath);
+                    return;
+                }
+            }
+        }
+
+        private static string? GetSteamInstallPath()
+        {
+            string[] keys =
+            [
+                @"SOFTWARE\WOW6432Node\Valve\Steam",
+                @"SOFTWARE\Valve\Steam"
+            ];
+
+            foreach (string key in keys)
+            {
+                using var reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(key);
+                if (reg?.GetValue("InstallPath") is string path && Directory.Exists(path))
+                    return path;
+            }
+            return null;
+        }
+
+        private static List<string> ParseSteamLibraryFolders(string vdfPath)
+        {
+            var paths = new List<string>();
+            foreach (string line in File.ReadLines(vdfPath))
+            {
+                string trimmed = line.Trim();
+                // VDF format: "path"   "C:\\SteamLibrary"
+                if (!trimmed.StartsWith("\"path\"", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                int start = trimmed.IndexOf('"', 6);
+                int end = trimmed.LastIndexOf('"');
+                if (start == -1 || end <= start) continue;
+
+                string path = trimmed[(start + 1)..end].Replace("\\\\", "\\");
+                if (Directory.Exists(path))
+                    paths.Add(path);
+            }
+            return paths;
+        }
+
+        private void UpdateCanContinue()
+        {
+            mf.SetButtonsEnabled(true, IsValidDDLCDir(textBox1.Text));
+        }
+
+        private void SetDDLCDir(string path)
+        {
+            textBox1.Text = path;
+            ctx.ddlcFolder = path;
+            UpdateCanContinue();
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new();
@@ -64,16 +139,13 @@ namespace Installer
             {
                 if (IsValidDDLCDir(fbd.SelectedPath))
                 {
-                    mf.SetButtonsEnabled(true, true);
                     string gf = fbd.SelectedPath;
-                    textBox1.Text = gf;
-                    ctx.ddlcFolder = gf;
-                    ctx.ddlcGameFolder = Path.Combine(gf, "game");
+                    SetDDLCDir(gf);
                 }
                 else
                 {
-                    mf.SetButtonsEnabled(true, false);
-                    MessageBox.Show("The selected folder does not contain a valid DDLC installation (images.rpa not found).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("The selected folder does not contain a valid DDLC installation (game/images.rpa not found).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    UpdateCanContinue();
                 }
             }
         }

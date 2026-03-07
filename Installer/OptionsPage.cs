@@ -1,11 +1,12 @@
-﻿using System;
+﻿using IWshRuntimeLibrary;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
 
 namespace Installer
 {
@@ -33,46 +34,75 @@ namespace Installer
             InitializeComponent();
         }
 
-        private string? GetInstallPath(string folder)
+        private static bool ValidateInstallPath(string folder, out string? finalInstallPath, bool displayErrors = true)
         {
+            finalInstallPath = null;
             if (string.IsNullOrEmpty(folder))
             {
-                MessageBox.Show("Please select a valid folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                if (displayErrors) MessageBox.Show("Please select a valid folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
             if (!Directory.Exists(folder))
             {
-                MessageBox.Show("The selected folder does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                if (displayErrors) MessageBox.Show("The selected folder does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
-            if (Directory.Exists(Path.Combine(folder, "DDLCDesktop")))
+            if (folder.Contains("OneDrive", StringComparison.OrdinalIgnoreCase))
             {
-                var res = MessageBox.Show("The selected folder already contains a DDLCDesktop installation. Overwrite?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (!displayErrors) return false;
+                var res = MessageBox.Show("The selected folder has been detected to be in OneDrive. This may cause issues with the installation. Do you want to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res != DialogResult.Yes)
                 {
-                    return null;
+                    return false;
                 }
             }
 
-            return Path.Combine(folder, "DDLCDesktop");
+            finalInstallPath = Path.Combine(folder, "DDLCDesktop");
+            return true;
         }
 
         private void SetDefaultInstallPath()
         {
-            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string? installPath = GetInstallPath(userProfile);
+            string pfPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string? installPath = null;
+            if (!ValidateInstallPath(pfPath, out installPath, false))
+            {
+                string myGamesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Documents", "My Games");
+                ValidateInstallPath(pfPath, out installPath, false);
+            }
+
+            if (Directory.Exists(installPath))
+            {
+                var res = MessageBox.Show($"A DDLCDesktop installation has been detected at the default installation path ({installPath}). Overwrite?", "Installation Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (res != DialogResult.Yes)
+                {
+                    installPath = null;
+                }
+            }
+
             if (installPath != null)
             {
-                textBox1.Text = installPath!;
-                ctx.installPath = installPath!;
-                mf.SetButtonsEnabled(true, true);
+                UpdateInstallPath(installPath);
             }
             else
             {
-                mf.SetButtonsEnabled(true, false);
+                MessageBox.Show("Could not find a valid default installation path. Please select one manually.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateCanInstall();
             }
+        }
+
+        private void UpdateInstallPath(string path)
+        {
+            textBox1.Text = path;
+            ctx.installPath = path;
+            UpdateCanInstall();
+        }
+
+        private void UpdateCanInstall()
+        {
+            mf.SetButtonsEnabled(true, !string.IsNullOrEmpty(ctx.installPath));
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -80,16 +110,22 @@ namespace Installer
             FolderBrowserDialog fbd = new();
             if (fbd.ShowDialog() == DialogResult.OK)
             {
-                string? installPath = GetInstallPath(fbd.SelectedPath);
-                if (installPath != null)
+                if (ValidateInstallPath(fbd.SelectedPath, out string? finalPath, true))
                 {
-                    mf.SetButtonsEnabled(true, true);
-                    textBox1.Text = installPath!;
-                    ctx.installPath = installPath!;
+                    if (Directory.Exists(finalPath))
+                    {
+                        var res = MessageBox.Show("A DDLCDesktop installation has been detected in the selected folder. Do you want to overwrite it?", "Installation Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (res != DialogResult.Yes)
+                        {
+                            return;
+                        }
+                    }
+
+                    UpdateInstallPath(finalPath!);
                 }
                 else
                 {
-                    mf.SetButtonsEnabled(true, false);
+                    UpdateCanInstall();
                 }
             }
         }

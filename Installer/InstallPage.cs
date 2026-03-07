@@ -115,10 +115,11 @@ namespace Installer
                 Application.DoEvents();
 
                 // Run on images.rpa
+                string ddlcGameFolder = Path.Combine(ctx.ddlcFolder, "game");
                 string[] rpaFiles = ["images.rpa", "audio.rpa", "fonts.rpa"];
                 foreach (string rpaFile in rpaFiles)
                 {
-                    string path = Path.Combine(ctx.ddlcGameFolder, rpaFile);
+                    string path = Path.Combine(ddlcGameFolder, rpaFile);
                     if (File.Exists(path))
                     {
                         RunRPAExtract(path);
@@ -131,12 +132,12 @@ namespace Installer
                     Application.DoEvents();
                 }
 
-                string imagesRpaPath = Path.Combine(ctx.ddlcGameFolder, "images.rpa");
+                string imagesRpaPath = Path.Combine(ddlcGameFolder, "images.rpa");
 
-                string imagesFolder = Path.Combine(ctx.ddlcGameFolder, "images");
-                string guiFolder = Path.Combine(ctx.ddlcGameFolder, "gui");
-                string sfxFolder = Path.Combine(ctx.ddlcGameFolder, "sfx");
-                string bgmFolder = Path.Combine(ctx.ddlcGameFolder, "bgm");
+                string imagesFolder = Path.Combine(ddlcGameFolder, "images");
+                string guiFolder = Path.Combine(ddlcGameFolder, "gui");
+                string sfxFolder = Path.Combine(ddlcGameFolder, "sfx");
+                string bgmFolder = Path.Combine(ddlcGameFolder, "bgm");
                 if (!Directory.Exists(imagesFolder) ||
                     !Directory.Exists(guiFolder) ||
                     !Directory.Exists(sfxFolder) ||
@@ -216,7 +217,7 @@ namespace Installer
                 dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("WScript.Shell")!)!;
 
                 // Desktop shortcut
-                string desktopShortcutPath = Path.Combine(desktopPath, "DDLCDesktop.lnk");
+                string desktopShortcutPath = Path.Combine(desktopPath, "DDLC Desktop.lnk");
                 dynamic desktopShortcut = shell.CreateShortcut(desktopShortcutPath);
                 desktopShortcut.TargetPath = executablePath;
                 desktopShortcut.WorkingDirectory = ctx.installPath;
@@ -225,7 +226,7 @@ namespace Installer
                 desktopShortcut.Save();
 
                 // Start Menu shortcut
-                string startMenuShortcutPath = Path.Combine(startMenuPath, "DDLCDesktop.lnk");
+                string startMenuShortcutPath = Path.Combine(startMenuPath, "DDLC Desktop.lnk");
                 dynamic startMenuShortcut = shell.CreateShortcut(startMenuShortcutPath);
                 startMenuShortcut.TargetPath = executablePath;
                 startMenuShortcut.WorkingDirectory = ctx.installPath;
