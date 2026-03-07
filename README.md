@@ -141,10 +141,9 @@ If you encounter any issues, please do one of the following:
 #### Added
 - Added run on boot and run in background settings under the new "general" settings tab.
 - Added a system tray icon to allow the app to be "minimised".
-#### Fixed
 #### Changed
 - Redesigned the message history system to be character-specific, this means each character holds their own history and removes the need to reset context when switching characters.
-#### Removed
+- Improved the error output system - it now prints the actual error message (if present) within the story, the story is also much shorter and consistent across all error types.
 
 ### [2.0.0]
 #### Added
