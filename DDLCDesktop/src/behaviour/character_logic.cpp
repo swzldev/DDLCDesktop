@@ -384,7 +384,7 @@ void character_logic::show_setup(unsigned int step) {
 		await_input_custom("Enter your OpenRouter API key: ", config_->api_key,
 			[this](bool success, const std::string& value) {
 				if (success && !value.empty()) {
-					config_->api_key = value;
+					config_->api_key = string_utils::trim(value);
 					setup_step_++;
 					show_setup(setup_step_);
 				}
@@ -594,7 +594,7 @@ void character_logic::show_settings_api_menu() {
 		await_input_custom("Enter API key: ", config_->api_key,
 			[this](bool success, const std::string& value) {
 				if (success) {
-					config_->api_key = value;
+					config_->api_key = string_utils::trim(value);
 					config::save(); // save config
 				}
 				show_settings_api_menu();
