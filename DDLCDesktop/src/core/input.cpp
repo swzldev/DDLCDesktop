@@ -67,6 +67,10 @@ void input::set_clipboard_text(const std::string& text) {
 	CloseClipboard();
 }
 
+bool input::is_typable_char(wchar_t c) {
+	return (c >= 32 && c <= 126); // basic ascii range
+}
+
 void input::on_char_input(wchar_t c) {
 	if (cur_input_buffer_) {
 		// backspace
