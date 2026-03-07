@@ -73,7 +73,7 @@ std::vector<character_state::interaction> error_stories::error_story(const std::
         {"\"" + user_name + "?\"", "p", "1", "1"},
         {"\"Well, this is a little embarrassing...\"", "m", "1", "1"},
         {"\"It's saying an error occurred, let me get you the details...\"", "f", "2", "1"},
-        {message, "h", "1", "1"},
+        {"\"It says: '" + message + "'\"", "h", "1", "1"},
         {"\"If you need any help don't forget to join the discord server!\"", "e", "2", "2"},
         {"https://discord.gg/CyerbjvyMb", "j", "1", "1"},
     };
