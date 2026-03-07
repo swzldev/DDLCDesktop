@@ -17,7 +17,7 @@ public:
 	static std::string get_clipboard_text();
 	static void set_clipboard_text(const std::string& text);
 
-	static bool is_typable_char(wchar_t c);
+	static bool is_typable_char(char c);
 
 private:
 	friend class window;
