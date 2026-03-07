@@ -820,16 +820,9 @@ void character_logic::await_input_custom(const std::string& prompt, const std::s
 
 	visuals->clear_buttons();
 	visuals->add_button(std::make_unique<text_button>("Submit", [this]() { finish_settings_input(true); }));
-	visuals->add_button(std::make_unique<text_button>("Clear", [this]() { settings_input_.buffer.clear(); }));
-	visuals->add_button(std::make_unique<text_button>("Copy", [this]() { input::set_clipboard_text(settings_input_.buffer); }));
-	visuals->add_button(std::make_unique<text_button>("Paste", [this]() {
-		std::string clip = input::get_clipboard_text();
-		for (char c : clip) {
-			if (settings_input_.buffer.length() < INPUT_MAX_LENGTH) {
-				settings_input_.buffer.push_back(c);
-			}
-		}
-	}));
+	visuals->add_button(std::make_unique<text_button>("Clear", [this]() { input::buffer_clear(); }));
+	visuals->add_button(std::make_unique<text_button>("Copy", [this]() { input::buffer_copy(); }));
+	visuals->add_button(std::make_unique<text_button>("Paste", [this]() { input::buffer_paste(); }));
 	visuals->add_button(std::make_unique<text_button>("Cancel", [this]() { finish_settings_input(false); } ));
 
 	input::begin_input_recording(&settings_input_.buffer, INPUT_MAX_LENGTH, [this]() {
