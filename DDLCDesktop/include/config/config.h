@@ -20,6 +20,7 @@ public:
   // application
   bool start_on_boot;
   bool run_in_background;
+  int auto_mode_speed;
 
   // api
   api api;

@@ -530,7 +530,7 @@ void character_logic::show_settings_general_menu() {
 		"Auto Speed: ",
 		nullptr,
 		1, 5,
-		&auto_mode_speed_
+		&config_->auto_mode_speed
 	);
 	auto_speed_btn->set_value_labels({ "Very slow", "Slow", "Normal", "Fast", "Very fast", });
 	visuals->add_button(std::move(auto_speed_btn));
@@ -866,7 +866,7 @@ float character_logic::get_auto_delay_sec() const {
 		{ 5, 0.75f },
 	};
 
-	return delay_map.at(auto_mode_speed_);
+	return delay_map.at(std::clamp(config_->auto_mode_speed, 1, 5));
 }
 
 int character_logic::get_choice_input(int num_choices) {

@@ -74,7 +74,6 @@ private:
     ddlc_character character_ = ddlc_character::MONIKA;
     bool first_tick_ = true;
     bool paused_ = false;
-    int auto_mode_speed_ = 3;
 
     error_state error_state_ = error_state::NONE;
     logic_state state_ = logic_state::IDLE;

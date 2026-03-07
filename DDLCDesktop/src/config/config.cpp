@@ -41,6 +41,7 @@ void config::load() {
 	// application
 	cfg->start_on_boot = j.value("start_on_boot", false);
 	cfg->run_in_background = j.value("run_in_background", false);
+	cfg->auto_mode_speed = std::clamp(j.value("auto_mode_speed", 3), 1, 5);
 
 	// ai
 	std::string api_str = j.value("api", "");
@@ -122,6 +123,7 @@ bool config::save() {
 	// application
 	j["run_on_boot"] = loaded_->start_on_boot;
 	j["run_in_background"] = loaded_->run_in_background;
+	j["auto_mode_speed"] = loaded_->auto_mode_speed;
 	// ai
 	j["api_key"] = loaded_->api_key;
 	j["model"] = loaded_->model;
@@ -171,6 +173,11 @@ config* config::get() {
 
 void config::load_default() {
 	loaded_ = std::make_unique<config>();
+
+	// application
+	loaded_->start_on_boot = false;
+	loaded_->run_in_background = false;
+	loaded_->auto_mode_speed = 3;
 
 	// API
 	loaded_->api = api::OPENROUTER;
