@@ -56,8 +56,8 @@ public:
 		is_speaking_ = false;
 	}
 
-	inline void add_button(const button& btn) {
-		else buttons_.push_back(btn);
+	inline void add_button(std::unique_ptr<button>&& btn) {
+		buttons_.push_back(std::move(btn));
 	}
 	inline void clear_buttons() {
 		buttons_.clear();
@@ -87,7 +87,7 @@ private:
 	float chars_per_second_ = 50.0f;
 
 	// buttons
-	std::vector<button> buttons_;
+	std::vector<std::unique_ptr<button>> buttons_;
 	int current_button_id_ = -1;
 	int current_option_ = -1;
 

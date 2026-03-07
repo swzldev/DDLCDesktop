@@ -182,6 +182,9 @@
     <ClInclude Include="include\visual\ui\button.h" />
     <ClInclude Include="include\visual\character_visuals.h" />
     <ClInclude Include="include\visual\sprite.h" />
+    <ClInclude Include="include\visual\ui\number_button.h" />
+    <ClInclude Include="include\visual\ui\text_button.h" />
+    <ClInclude Include="include\visual\ui\toggle_button.h" />
     <ClInclude Include="lib\nlohmann-json\include\nlohmann\json.hpp" />
     <ClInclude Include="lib\nlohmann-json\include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="lib\stb\include\stb_image.h" />

@@ -186,7 +186,8 @@ int character_visuals::get_scale() {
 
 void character_visuals::draw_all_buttons() {
 	const float button_pad = 0.01f;
-	const float buttons_y = 0.86f;
+	const float buttons_y = 0.855f;
+	const float button_font_size = 2.2f;
 
 	struct button_draw_data {
 		int btn_id;
@@ -194,7 +195,6 @@ void character_visuals::draw_all_buttons() {
 		float width;
 		float height;
 		bool is_disabled;
-		bool is_toggled;
 		// ^^ including padding
 	};
 	std::vector<button_draw_data> predraw_data;
@@ -202,11 +202,11 @@ void character_visuals::draw_all_buttons() {
 	float total_width = 0.0f; // normalized & with padding
 	float height = 0.0f;
 
-	for (auto& button : buttons_) {
-		std::wstring wtext = utf8_to_wstring(button.text());
+	for (const auto& button : buttons_) {
+		std::wstring wtext = utf8_to_wstring(button->text());
 
 		// measure (size 2.2)
-		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, 2.2f);
+		D2D1_SIZE_F text_size = renderer_->measure_text(wtext, button_font_size);
 
 		float width_normalized = text_size.width / window_->size() + button_pad * 2;
 		float height_normalized = text_size.height / window_->size();
@@ -215,7 +215,7 @@ void character_visuals::draw_all_buttons() {
 		height = std::max(height, height_normalized);
 		total_width += width_normalized;
 
-		predraw_data.push_back({ button.id(), wtext, width_normalized, height_normalized, button.is_disabled(), button.is_toggled() });
+		predraw_data.push_back({ button->id(), wtext, width_normalized, height_normalized, button->is_disabled() });
 	}
 
 	D2D_COLOR_F btn_col = D2D1::ColorF(0, 0, 0, 0.7f);
@@ -254,9 +254,9 @@ void character_visuals::draw_all_buttons() {
 		if (data.is_disabled) {
 			btn_col = D2D1::ColorF(0.333f, 0.137f, 0.137f, 0.35f);
 		}
-		else if (data.is_toggled) {
+		/*else if (data.is_toggled) {
 			btn_col = D2D1::ColorF(1, 1, 1);
-		}
+		}*/
 
 		renderer_->set_text_alignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 		renderer_->set_text_color(btn_col);
@@ -268,7 +268,7 @@ void character_visuals::draw_all_buttons() {
 			buttons_y,
 			data.width,
 			data.height,
-			2.2f
+			button_font_size
 			/* no stroke */
 		);
 
@@ -351,8 +351,8 @@ int character_visuals::on_mouse_click() {
 	if (current_button_id_ != -1) {
 		// Find button by ID in storage vectors
 		for (auto& btn : buttons_) {
-			if (btn.id() == current_button_id_) {
-				btn.click();
+			if (btn->id() == current_button_id_) {
+				btn->click();
 				return 1; // handled
 			}
 		}

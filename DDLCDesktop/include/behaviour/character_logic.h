@@ -40,7 +40,6 @@ class window;
 class character_logic {
 public:
     static constexpr int INPUT_MAX_LENGTH = 170;
-    static constexpr float AUTO_MODE_DELAY_SEC = 3.0f;
 
 public:
     character_logic(window* window);
@@ -75,6 +74,7 @@ private:
     ddlc_character character_ = ddlc_character::MONIKA;
     bool first_tick_ = true;
     bool paused_ = false;
+    int auto_mode_speed_ = 3;
 
     error_state error_state_ = error_state::NONE;
     logic_state state_ = logic_state::IDLE;
@@ -111,6 +111,8 @@ private:
     void await_input();
     void await_input_custom(const std::string& prompt, const std::string& initial_value, const std::function<void(bool, const std::string&)>& callback);
     void finish_settings_input(bool success);
+
+    float get_auto_delay_sec() const;
 
     int get_choice_input(int num_choices);
 

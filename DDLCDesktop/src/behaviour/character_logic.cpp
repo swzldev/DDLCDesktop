@@ -1,5 +1,6 @@
 #include <behaviour/character_logic.h>
 
+#include <memory>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -23,6 +24,9 @@
 #include <utility/string_utils.h>
 #include <visual/character_visuals.h>
 #include <visual/ui/button.h>
+#include <visual/ui/text_button.h>
+#include <visual/ui/toggle_button.h>
+#include <visual/ui/number_button.h>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -168,7 +172,7 @@ void character_logic::tick(float delta_time) {
 		if (!visuals->is_speaking() && auto_mode_) {
 			auto_timer_ += delta_time;
 		}
-		if (auto_timer_ >= AUTO_MODE_DELAY_SEC) {
+		if (auto_timer_ >= get_auto_delay_sec()) {
 			auto_timer_ = 0.0f;
 			advance_interaction();
 		}
@@ -292,15 +296,8 @@ void character_logic::show_setup(unsigned int step) {
 	visuals->set_chars_per_second(30.0f);
 
 	visuals->clear_buttons();
-	visuals->add_button({ "Quit",
-		[this]() {
-			if (!in_setup_) {
-				config::save();
-				ai->handle_close_interaction();
-			}
-
-			window_->close();
-		} }
+	visuals->add_button(
+		std::make_unique<text_button>("Quit", [this]() { close(); })
 	);
 
 	if (step == 0) {
@@ -435,33 +432,35 @@ void character_logic::show_main_menu() {
 	current_menu_ = menu_state::MAIN;
 
 	// set buttons
-	visuals->add_button({ "Close",
-		[this]() {
-			close();
-		} }
+	visuals->add_button(
+		std::make_unique<text_button>("Close", [this]() { close(); })
 	);
-	visuals->add_button({"Auto",
-		[this]() { auto_mode_ = true; },
-		button_style::LABEL,
-		button_type::TOGGLE,
-		"",
-		[this]() { auto_mode_ = false; },
-	});
-	visuals->add_button({"Reset",
-		[this]() {
+	visuals->add_button(
+		std::make_unique<toggle_button>("Auto: ", nullptr, &auto_mode_)
+	);
+	visuals->add_button(
+		std::make_unique<text_button>("Reset", [this]() {
 			if (state_ == logic_state::THINKING) {
-				return; // dont reset while thinking
+				visuals->show_message("Cannot reset while thinking. Please wait.");
+				return;
 			}
 			reset_fully();
-		}
+		})
+	);
+
+	// TODO: CACHE THIS!!
+	auto input_mode_btn = std::make_unique<toggle_button>("Input Mode: ", [this](bool t) {
+		if (t) await_choice(/*true*/);
+		else await_input();
 	});
-	visuals->add_button({ "Custom",
-		[this]() { await_input(); },
-		button_style::LABEL, button_type::SWAP, "Actions",
-		[this]() { await_choice(/*true*/); },
-		&input_mode_btn_disabled_
-	});
-	visuals->add_button({ "Settings", [this]() { show_settings_menu(); } });
+	input_mode_btn->set_disabled_ptr(&input_mode_btn_disabled_);
+	input_mode_btn->set_labels("Choice", "Text");
+
+	visuals->add_button(std::move(input_mode_btn));
+
+	visuals->add_button(
+		std::make_unique<text_button>("Settings", [this]() { show_settings_menu(); })
+	);
 
 	refresh_display();
 }
@@ -471,13 +470,13 @@ void character_logic::show_settings_menu() {
 
 	visuals->set_chars_per_second(100.0f);
 	visuals->set_saying("Choose an option...");
-
+	
 	// set buttons
-	visuals->add_button({ "General", [this]() { show_settings_general_menu(); } });
-	visuals->add_button({ "API", [this]() { show_settings_api_menu(); } });
-	visuals->add_button({ "Character", [this]() { show_settings_character_menu(); } });
-	visuals->add_button({ "User", [this]() { show_settings_user_menu(); } });
-	visuals->add_button({ "Back", [this]() { show_main_menu(); } });
+	visuals->add_button(std::make_unique<text_button>("General", [this]() { show_settings_general_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("API", [this]() { show_settings_api_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("Character", [this]() { show_settings_character_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("User", [this]() { show_settings_user_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_main_menu(); }));
 }
 void character_logic::show_settings_general_menu() {
 	visuals->clear_buttons();
@@ -486,43 +485,56 @@ void character_logic::show_settings_general_menu() {
 	visuals->set_chars_per_second(100.0f);
 
 	// set buttons
-	visuals->add_button({ "Run in background: ON",
-		[this]() {
-			config_->run_in_background = false;
-			config::save();
-		},
-		button_style::LABEL, button_type::SWAP, "Run in background: OFF",
-		[this]() {
-			visuals->show_message("Closing will now minimise the app. It can be reshown via the system tray.");
-			config_->run_in_background = true;
-			config::save();
-		},
-		nullptr, nullptr, false, !config_->run_in_background
-		}
-	);
-	visuals->add_button({ "Run on boot: ON",
-		[this]() {
-			if (!run_on_boot_helper::disable_run_on_boot()) {
-				visuals->show_message("Failed to disable run on boot. Please try again.");
-				return;
+	auto run_bg_btn = std::make_unique<toggle_button>(
+		"Run in background: ",
+		[this](bool toggled) {
+			if (toggled) {
+				visuals->show_message("Closing will now minimise the app. It can be reshown via the system tray.");
+				config_->run_in_background = true;
 			}
-			config_->start_on_boot = false;
-			config::save();
-		},
-		button_style::LABEL, button_type::SWAP, "Run on boot: OFF",
-		[this]() {
-			if (!run_on_boot_helper::enable_run_on_boot()) {
-				visuals->show_message("Failed to enable run on boot. Please try again.");
-				return;
+			else {
+				config_->run_in_background = false;
 			}
-			visuals->show_message("Run on boot enabled, the application will now open at startup.");
-			config_->start_on_boot = true;
 			config::save();
 		},
-		nullptr, nullptr, false, !config_->start_on_boot
-		}
+		config_->run_in_background
 	);
-	visuals->add_button({ "Back", [this]() { show_settings_menu(); } });
+	visuals->add_button(std::move(run_bg_btn));
+	auto run_boot_btn = std::make_unique<toggle_button>(
+		"Run on boot: ",
+		[this](bool toggled) {
+			if (toggled) {
+				if (!run_on_boot_helper::enable_run_on_boot()) {
+					visuals->show_message("Failed to enable run on boot. Please try again.");
+					show_settings_general_menu(); // revert visual state
+					return;
+				}
+				visuals->show_message("Run on boot enabled, the application will now open at startup.");
+				config_->start_on_boot = true;
+				config::save();
+			}
+			else {
+				if (!run_on_boot_helper::disable_run_on_boot()) {
+					visuals->show_message("Failed to disable run on boot. Please try again.");
+					show_settings_general_menu(); // revert visual state
+					return;
+				}
+				config_->start_on_boot = false;
+				config::save();
+			}
+		},
+		config_->start_on_boot
+	);
+	visuals->add_button(std::move(run_boot_btn));
+	auto auto_speed_btn = std::make_unique<number_button>(
+		"Auto Speed: ",
+		nullptr,
+		1, 5,
+		&auto_mode_speed_
+	);
+	auto_speed_btn->set_value_labels({ "Very slow", "Slow", "Normal", "Fast", "Very fast", });
+	visuals->add_button(std::move(auto_speed_btn));
+	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_menu(); }));
 }
 void character_logic::show_settings_api_menu() {
 	visuals->clear_buttons();
@@ -545,7 +557,7 @@ void character_logic::show_settings_api_menu() {
 	visuals->set_saying(message);
 
 	// set buttons
-	visuals->add_button({ "API Mode", [this]() {
+	visuals->add_button(std::make_unique<text_button>("API Mode", [this]() {
 		await_input_custom("Enter your API (OpenRouter/OpenAI/Custom): ", "",
 			[this](bool success, const std::string& value) {
 				if (success) {
@@ -567,28 +579,28 @@ void character_logic::show_settings_api_menu() {
 				}
 				show_settings_api_menu();
 			});
-	} });
-	visuals->add_button({ "Model", [this]() {
-						   await_input_custom("Enter model: ", config_->model,
-											  [this](bool success, const std::string& value) {
-												  if (success) {
-													  config_->model = value;
-													  config::save(); // save config
-												  }
-												  show_settings_api_menu();
-											  });
-						 } });
-	visuals->add_button({ "API Key", [this]() {
-						   await_input_custom("Enter API key: ", config_->api_key,
-											  [this](bool success, const std::string& value) {
-												  if (success) {
-													  config_->api_key = value;
-													  config::save(); // save config
-												  }
-												  show_settings_api_menu();
-											  });
-						 } });
-	visuals->add_button({ "Token Limit", [this]() {
+		}));
+	visuals->add_button(std::make_unique<text_button>("Model", [this]() {
+		await_input_custom("Enter model: ", config_->model,
+			[this](bool success, const std::string& value) {
+				if (success) {
+					config_->model = value;
+					config::save(); // save config
+				}
+				show_settings_api_menu();
+			});
+		}));
+	visuals->add_button(std::make_unique<text_button>("API Key", [this]() {
+		await_input_custom("Enter API key: ", config_->api_key,
+			[this](bool success, const std::string& value) {
+				if (success) {
+					config_->api_key = value;
+					config::save(); // save config
+				}
+				show_settings_api_menu();
+			});
+		}));
+	visuals->add_button(std::make_unique<text_button>("Token Limit", [this]() {
 		await_input_custom("Enter Token Limit (0 for infinite): ", std::to_string(config_->max_tokens),
 			[this](bool success, const std::string& value) {
 				if (success) {
@@ -612,21 +624,20 @@ void character_logic::show_settings_api_menu() {
 				}
 				show_settings_api_menu();
 			});
-	} });
+		}));
 	if (config_->api == api::CUSTOM) {
-		visuals->add_button(
-			{ "Endpoint", [this]() {
-			   await_input_custom("Enter endpoint URL: ", config_->custom_endpoint,
-								  [this](bool success, const std::string& value) {
-									  if (success) {
-										  config_->custom_endpoint = value;
-										  config::save(); // save config
-									  }
-									  show_settings_api_menu();
-								  });
-			 } });
+		visuals->add_button(std::make_unique<text_button>("Endpoint", [this]() {
+			await_input_custom("Enter endpoint URL: ", config_->custom_endpoint,
+				[this](bool success, const std::string& value) {
+					if (success) {
+						config_->custom_endpoint = value;
+						config::save(); // save config
+					}
+					show_settings_api_menu();
+				});
+			}));
 	}
-	visuals->add_button({ "Back", [this]() { show_settings_menu(); } });
+	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_menu(); }));
 }
 void character_logic::show_settings_character_menu() {
 	visuals->clear_buttons();
@@ -641,54 +652,52 @@ void character_logic::show_settings_character_menu() {
 	visuals->set_saying(message);
 
 	// set buttons
-	visuals->add_button({ "Switch character", [this]() { show_settings_character_change_menu(); } });
-	visuals->add_button(
-		{ "Preset", [this]() {
-			await_input_custom("Enter new behaviour preset: ", config_->behaviour_preset,
-				[this](bool success, const std::string& value) {
-					if (success) {
-						if (supports_behaviour_preset(character_, value)) {
-							visuals->show_popup("Warning: Changing the preset will "
-												"reset all progress. Continue?",
-												[this, value](int result) {
-													if (result == 0) {
-														config_->behaviour_preset = value;
-														reset_fully();
-													}
-												});
-						}
-						else {
-							std::string supported;
-							auto presets = get_behaviour_presets(character_);
-							for (size_t i = 0; i < presets.size(); i++) {
-								supported += "'" + presets[i];
-								if (i < presets.size() - 1) {
-									supported += "', ";
+	visuals->add_button(std::make_unique<text_button>("Switch character", [this]() { show_settings_character_change_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("Preset", [this]() {
+		await_input_custom("Enter new behaviour preset: ", config_->behaviour_preset,
+			[this](bool success, const std::string& value) {
+				if (success) {
+					if (supports_behaviour_preset(character_, value)) {
+						visuals->show_popup("Warning: Changing the preset will "
+							"reset all progress. Continue?",
+							[this, value](int result) {
+								if (result == 0) {
+									config_->behaviour_preset = value;
+									reset_fully();
 								}
-								else {
-									supported += "'";
-								}
-							}
-							visuals->show_message("Invalid behaviour preset. Supported: " + supported);
-						}
-						config::save(); // save config
+							});
 					}
-					show_settings_character_menu();
-				});
-		} });
-	visuals->add_button(
-		{ "Window control: ON",
-		 [this]() {
-			 config_->enable_window_controls = false;
-			 config::save();
-		 },
-		 button_style::LABEL, button_type::SWAP, "Window control: OFF",
-		 [this]() {
-			 config_->enable_window_controls = true;
-			 config::save();
-		 },
-		 nullptr, nullptr, false, !config_->enable_window_controls });
-	visuals->add_button({ "Back", [this]() { show_settings_menu(); } });
+					else {
+						std::string supported;
+						auto presets = get_behaviour_presets(character_);
+						for (size_t i = 0; i < presets.size(); i++) {
+							supported += "'" + presets[i];
+							if (i < presets.size() - 1) {
+								supported += "', ";
+							}
+							else {
+								supported += "'";
+							}
+						}
+						visuals->show_message("Invalid behaviour preset. Supported: " + supported);
+					}
+					config::save(); // save config
+				}
+				show_settings_character_menu();
+			});
+		}));
+
+	auto window_ctrl_btn = std::make_unique<toggle_button>(
+		"Window control: ",
+		[this](bool toggled) {
+			config_->enable_window_controls = toggled;
+			config::save();
+		},
+		config_->enable_window_controls
+	);
+	visuals->add_button(std::move(window_ctrl_btn));
+
+	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_menu(); }));
 }
 void character_logic::show_settings_character_change_menu() {
 	visuals->clear_buttons();
@@ -705,24 +714,23 @@ void character_logic::show_settings_character_change_menu() {
 		if (character_ == ch) {
 			visuals->show_message("You cannot change to the same character.");
 		}
-		else
-			set_character(ch);
-		};
+		else set_character(ch);
+	};
 
 	// set buttons
-	visuals->add_button({ "Monika", [this, try_set_character]() {
-						   try_set_character(ddlc_character::MONIKA);
-						 } });
-	visuals->add_button({ "Yuri", [this, try_set_character]() {
-						   try_set_character(ddlc_character::YURI);
-						 } });
-	visuals->add_button({ "Natsuki", [this, try_set_character]() {
-						   try_set_character(ddlc_character::NATSUKI);
-						 } });
-	visuals->add_button({ "Sayori", [this, try_set_character]() {
-						   try_set_character(ddlc_character::SAYORI);
-						 } });
-	visuals->add_button({ "Back", [this]() { show_settings_character_menu(); } });
+	visuals->add_button(std::make_unique<text_button>("Monika", [this, try_set_character]() {
+		try_set_character(ddlc_character::MONIKA);
+	}));
+	visuals->add_button(std::make_unique<text_button>("Yuri", [this, try_set_character]() {
+		try_set_character(ddlc_character::YURI);
+	}));
+	visuals->add_button(std::make_unique<text_button>("Natsuki", [this, try_set_character]() {
+		try_set_character(ddlc_character::NATSUKI);
+	}));
+	visuals->add_button(std::make_unique<text_button>("Sayori", [this, try_set_character]() {
+		try_set_character(ddlc_character::SAYORI);
+	}));
+	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_character_menu(); }));
 }
 void character_logic::show_settings_user_menu() {
 	visuals->clear_buttons();
@@ -737,37 +745,37 @@ void character_logic::show_settings_user_menu() {
 	visuals->set_saying(message);
 
 	// set buttons
-	visuals->add_button({ "Name", [this]() {
-						   await_input_custom("Enter your name: ", config_->user_name,
-											  [this](bool success, const std::string& value) {
-												  if (success) {
-													  config_->user_name = value;
-													  config::save(); // save config
-												  }
-												  show_settings_user_menu();
-											  });
-						 } });
-	visuals->add_button({ "Pronouns", [this]() {
-						   await_input_custom("Enter your pronouns: ", config_->pronouns,
-											  [this](bool success, const std::string& value) {
-												  if (success) {
-													  config_->pronouns = value;
-													  config::save(); // save config
-												  }
-												  show_settings_user_menu();
-											  });
-						 } });
-	visuals->add_button({ "Language", [this]() {
-						   await_input_custom("Enter your language (does not affect UI): ", config_->language,
-											  [this](bool success, const std::string& value) {
-												  if (success) {
-													  config_->language = value;
-													  config::save(); // save config
-												  }
-												  show_settings_user_menu();
-											  });
-						 } });
-	visuals->add_button({ "Back", [this]() { show_settings_menu(); } });
+	visuals->add_button(std::make_unique<text_button>("Name", [this]() {
+		await_input_custom("Enter your name: ", config_->user_name,
+			[this](bool success, const std::string& value) {
+				if (success) {
+					config_->user_name = value;
+					config::save(); // save config
+				}
+				show_settings_user_menu();
+			});
+		}));
+	visuals->add_button(std::make_unique<text_button>("Pronouns", [this]() {
+		await_input_custom("Enter your pronouns: ", config_->pronouns,
+			[this](bool success, const std::string& value) {
+				if (success) {
+					config_->pronouns = value;
+					config::save(); // save config
+				}
+				show_settings_user_menu();
+			});
+		}));
+	visuals->add_button(std::make_unique<text_button>("Language", [this]() {
+		await_input_custom("Enter your language (does not affect UI): ", config_->language,
+			[this](bool success, const std::string& value) {
+				if (success) {
+					config_->language = value;
+					config::save(); // save config
+				}
+				show_settings_user_menu();
+			});
+		}));
+	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_menu(); }));
 }
 
 void character_logic::await_choice(bool show_immediate) {
@@ -811,18 +819,18 @@ void character_logic::await_input_custom(const std::string& prompt, const std::s
 	settings_input_.restore_state = state_;
 
 	visuals->clear_buttons();
-	visuals->add_button({ "Submit", [this]() { finish_settings_input(true); } });
-	visuals->add_button({ "Clear", [this]() { settings_input_.buffer.clear(); } });
-	visuals->add_button({ "Copy", [this]() { input::set_clipboard_text(settings_input_.buffer); } });
-	visuals->add_button({ "Paste", [this]() {
+	visuals->add_button(std::make_unique<text_button>("Submit", [this]() { finish_settings_input(true); }));
+	visuals->add_button(std::make_unique<text_button>("Clear", [this]() { settings_input_.buffer.clear(); }));
+	visuals->add_button(std::make_unique<text_button>("Copy", [this]() { input::set_clipboard_text(settings_input_.buffer); }));
+	visuals->add_button(std::make_unique<text_button>("Paste", [this]() {
 		std::string clip = input::get_clipboard_text();
 		for (char c : clip) {
 			if (settings_input_.buffer.length() < INPUT_MAX_LENGTH) {
 				settings_input_.buffer.push_back(c);
 			}
 		}
-	} });
-	visuals->add_button({ "Cancel", [this]() { finish_settings_input(false); } });
+	}));
+	visuals->add_button(std::make_unique<text_button>("Cancel", [this]() { finish_settings_input(false); } ));
 
 	input::begin_input_recording(&settings_input_.buffer, INPUT_MAX_LENGTH, [this]() {
 		finish_settings_input(true);
@@ -847,6 +855,18 @@ void character_logic::finish_settings_input(bool success) {
 	if (callback) {
 		callback(success, result);
 	}
+}
+
+float character_logic::get_auto_delay_sec() const {
+	const std::unordered_map<int, float> delay_map = {
+		{ 1, 8.0f },
+		{ 2, 6.0f },
+		{ 3, 3.0f },
+		{ 4, 1.5f },
+		{ 5, 0.75f },
+	};
+
+	return delay_map.at(auto_mode_speed_);
 }
 
 int character_logic::get_choice_input(int num_choices) {
