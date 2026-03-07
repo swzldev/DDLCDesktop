@@ -14,6 +14,10 @@ public:
 	static void begin_input_recording(std::string* buffer, int max_length = 50, std::function<void()> on_submit = nullptr);
 	static void end_input_recording();
 
+	static void buffer_clear();
+	static void buffer_paste();
+	static void buffer_copy();
+
 	static std::string get_clipboard_text();
 	static void set_clipboard_text(const std::string& text);
 

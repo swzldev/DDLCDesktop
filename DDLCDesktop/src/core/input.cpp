@@ -30,6 +30,30 @@ void input::end_input_recording() {
 	cur_input_buffer_ = nullptr;
 }
 
+void input::buffer_clear() {
+	if (cur_input_buffer_) {
+		cur_input_buffer_->clear();
+	}
+}
+void input::buffer_paste() {
+	if (cur_input_buffer_) {
+		std::string clip = get_clipboard_text();
+		for (char c : clip) {
+			if (cur_input_buffer_->length() >= static_cast<size_t>(max_input_length_)) {
+				break;
+			}
+			if (is_typable_char(c)) {
+				cur_input_buffer_->push_back(c);
+			}
+		}
+	}
+}
+void input::buffer_copy() {
+	if (cur_input_buffer_) {
+		set_clipboard_text(*cur_input_buffer_);
+	}
+}
+
 std::string input::get_clipboard_text() {
 	OpenClipboard(nullptr);
 	HANDLE hData = GetClipboardData(CF_TEXT);
