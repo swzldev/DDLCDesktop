@@ -15,8 +15,8 @@ namespace Installer
         private readonly MainForm mf;
         private readonly InstallerContext ctx;
 
-        public string Title => "Assets";
-        public string Description => "How the game assets should be handled.";
+        public string Title => "Options";
+        public string Description => "Installation options.";
         public ButtonLayout ButtonLayout => ButtonLayout.BackInstall;
 
         public bool CanButtonRight() => false;
