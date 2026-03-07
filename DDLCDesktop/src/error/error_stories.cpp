@@ -67,36 +67,14 @@ std::vector<character_state::interaction> error_stories::update_story(const std:
         {"\"Would you like to download it? It will only take a second!\"", "b", "2", "1"},
     };
 }
-
-std::vector<character_state::interaction> error_stories::fail_ai_response_story() {
+std::vector<character_state::interaction> error_stories::error_story(const std::string& user_name, const std::string& message) {
     return {
-        {"\"Oh...\"", "c", "1", "1"},
-        {"\"It looks like something went wrong with the AI response.\"", "h", "1", "1"},
-        {"\"Don't worry though, we can figure this out together!\"", "e", "1", "1"},
-        {"\"First, can you do me a favor?\"", "d", "2", "2"},
-        {"\"Open the log.txt file in the app folder and scroll to the very bottom.\"", "h", "2", "1"},
-        {"\"You should see an error message there.\"", "c", "1", "1"},
-        {"\"If it says something like 'rate limit exceeded'...\"", "f", "1", "1"},
-        {"\"That means you've used up your free API usage for today.\"", "h", "1", "1"},
-        {"\"Both OpenAI and OpenRouter have daily limits on their free tiers.\"", "d", "1", "1"},
-        {"\"You'll either need to wait until tomorrow, or add some credit to your account.\"", "e", "1", "1"},
-        {"\"If the error message seems pretty clear, just read through it carefully.\"", "a", "2", "2"},
-        {"\"It should tell you exactly what went wrong!\"", "j", "1", "1"},
-        {"\"But if you're not sure what it means, or you need help...\"", "m", "1", "1"},
-        {"\"You can always join the Discord server and ask in the issues channel.\"", "e", "2", "2"},
-        {"\"Just make sure to include the error from log.txt!\"", "d", "2", "1"},
-        {"https://discord.gg/CyerbjvyMb", "a", "1", "1"},
-        {"\"I believe in you!\"", "j", "2", "2"},
-        {"\"We'll get through this together~\"", "k", "1", "1"},
-    };
-}
-std::vector<character_state::interaction> error_stories::fail_parse_ai_response_story() {
-    return {
-        {"\"...\"", "a", "1", "1"},
-        {"\"Uh oh.\"", "a", "1", "1"},
-        {"\"That's not good.\"", "a", "1", "1"},
-        {"An application error occurred: FAIL_PARSE_AI_RESPONSE. See log.txt for details.", "a", "1", "1"},
-        {"If this keeps happening, check the log.txt for any obvious information or report the issue in the discord server.", "a", "1", "1"},
-        {"https://discord.gg/CyerbjvyMb", "a", "1", "1"},
+        {"\"...\"", "c", "1", "1"},
+        {"\"" + user_name + "?\"", "p", "1", "1"},
+        {"\"Well, this is a little embarrassing...\"", "m", "1", "1"},
+        {"\"It's saying an error occurred, let me get you the details...\"", "f", "2", "1"},
+        {message, "h", "1", "1"},
+        {"\"If you need any help don't forget to join the discord server!\"", "e", "2", "2"},
+        {"https://discord.gg/CyerbjvyMb", "j", "1", "1"},
     };
 }
