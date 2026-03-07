@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <functional>
@@ -55,10 +56,7 @@ public:
 		is_speaking_ = false;
 	}
 
-	inline void add_button(const button& btn, bool permanent = false) {
-		if (permanent) {
-			buttons_permanent_.push_back(btn);
-		}
+	inline void add_button(const button& btn) {
 		else buttons_.push_back(btn);
 	}
 	inline void clear_buttons() {
@@ -89,7 +87,6 @@ private:
 	float chars_per_second_ = 50.0f;
 
 	// buttons
-	std::vector<button> buttons_permanent_;
 	std::vector<button> buttons_;
 	int current_button_id_ = -1;
 	int current_option_ = -1;

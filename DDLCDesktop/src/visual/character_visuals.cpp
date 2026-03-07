@@ -28,7 +28,7 @@ character_visuals::character_visuals(renderer* renderer, ddlc_character characte
 
 	window_->on_mouse_click.push_back([this]() {
 		return on_mouse_click();
-	});
+		});
 
 	// load textbox sprite
 	std::string textbox_path = (fs::path(ASSETS_DIR) / "gui/textbox.png").make_preferred().string();
@@ -104,7 +104,7 @@ void character_visuals::reset(ddlc_character character) {
 	current_button_id_ = -1;
 
 	window_->reset();
-	
+
 	character_ = character;
 	expression_ = "a";
 	pose_left_ = "1";
@@ -165,7 +165,7 @@ void character_visuals::show_message(const std::string& message, const std::func
 		if (callback) {
 			callback();
 		}
-	}, { "OK" });
+		}, { "OK" });
 }
 
 void character_visuals::set_position(int x, int y) {
@@ -202,9 +202,7 @@ void character_visuals::draw_all_buttons() {
 	float total_width = 0.0f; // normalized & with padding
 	float height = 0.0f;
 
-	std::vector<button> all_buttons = buttons_;
-	all_buttons.insert(all_buttons.begin(), buttons_permanent_.begin(), buttons_permanent_.end());
-	for (auto& button : all_buttons) {
+	for (auto& button : buttons_) {
 		std::wstring wtext = utf8_to_wstring(button.text());
 
 		// measure (size 2.2)
@@ -350,21 +348,15 @@ void character_visuals::draw_popup() {
 }
 
 int character_visuals::on_mouse_click() {
-if (current_button_id_ != -1) {
-// Find button by ID in storage vectors
-for (auto& btn : buttons_permanent_) {
-if (btn.id() == current_button_id_) {
-btn.click();
-return 1; // handled
-}
-}
-for (auto& btn : buttons_) {
-if (btn.id() == current_button_id_) {
-btn.click();
-return 1; // handled
-}
-}
-}
+	if (current_button_id_ != -1) {
+		// Find button by ID in storage vectors
+		for (auto& btn : buttons_) {
+			if (btn.id() == current_button_id_) {
+				btn.click();
+				return 1; // handled
+			}
+		}
+	}
 	if (popup_ && current_option_ != -1) {
 		popup_response_ = (current_option_ == 1);
 		popup_ = false;
@@ -397,7 +389,7 @@ void character_visuals::update_sprites() {
 
 	auto normalize_path = [](const fs::path& p) {
 		return fs::absolute(fs::weakly_canonical(p).make_preferred());
-	};
+		};
 
 	std::string pose_left_full = pose_left_;;
 	std::string pose_right_full = pose_right_;
