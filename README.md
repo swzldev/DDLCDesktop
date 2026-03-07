@@ -141,10 +141,11 @@ If you encounter any issues, please do one of the following:
 #### Added
 - Added run on boot and run in background settings under the new "general" settings tab.
 - Added a system tray icon to allow the app to be "minimised".
+- Added an 'auto speed' setting under settings > general.
 #### Changed
 - Redesigned the message history system to be character-specific, this means each character holds their own history and removes the need to reset context when switching characters.
 - Improved the error output system - it now prints the actual error message (if present) within the story, the story is also much shorter and consistent across all error types.
-
+- Redesigned the button system to be more robust and allow for additional button types such as "number buttons" in place of sliders etc.
 ### [2.0.0]
 #### Added
 - Added an updater project that is able to automatically download new versions as and when they release.
