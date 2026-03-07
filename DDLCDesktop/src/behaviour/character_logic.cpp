@@ -146,7 +146,7 @@ void character_logic::tick(float delta_time) {
 				case character_state::error::FAIL_PARSE_RESPONSE_UNKNOWN:
 					handle_error(ddlcd_runtime_error(
 						ddlcd_error::FAIL_PARSE_AI_RESPONSE,
-							"Failed to parse AI response due to unknown format."));
+							current_state.error_message));
 					return;
 				default:
 					break;
@@ -234,17 +234,12 @@ void character_logic::handle_error(const ddlcd_runtime_error& error) {
 
 	bool fatal = false;
 
+	current_state.interactions = error_stories::error_story(config_->user_name, error.message);
 	switch (error.kind) {
 	case ddlcd_error::FAIL_AI_RESPONSE:
-		current_state.interactions = error_stories::fail_ai_response_story();
 		fatal = true;
 		break;
-	case ddlcd_error::FAIL_PARSE_AI_RESPONSE:
-		current_state.interactions = error_stories::fail_parse_ai_response_story();
-		break;
-	case ddlcd_error::OTHER:
-		current_state.interactions.push_back(
-			{ "Uh oh! An error has occurred: " + error.message, "h", "1", "1" });
+	default:
 		break;
 	}
 
