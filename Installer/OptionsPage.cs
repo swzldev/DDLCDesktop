@@ -1,12 +1,6 @@
-﻿using IWshRuntimeLibrary;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Security.AccessControl;
+using System.Security.Principal;
+using IWshRuntimeLibrary;
 
 namespace Installer
 {
@@ -59,19 +53,24 @@ namespace Installer
                 }
             }
 
+            if (RequiresAdmin(folder))
+            {
+                if (!displayErrors) return false;
+                var res = MessageBox.Show("The selected folder appears to require administrator permissions to write. This may cause issues with the application and is not recommended. Do you want to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res != DialogResult.Yes)
+                {
+                    return false;
+                }
+            }
+
             finalInstallPath = Path.Combine(folder, "DDLCDesktop");
             return true;
         }
 
         private void SetDefaultInstallPath()
         {
-            string pfPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            string? installPath = null;
-            if (!ValidateInstallPath(pfPath, out installPath, false))
-            {
-                string myGamesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Documents", "My Games");
-                ValidateInstallPath(pfPath, out installPath, false);
-            }
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            ValidateInstallPath(appDataPath, out string? installPath, false);
 
             if (Directory.Exists(installPath))
             {
@@ -91,6 +90,32 @@ namespace Installer
                 MessageBox.Show("Could not find a valid default installation path. Please select one manually.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 UpdateCanInstall();
             }
+        }
+
+        private static bool RequiresAdmin(string folder)
+        {
+            SecurityIdentifier usersGroup = new(WellKnownSidType.BuiltinUsersSid, null);
+            DirectorySecurity acl = new DirectoryInfo(folder).GetAccessControl();
+            AuthorizationRuleCollection rules = acl.GetAccessRules(true, true, typeof(SecurityIdentifier));
+
+            bool allowWrite = false;
+            bool denyWrite = false;
+
+            foreach (FileSystemAccessRule rule in rules)
+            {
+                if (rule.IdentityReference != usersGroup)
+                    continue;
+
+                if (rule.FileSystemRights.HasFlag(FileSystemRights.Write))
+                {
+                    if (rule.AccessControlType == AccessControlType.Deny)
+                        denyWrite = true;
+                    else
+                        allowWrite = true;
+                }
+            }
+
+            return denyWrite || !allowWrite;
         }
 
         private void UpdateInstallPath(string path)
