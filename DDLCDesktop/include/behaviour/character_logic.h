@@ -131,7 +131,7 @@ private:
 
     void set_character(ddlc_character new_character, bool warn_preset = true);
 
-    void update_rpc();
+    void update_rpc(bool reset_start_time = false);
 
     int run_cmd_hidden(wchar_t* cmd, bool wait = true);
 

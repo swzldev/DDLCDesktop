@@ -1093,13 +1093,15 @@ void character_logic::set_character(ddlc_character new_character, bool warn_pres
 	}
 
 	// update RPC
-	update_rpc();
+	update_rpc(true);
 }
 
-void character_logic::update_rpc() {
+void character_logic::update_rpc(bool reset_start_time) {
 	if (!config_->rpc_enable) {
 		return;
 	}
+
+	discord_rpc& dc = widget_->get_discord();
 
 	// set status
 	std::string status = "Hanging out with ";
@@ -1107,11 +1109,12 @@ void character_logic::update_rpc() {
 		status += ddlc_character_to_string(character_) + "!";
 	}
 	else status += "the club!";
-
-	discord_rpc& dc = widget_->get_discord();
-
 	dc.set_status(status);
-	dc.reset_start_time();
+
+	if (reset_start_time) {
+		dc.reset_start_time();
+	}
+	
 	dc.update_activity();
 }
 
