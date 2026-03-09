@@ -483,7 +483,7 @@ void character_logic::show_settings_menu() {
 	
 	// set buttons
 	visuals->add_button(std::make_unique<text_button>("Application", [this]() { show_settings_application_menu(); }));
-	visuals->add_button(std::make_unique<text_button>("Discord", [this]() { show_settings_discord_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("Discord RPC", [this]() { show_settings_discord_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("API", [this]() { show_settings_api_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("Character", [this]() { show_settings_character_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("User", [this]() { show_settings_user_menu(); }));
