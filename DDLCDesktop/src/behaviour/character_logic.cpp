@@ -49,7 +49,7 @@ character_logic::character_logic(widget* widget) {
 	}
 	config_ = config::get();
 
-	if (config_->enable_discord_rpc) {
+	if (config_->rpc_enable) {
 		widget_->get_discord().enable();
 	}
 
@@ -483,6 +483,7 @@ void character_logic::show_settings_menu() {
 	
 	// set buttons
 	visuals->add_button(std::make_unique<text_button>("Application", [this]() { show_settings_application_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("Discord", [this]() { show_settings_discord_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("API", [this]() { show_settings_api_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("Character", [this]() { show_settings_character_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("User", [this]() { show_settings_user_menu(); }));
@@ -521,7 +522,6 @@ void character_logic::show_settings_application_menu() {
 				}
 				visuals->show_message("Run on boot enabled, the application will now open at startup.");
 				config_->start_on_boot = true;
-				config::save();
 			}
 			else {
 				if (!run_on_boot_helper::disable_run_on_boot()) {
@@ -530,8 +530,8 @@ void character_logic::show_settings_application_menu() {
 					return;
 				}
 				config_->start_on_boot = false;
-				config::save();
 			}
+			config::save();
 		},
 		config_->start_on_boot
 	);
@@ -547,6 +547,40 @@ void character_logic::show_settings_application_menu() {
 	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_menu(); }));
 }
 void character_logic::show_settings_discord_menu() {
+	visuals->clear_buttons();
+	current_menu_ = menu_state::SETTINGS;
+
+	visuals->set_chars_per_second(100.0f);
+
+	// set buttons
+	auto enable_rpc_button = std::make_unique<toggle_button>(
+		"Discord Rich Presence: ",
+		[this](bool toggled) {
+			if (toggled) {
+				widget_->get_discord().enable();
+				update_rpc();
+			}
+			else {
+				widget_->get_discord().disable();
+			}
+			config::save();
+		},
+		&config_->rpc_enable
+	);
+	visuals->add_button(std::move(enable_rpc_button));
+
+	auto display_character_button = std::make_unique<toggle_button>(
+		"Display character: ",
+		[this](bool toggled) {
+			update_rpc();
+			config::save();
+		},
+		&config_->rpc_display_current_character
+	);
+	display_character_button->set_enabled_ptr(&config_->rpc_enable); // can only toggle if rpc enabled
+	visuals->add_button(std::move(display_character_button));
+
+	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_menu(); }));
 }
 void character_logic::show_settings_api_menu() {
 	visuals->clear_buttons();
@@ -683,12 +717,12 @@ void character_logic::show_settings_character_menu() {
 						std::string supported;
 						auto presets = get_behaviour_presets(character_);
 						for (size_t i = 0; i < presets.size(); i++) {
-							supported += "'" + presets[i];
+							supported += "[ " + presets[i];
 							if (i < presets.size() - 1) {
 								supported += "', ";
 							}
 							else {
-								supported += "'";
+								supported += " ]";
 							}
 						}
 						visuals->show_message("Invalid behaviour preset. Supported: " + supported);
@@ -1063,8 +1097,17 @@ void character_logic::set_character(ddlc_character new_character, bool warn_pres
 }
 
 void character_logic::update_rpc() {
+	if (!config_->rpc_enable) {
+		return;
+	}
+
 	// set status
-	std::string status = "Talking with " + ddlc_character_to_string(character_) + "!";
+	std::string status = "Hanging out with ";
+	if (config_->rpc_display_current_character) {
+		status += ddlc_character_to_string(character_) + "!";
+	}
+	else status += "the club!";
+
 	discord_rpc& dc = widget_->get_discord();
 
 	dc.set_status(status);
