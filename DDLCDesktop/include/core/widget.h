@@ -5,6 +5,7 @@
 #include <core/noticon.h>
 #include <core/window.h>
 #include <behaviour/character_logic.h>
+#include <discord/discord_rpc.h>
 
 class widget {
 public:
@@ -39,6 +40,9 @@ public:
 	inline character_logic* get_logic() {
 		return logic_;
 	}
+	inline discord_rpc& get_discord() {
+		return discord_rpc_;
+	}
 
 private:
 	widget();
@@ -46,11 +50,14 @@ private:
 	noticon noticon_;
 	window* window_;
 	renderer* renderer_;
+	discord_rpc discord_rpc_;
 	bool running_ = true;
 
 	std::chrono::high_resolution_clock::time_point last_time_;
 
 	character_logic* logic_;
+
+	void update();
 
 	void create_noticon();
 	void noticon__double_click();

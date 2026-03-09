@@ -142,10 +142,22 @@ If you encounter any issues, please do one of the following:
 - Added run on boot and run in background settings under the new "general" settings tab.
 - Added a system tray icon to allow the app to be "minimised".
 - Added an 'auto speed' setting under settings > general.
+- Added an uninstaller that automatically deletes the app and carries out any additional cleanup.
+- Added discord rich presence support.
+#### Fixed
+- Fixed a bug where non-ascii characters could be pasted since there was no character validation.
+- Fixed the installer sometimes setting the install path to OneDrive if folder redirection is enabled.
+- Fixed the installer having the wrong title + description on the install page.
 #### Changed
 - Redesigned the message history system to be character-specific, this means each character holds their own history and removes the need to reset context when switching characters.
 - Improved the error output system - it now prints the actual error message (if present) within the story, the story is also much shorter and consistent across all error types.
 - Redesigned the button system to be more robust and allow for additional button types such as "number buttons" in place of sliders etc.
+- Installer default install path is now C:/Users/<user>/AppData/roaming/.
+- Installer now attempts to locate DDLC game directory if installed on Steam.
+- General Installer improvements.
+- Changed the start menu and desktop shortcut names to "DDLC Desktop" from "DDLCDesktop", note this may cause duplicates if you've used the old installer before.
+- Trimmed the entered API key which may help prevent pasting extra whitespace/newlines which can bug out.
+
 ### [2.0.0]
 #### Added
 - Added an updater project that is able to automatically download new versions as and when they release.

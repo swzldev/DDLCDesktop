@@ -8,6 +8,7 @@
 #include <core/input.h>
 #include <behaviour/character_logic.h>
 #include <behaviour/character_interaction.h>
+#include <discord/discord_rpc.h>
 #include <visual/sprite.h>
 #include <error/ddlcd_runtime_error.h>
 
@@ -34,20 +35,7 @@ void widget::main_loop() {
 	while (running_) {
 		try {
 			while (running_) {
-				auto now = std::chrono::high_resolution_clock::now();
-				float delta_time = std::chrono::duration<float>(now - last_time_).count();
-
-				input::tick();
-
-				window_->poll_events();
-				if (window_->should_close()) {
-					stop();
-				}
-
-				logic_->tick(delta_time);
-				render();
-
-				last_time_ = now;
+				update();
 			}
 		}
 		catch (const ddlcd_runtime_error& e) {
@@ -88,6 +76,31 @@ widget::widget() {
 
 	// create noticon (after window)
 	create_noticon();
+}
+
+void widget::update() {
+	// calculate delta time
+	auto now = std::chrono::high_resolution_clock::now();
+	float delta_time = std::chrono::duration<float>(now - last_time_).count();
+
+	// tick input system
+	input::tick();
+
+	// poll window events and check to close
+	window_->poll_events();
+	if (window_->should_close()) {
+		stop();
+	}
+
+	// tick logic system
+	logic_->tick(delta_time);
+	render();
+
+	// update discord rpc
+	discord_rpc::run_discord_callbacks();
+
+	// update last time
+	last_time_ = now;
 }
 
 void widget::create_noticon() {
