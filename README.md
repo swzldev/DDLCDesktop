@@ -137,7 +137,7 @@ If you encounter any issues, please do one of the following:
 
 ## Changelog
 
-### [Unreleased]
+### [2.1.0]
 #### Added
 - Added run on boot and run in background settings under the new "general" settings tab.
 - Added a system tray icon to allow the app to be "minimised".
