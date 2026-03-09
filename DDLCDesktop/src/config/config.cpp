@@ -42,7 +42,10 @@ void config::load() {
 	cfg->start_on_boot = j.value("start_on_boot", false);
 	cfg->run_in_background = j.value("run_in_background", false);
 	cfg->auto_mode_speed = std::clamp(j.value("auto_mode_speed", 3), 1, 5);
-	cfg->enable_discord_rpc = j.value("enable_discord_rpc", true);
+
+	// discord
+	cfg->rpc_enable = j.value("rpc_enable", true);
+	cfg->rpc_display_current_character = j.value("rpc_display_current_character", true);
 
 	// ai
 	std::string api_str = j.value("api", "");
@@ -125,7 +128,9 @@ bool config::save() {
 	j["run_on_boot"] = loaded_->start_on_boot;
 	j["run_in_background"] = loaded_->run_in_background;
 	j["auto_mode_speed"] = loaded_->auto_mode_speed;
-	j["enable_discord_rpc"] = loaded_->enable_discord_rpc;
+	// discord
+	j["rpc_enable"] = loaded_->rpc_enable;
+	j["rpc_display_current_character"] = loaded_->rpc_display_current_character;
 	// ai
 	j["api_key"] = loaded_->api_key;
 	j["model"] = loaded_->model;
@@ -180,7 +185,10 @@ void config::load_default() {
 	loaded_->start_on_boot = false;
 	loaded_->run_in_background = false;
 	loaded_->auto_mode_speed = 3;
-	loaded_->enable_discord_rpc = true;
+
+	// discord
+	loaded_->rpc_enable = true;
+	loaded_->rpc_display_current_character = true;
 
 	// API
 	loaded_->api = api::OPENROUTER;

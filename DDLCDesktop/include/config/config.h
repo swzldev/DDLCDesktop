@@ -21,7 +21,10 @@ public:
   bool start_on_boot;
   bool run_in_background;
   int auto_mode_speed;
-  bool enable_discord_rpc;
+
+  // discord
+  bool rpc_enable;
+  bool rpc_display_current_character;
 
   // api
   api api;
