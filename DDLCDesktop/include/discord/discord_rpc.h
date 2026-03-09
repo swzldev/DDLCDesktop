@@ -21,6 +21,14 @@ public:
 		discordpp::RunCallbacks();
 	}
 
+	inline void enable() {
+		if (client_) return;
+		init();
+	}
+	inline void disable() {
+		client_.reset();
+	}
+
 	inline void set_status(const std::string& status) {
 		status_ = status;
 	}
