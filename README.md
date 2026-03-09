@@ -32,7 +32,7 @@
 ## Installation
 As of v2.0.0, installation is super simple and only takes a few steps.
 
-1) Download the latest release of the installer [here](https://github.com/swzldev/DDLCDesktop/releases). (You'll want the one called DDLCDesktop-Installer-vX.X.X.exe)
+1) Download the latest release of the installer [here](https://github.com/swzldev/DDLCDesktop/releases). (You'll want the one called DDLCDesktop-OfflineInstaller-vX.X.X-x64.exe)
 2) Run the installer -- you may need to disable your antivirus, don't worry, it's completely safe, it only appears because the application is not signed. Signing it would cost me [upwards of £500 a year](https://www.digicert.com/signing/code-signing-certificates#code_signing_key_locker).
 3) Follow the instructions on screen, make sure you download it to an appropriate path, the default is usually fine, but you should be careful about putting it into any restricted folders such as Program Files or OneDrive -- many people have had issues due to this.
 
