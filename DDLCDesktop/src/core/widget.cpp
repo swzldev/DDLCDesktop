@@ -96,9 +96,6 @@ void widget::update() {
 	logic_->tick(delta_time);
 	render();
 
-	// update discord rpc
-	discord_rpc::run_discord_callbacks();
-
 	// update last time
 	last_time_ = now;
 }

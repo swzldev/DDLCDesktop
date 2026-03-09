@@ -47,8 +47,13 @@ character_logic::character_logic(widget* widget) {
 		in_setup_ = true;
 		setup_step_ = 0;
 	}
-
 	config_ = config::get();
+
+	if (config_->enable_discord_rpc) {
+		widget_->get_discord().enable();
+	}
+
+	// set starting character
 	set_character(config_->character, false);
 
 	// create visuals
@@ -104,6 +109,8 @@ void character_logic::handle_interaction(const character_interaction& interactio
 }
 
 void character_logic::tick(float delta_time) {
+	discord_rpc::run_discord_callbacks();
+
 	if (paused_)
 		return;
 
