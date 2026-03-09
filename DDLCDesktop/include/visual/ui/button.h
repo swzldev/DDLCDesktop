@@ -18,9 +18,13 @@ public:
 	inline void set_disabled_ptr(bool* disabled_ptr) {
 		disabled_ptr_ = disabled_ptr;
 	}
+	// once set, underlying disabled_ is unused
+	inline void set_enabled_ptr(bool* enabled_ptr) {
+		enabled_ptr_ = enabled_ptr;
+	}
 	inline void disable() { disabled_ = true; }
 	inline void enable() { disabled_ = false; }
-	inline bool is_disabled() const { return disabled_ptr_ ? *disabled_ptr_ : disabled_; }
+	inline bool is_disabled() const { return enabled_ptr_ ? !*enabled_ptr_ : disabled_ptr_ ? *disabled_ptr_ : disabled_; }
 
 	inline int id() const {
 		return id_;
@@ -37,6 +41,7 @@ private:
 	int id_;
 	bool disabled_ = false;
 	bool* disabled_ptr_ = nullptr;
+	bool* enabled_ptr_ = nullptr;
 
 	virtual void on_click() = 0;
 };
