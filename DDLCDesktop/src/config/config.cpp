@@ -47,7 +47,7 @@ void config::load() {
 	cfg->rpc_enable = j.value("rpc_enable", true);
 	cfg->rpc_display_current_character = j.value("rpc_display_current_character", true);
 
-	// ai
+	// api
 	std::string api_str = j.value("api", "");
 	if (api_str == "openai") {
 		cfg->api = api::OPENAI;
@@ -59,29 +59,19 @@ void config::load() {
 		cfg->api = api::CUSTOM;
 	}
 	else {
-		load_default();
-		return;
+		cfg->api = api::OPENROUTER;
 	}
-	// API key
 	cfg->api_key = j.value("api_key", "");
-	// model
 	cfg->model = j.value("model", "");
-	// custom endpoint
 	cfg->custom_endpoint = j.value("custom_endpoint", "");
-	// message history size
 	cfg->message_history_size = j.value("message_history_size", 6);
-	// max tokens
 	cfg->max_tokens = j.value("max_tokens", 2000);
 
-	// pronouns
+	// behaviour
 	cfg->pronouns = j.value("pronouns", "he/him");
-	// user name
 	cfg->user_name = j.value("user_name", "");
-	// language
 	cfg->language = j.value("language", "English");
-	// preset
 	cfg->behaviour_preset = j.value("behaviour_preset", "");
-	// character
 	std::string character_str = j.value("character", "monika");
 	if (character_str == "monika") {
 		cfg->character = ddlc_character::MONIKA;
@@ -96,12 +86,19 @@ void config::load() {
 		cfg->character = ddlc_character::SAYORI;
 	}
 	else {
-		load_default();
-		return;
+		cfg->character = ddlc_character::MONIKA;
 	}
-
-	// enable (ai) window controls
 	cfg->enable_window_controls = j.value("enable_window_controls", true);
+	std::string input_mode_str = j.value("input_mode", "text");
+	if (input_mode_str == "choice") {
+		cfg->input_mode = input_mode::CHOICE;
+	}
+	else if (input_mode_str == "text") {
+		cfg->input_mode = input_mode::TEXT;
+	}
+	else {
+		
+	}
 
 	loaded_ = std::move(cfg);
 }
@@ -131,7 +128,7 @@ bool config::save() {
 	// discord
 	j["rpc_enable"] = loaded_->rpc_enable;
 	j["rpc_display_current_character"] = loaded_->rpc_display_current_character;
-	// ai
+	// api
 	j["api_key"] = loaded_->api_key;
 	j["model"] = loaded_->model;
 	j["custom_endpoint"] = loaded_->custom_endpoint;
@@ -158,6 +155,14 @@ bool config::save() {
 		break;
 	}
 	j["enable_window_controls"] = loaded_->enable_window_controls;
+	switch (loaded_->input_mode) {
+	case input_mode::CHOICE:
+		j["input_mode"] = "choice";
+		break;
+	case input_mode::TEXT:
+		j["input_mode"] = "text";
+		break;
+	}
 
 	std::string path = "config.json";
 	std::ofstream file(path);
@@ -214,6 +219,7 @@ void config::load_default() {
 
 	// enable (ai) window controls
 	loaded_->enable_window_controls = true;
+	loaded_->input_mode = input_mode::TEXT;
 }
 
 std::unique_ptr<config> config::loaded_ = nullptr;
