@@ -82,7 +82,6 @@ private:
     unsigned int interaction_index_ = 0;
 
     bool input_mode_btn_disabled_ = true;
-    bool custom_mode_ = false;
 
     std::string live_input_buffer_;
     settings_input_session settings_input_;

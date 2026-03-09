@@ -460,9 +460,16 @@ void character_logic::show_main_menu() {
 
 	// TODO: CACHE THIS!!
 	auto input_mode_btn = std::make_unique<toggle_button>("Input Mode: ", [this](bool t) {
-		if (t) await_choice(/*true*/);
-		else await_input();
-	});
+		if (t) {
+			config_->input_mode = input_mode::CHOICE;
+			await_choice(/*true*/);
+		}
+		else {
+			config_->input_mode = input_mode::TEXT;
+			await_input();
+		}
+		config::save();
+	}, config_->input_mode == input_mode::CHOICE);
 	input_mode_btn->set_disabled_ptr(&input_mode_btn_disabled_);
 	input_mode_btn->set_labels("Choice", "Text");
 
@@ -842,7 +849,6 @@ void character_logic::await_choice(bool show_immediate) {
 		visuals->set_saying(message);
 	}
 
-	custom_mode_ = false;
 	state_ = logic_state::AWAITING_CHOICE;
 }
 void character_logic::await_input() {
@@ -853,9 +859,8 @@ void character_logic::await_input() {
 		input_interaction.str_data = live_input_buffer_;
 		input::end_input_recording();
 		begin_think(input_interaction);
-		});
+	});
 
-	custom_mode_ = true;
 	state_ = logic_state::AWAITING_INPUT;
 }
 void character_logic::await_input_custom(const std::string& prompt, const std::string& initial_value, const std::function<void(bool, const std::string&)>& callback) {
@@ -1056,7 +1061,7 @@ void character_logic::advance_interaction() {
 		}
 		else {
 			if (!current_state.actions.empty()) {
-				if (custom_mode_) {
+				if (config_->input_mode == input_mode::TEXT) {
 					await_input();
 				}
 				else {
@@ -1195,7 +1200,6 @@ void character_logic::refresh_display() {
 
 	case logic_state::AWAITING_INPUT:
 		// restore input mode
-		custom_mode_ = true;
 		input_mode_btn_disabled_ = false;
 
 		// restart input recording
