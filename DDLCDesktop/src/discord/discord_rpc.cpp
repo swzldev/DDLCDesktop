@@ -10,6 +10,10 @@
 #include <output/log.h>
 
 void discord_rpc::update_activity() {
+	if (!client_) {
+		return;
+	}
+
 	discordpp::Activity activity;
 
 	// basic details
