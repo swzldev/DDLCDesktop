@@ -53,28 +53,18 @@ namespace Installer
                 }
             }
 
-            if (RequiresAdmin(folder))
-            {
-                if (!displayErrors) return false;
-                var res = MessageBox.Show("The selected folder appears to require administrator permissions to write. This may cause issues with the application and is not recommended. Do you want to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (res != DialogResult.Yes)
-                {
-                    return false;
-                }
-            }
-
             finalInstallPath = Path.Combine(folder, "DDLCDesktop");
             return true;
         }
 
         private void SetDefaultInstallPath()
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            ValidateInstallPath(appDataPath, out string? installPath, false);
+            string defaultInstallFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Documents");
+            ValidateInstallPath(defaultInstallFolder, out string? installPath, false);
 
-            if (Directory.Exists(installPath))
+            if (installPath != null && Directory.Exists(installPath))
             {
-                var res = MessageBox.Show($"A DDLCDesktop installation has been detected at the default installation path ({installPath}). Overwrite?", "Installation Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                var res = MessageBox.Show($"A previous installation of DDLCDesktop has been detected at the default installation path ({installPath}). Do you want to overwrite it?", "Installation Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (res != DialogResult.Yes)
                 {
                     installPath = null;
@@ -87,35 +77,9 @@ namespace Installer
             }
             else
             {
-                MessageBox.Show("Could not find a valid default installation path. Please select one manually.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not find a valid default installation path. Please select manually.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 UpdateCanInstall();
             }
-        }
-
-        private static bool RequiresAdmin(string folder)
-        {
-            SecurityIdentifier usersGroup = new(WellKnownSidType.BuiltinUsersSid, null);
-            DirectorySecurity acl = new DirectoryInfo(folder).GetAccessControl();
-            AuthorizationRuleCollection rules = acl.GetAccessRules(true, true, typeof(SecurityIdentifier));
-
-            bool allowWrite = false;
-            bool denyWrite = false;
-
-            foreach (FileSystemAccessRule rule in rules)
-            {
-                if (rule.IdentityReference != usersGroup)
-                    continue;
-
-                if (rule.FileSystemRights.HasFlag(FileSystemRights.Write))
-                {
-                    if (rule.AccessControlType == AccessControlType.Deny)
-                        denyWrite = true;
-                    else
-                        allowWrite = true;
-                }
-            }
-
-            return denyWrite || !allowWrite;
         }
 
         private void UpdateInstallPath(string path)
