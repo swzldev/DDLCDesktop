@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <cstdint>
+#include <ctime>
 
 #include <discordpp.h>
 
@@ -21,19 +23,21 @@ public:
 
 	inline void set_status(const std::string& status) {
 		status_ = status;
-		update_activity();
 	}
 	inline void set_thumbnail(const std::string& thumbnail) {
 		thumbnail_ = thumbnail;
-		update_activity();
 	}
+	inline void reset_start_time() {
+		start_time_ = std::time(nullptr);
+	}
+
+	void update_activity();
 
 private:
 	std::unique_ptr<discordpp::Client> client_;
 	std::string thumbnail_;
 	std::string status_;
+	time_t start_time_ = 0;
 
 	void init();
-
-	void update_activity();
 };

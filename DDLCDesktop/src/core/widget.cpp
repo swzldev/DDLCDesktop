@@ -72,7 +72,7 @@ widget::widget() {
 	// allocate
 	window_ = new window(this);
 	renderer_ = window_->get_renderer();
-	logic_ = new character_logic(window_);
+	logic_ = new character_logic(this);
 
 	// create noticon (after window)
 	create_noticon();

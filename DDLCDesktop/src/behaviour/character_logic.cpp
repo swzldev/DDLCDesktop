@@ -18,6 +18,7 @@
 #include <core/input.h>
 #include <core/sys.h>
 #include <core/window.h>
+#include <core/widget.h>
 #include <ddlc/characters.h>
 #include <error/ddlcd_runtime_error.h>
 #include <error/error_stories.h>
@@ -27,6 +28,7 @@
 #include <visual/ui/text_button.h>
 #include <visual/ui/toggle_button.h>
 #include <visual/ui/number_button.h>
+#include <discord/discord_rpc.h>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -35,8 +37,9 @@ namespace {
 	bool checked_for_update_session = false;
 }
 
-character_logic::character_logic(window* window) {
-	window_ = window;
+character_logic::character_logic(widget* widget) {
+	widget_ = widget;
+	window_ = widget->get_window();
 
 	create_default_manifest();
 
@@ -46,7 +49,7 @@ character_logic::character_logic(window* window) {
 	}
 
 	config_ = config::get();
-	character_ = config_->character;
+	set_character(config_->character, false);
 
 	// create visuals
 	visuals = new character_visuals(window_->get_renderer(), character_);
@@ -714,7 +717,12 @@ void character_logic::show_settings_character_change_menu() {
 		if (character_ == ch) {
 			visuals->show_message("You cannot change to the same character.");
 		}
-		else set_character(ch);
+		else {
+			config_->character = ch;
+			config::save();
+			set_character(ch);
+			reset();
+		}
 	};
 
 	// set buttons
@@ -1031,22 +1039,28 @@ void character_logic::create_default_manifest() {
 	manifest_file.close();
 }
 
-void character_logic::set_character(ddlc_character new_character) {
-	if (character_ == new_character) {
-		return;
-	}
-
+void character_logic::set_character(ddlc_character new_character, bool warn_preset) {
 	character_ = new_character;
-	config_->character = character_;
 
 	if (!supports_behaviour_preset(character_, config_->behaviour_preset)) {
-		visuals->show_message("Current behaviour preset '" + config_->behaviour_preset +
+		if (warn_preset) visuals->show_message("Current behaviour preset '" + config_->behaviour_preset +
 			"' is not supported by the new character. Reverting to default preset.");
+
 		config_->behaviour_preset = "default";
 	}
 
-	config::save();
-	reset();
+	// update RPC
+	update_rpc();
+}
+
+void character_logic::update_rpc() {
+	// set status
+	std::string status = "Talking with " + ddlc_character_to_string(character_) + "!";
+	discord_rpc& dc = widget_->get_discord();
+
+	dc.set_status(status);
+	dc.reset_start_time();
+	dc.update_activity();
 }
 
 int character_logic::run_cmd_hidden(wchar_t* cmd, bool wait) {

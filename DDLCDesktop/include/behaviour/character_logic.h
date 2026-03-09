@@ -35,6 +35,7 @@ enum class menu_state {
     UPDATE,
 };
 
+class widget;
 class window;
 
 class character_logic {
@@ -42,7 +43,7 @@ public:
     static constexpr int INPUT_MAX_LENGTH = 170;
 
 public:
-    character_logic(window* window);
+    character_logic(widget* widget);
     ~character_logic();
 
     void handle_interaction(const character_interaction& interaction);
@@ -69,6 +70,7 @@ private:
         logic_state restore_state = logic_state::IDLE;
     };
 
+	widget* widget_ = nullptr;
     window* window_ = nullptr;
     config* config_ = nullptr;
     ddlc_character character_ = ddlc_character::MONIKA;
@@ -126,7 +128,9 @@ private:
 
     void create_default_manifest();
 
-    void set_character(ddlc_character new_character);
+    void set_character(ddlc_character new_character, bool warn_preset = true);
+
+    void update_rpc();
 
     int run_cmd_hidden(wchar_t* cmd, bool wait = true);
 
