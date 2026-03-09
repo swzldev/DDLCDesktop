@@ -482,13 +482,13 @@ void character_logic::show_settings_menu() {
 	visuals->set_saying("Choose an option...");
 	
 	// set buttons
-	visuals->add_button(std::make_unique<text_button>("General", [this]() { show_settings_general_menu(); }));
+	visuals->add_button(std::make_unique<text_button>("Application", [this]() { show_settings_application_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("API", [this]() { show_settings_api_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("Character", [this]() { show_settings_character_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("User", [this]() { show_settings_user_menu(); }));
 	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_main_menu(); }));
 }
-void character_logic::show_settings_general_menu() {
+void character_logic::show_settings_application_menu() {
 	visuals->clear_buttons();
 	current_menu_ = menu_state::SETTINGS;
 
@@ -516,7 +516,7 @@ void character_logic::show_settings_general_menu() {
 			if (toggled) {
 				if (!run_on_boot_helper::enable_run_on_boot()) {
 					visuals->show_message("Failed to enable run on boot. Please try again.");
-					show_settings_general_menu(); // revert visual state
+					show_settings_application_menu(); // revert visual state
 					return;
 				}
 				visuals->show_message("Run on boot enabled, the application will now open at startup.");
@@ -526,7 +526,7 @@ void character_logic::show_settings_general_menu() {
 			else {
 				if (!run_on_boot_helper::disable_run_on_boot()) {
 					visuals->show_message("Failed to disable run on boot. Please try again.");
-					show_settings_general_menu(); // revert visual state
+					show_settings_application_menu(); // revert visual state
 					return;
 				}
 				config_->start_on_boot = false;
@@ -545,6 +545,8 @@ void character_logic::show_settings_general_menu() {
 	auto_speed_btn->set_value_labels({ "Very slow", "Slow", "Normal", "Fast", "Very fast", });
 	visuals->add_button(std::move(auto_speed_btn));
 	visuals->add_button(std::make_unique<text_button>("Back", [this]() { show_settings_menu(); }));
+}
+void character_logic::show_settings_discord_menu() {
 }
 void character_logic::show_settings_api_menu() {
 	visuals->clear_buttons();
