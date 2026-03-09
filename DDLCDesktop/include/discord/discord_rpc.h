@@ -14,7 +14,7 @@ public:
 	static constexpr uint64_t APPLICATION_ID = 1480639216869441758;
 
 public:
-	inline discord_rpc() { init(); }
+	discord_rpc() = default;
 	~discord_rpc() = default;
 
 	inline static void run_discord_callbacks() {
