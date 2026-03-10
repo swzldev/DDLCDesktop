@@ -8,7 +8,7 @@
   </p>
 
   <p>
-    <a href="https://discord.gg/x6a9AF2aSx">Discord</a> |
+    <a href="https://discord.gg/CyerbjvyMb">Discord</a> |
     <a href="#features">Features</a> |
     <a href="#installation">Installation</a> |
     <a href="#controls">Controls</a> |
